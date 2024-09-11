@@ -22,6 +22,7 @@
 .externalToolBuilders/*
 .project
 .pydevproject
+*.launch
 
 # Netbeans files
 nbproject
