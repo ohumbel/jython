@@ -57,9 +57,9 @@ public class PyUnicodeComparisonTest {
         if (resultObject instanceof PyBoolean) {
             PyBoolean result = (PyBoolean) resultObject;
             if (expected) {
-                assertTrue("result:", result.getBooleanValue());
+                assertTrue("expected result to be True, but was False", result.getBooleanValue());
             } else {
-                assertFalse("result:", result.getBooleanValue());
+                assertFalse("expected result to be False, but was True", result.getBooleanValue());
             }
         } else {
             fail("expected result to be PyBoolean but was " + resultObject.getClass().getName());
