@@ -447,7 +447,12 @@ public class GrammarActions {
 
         StringPair(String s, boolean unicode) {
             this.s = s;
-            this.unicode = unicode;
+            // enforce unicode if the string does not fit into a real PyString
+            if (!PyString.charsFitWidth(s, 7)) {
+                this.unicode = true;
+            } else {
+                this.unicode = unicode;
+            }
         }
         String getString() {
             return s;
