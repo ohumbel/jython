@@ -445,9 +445,13 @@ public class GrammarActions {
         private String s;
         private boolean unicode;
 
-        StringPair(String s, boolean unicode) {
+        StringPair(String s, boolean unicode, String encoding) {
             this.s = s;
             this.unicode = unicode;
+            // in case of no encoding, enforce unicode if the string does not fit into a real PyString
+            if (encoding == null && !unicode && !PyString.charsFitWidth(s, 7)) {
+                this.unicode = true;
+            }
         }
         String getString() {
             return s;
@@ -534,7 +538,7 @@ public class GrammarActions {
             // Plain unicode: already decoded, just handle escapes
             string = PyString.decode_UnicodeEscape(string, start, end, "strict", ustring);
         }
-        return new StringPair(string, ustring);
+        return new StringPair(string, ustring, encoding);
     }
 
     Token extractStringToken(List s) {
