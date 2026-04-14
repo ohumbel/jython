@@ -1,0 +1,51 @@
+[versions]
+rev_ant =                 "1.10.17"
+rev_antlr =               "3.5.3"
+rev_asm =                 "9.9.1"
+rev_bouncycastle =        "1.83"
+rev_commons_compress =    "1.28.0"
+rev_commons_io =          "2.21.0"
+rev_guava =               "33.5.0-jre"
+rev_icu4j =               "78.2"
+rev_informix =            "15.0.1.0"
+rev_jakarta_servlet_api = "6.1.0"
+rev_java_sizeof =         "0.0.5"
+rev_jffi =                "1.3.14"
+rev_jline =               "2.14.6"
+rev_jnr_constants =       "0.10.4"
+rev_jnr_ffi =             "2.2.18"
+rev_jnr_netdb =           "1.2.0"
+rev_jnr_posix =           "3.1.21"
+rev_junit =               "4.13.2"
+rev_netty =               "4.2.10.Final"
+rev_oracle =              "23.26.1.0.0"
+
+[libraries]
+ant =                 { module = "org.apache.ant:ant",                     version.ref = "rev_ant" }
+antlr =               { module = "org.antlr:antlr",                        version.ref = "rev_antlr" }
+asm =                 { module = "org.ow2.asm:asm",                        version.ref = "rev_asm" }
+asm_commons =         { module = "org.ow2.asm:asm-commons",                version.ref = "rev_asm" }
+asm_util =            { module = "org.ow2.asm:asm-util",                   version.ref = "rev_asm" }
+bcpkix_jdk18on =      { module = "org.bouncycastle:bcpkix-jdk18on",        version.ref = "rev_bouncycastle" }
+bcprov_jdk18on =      { module = "org.bouncycastle:bcprov-jdk18on",        version.ref = "rev_bouncycastle" }
+commons_compress =    { module = "org.apache.commons:commons-compress",    version.ref = "rev_commons_compress" }
+commons_io =          { module = "commons-io:commons-io",                  version.ref = "rev_commons_io" }
+guava =               { module = "com.google.guava:guava",                 version.ref = "rev_guava" }
+icu4j =               { module = "com.ibm.icu:icu4j",                      version.ref = "rev_icu4j"}
+informix =            { module = "com.ibm.informix:jdbc",                  version.ref = "rev_informix" }
+jakarta_servlet_api = { module = "jakarta.servlet:jakarta.servlet-api",    version.ref = "rev_jakarta_servlet_api" }
+java_sizeof =         { module = "com.carrotsearch:java-sizeof",           version.ref = "rev_java_sizeof" }
+jffi =                { module = "com.github.jnr:jffi",                    version.ref = "rev_jffi" }
+jline =               { module = "jline:jline",                            version.ref = "rev_jline" }
+jnr_constants =       { module = "com.github.jnr:jnr-constants",           version.ref = "rev_jnr_constants" }
+jnr_ffi =             { module = "com.github.jnr:jnr-ffi",                 version.ref = "rev_jnr_ffi" }
+jnr_netdb =           { module = "com.github.jnr:jnr-netdb",               version.ref = "rev_jnr_netdb" }
+jnr_posix =           { module = "com.github.jnr:jnr-posix",               version.ref = "rev_jnr_posix" }
+junit =               { module = "junit:junit",                            version.ref = "rev_junit" }
+netty_buffer =        { module = "io.netty:netty-buffer",                  version.ref = "rev_netty" }
+netty_codec_base =    { module = "io.netty:netty-codec-base",              version.ref = "rev_netty" }
+netty_common =        { module = "io.netty:netty-common",                  version.ref = "rev_netty" }
+netty_handler =       { module = "io.netty:netty-handler",                 version.ref = "rev_netty" }
+netty_resolver =      { module = "io.netty:netty-resolver",                version.ref = "rev_netty" }
+netty_transport =     { module = "io.netty:netty-transport",               version.ref = "rev_netty" }
+oracle =              { module = "com.oracle.database.jdbc:ojdbc8",        version.ref = "rev_oracle" }
