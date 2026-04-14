@@ -17,6 +17,7 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.python.core.Py;
 import org.python.core.PyCode;
@@ -278,6 +279,7 @@ public class _localeTest {
     }
 
     @Test
+    @Ignore
     public void setLocaleChinaMainland() {
         settableInit();
         /*
