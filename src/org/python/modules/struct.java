@@ -61,7 +61,7 @@ import java.math.BigInteger;
  * Format characters have the following meaning; the conversion between
  * C and Python values should be obvious given their types:
 
- * <table border>
+ * <table border=1>
  *   <caption>Format characters</caption>
  *   <tr><th><b>Format</b></th>
  *       <th><b>C Type</b></th>
@@ -153,7 +153,7 @@ import java.math.BigInteger;
  * according to the following table:
  *
  * <P>
- * <table border>
+ * <table border=1>
  *   <caption>Byte order and alignment characters</caption>
  *   <tr><th><b>Character</b></th>
  *       <th><b>Byte order</b></th>

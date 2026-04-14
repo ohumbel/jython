@@ -315,7 +315,7 @@ public class InternalFormat {
          * <p>
          * When the padding method has decided that that it needs to add n padding characters, it
          * will affect {@link #start} or {@link #lenWhole} as follows.
-         * <table border style>
+         * <table border=1 style>
          * <caption>Effect of padding on {@link #start} or {@link #lenWhole}</caption>
          * <tr>
          * <th>align</th>
