@@ -6,10 +6,6 @@ import org.python.core.Py;
 import org.python.core.PyDataDescr;
 import org.python.core.PyObject;
 import org.python.core.PyType;
-import org.python.expose.ExposedDelete;
-import org.python.expose.ExposedGet;
-import org.python.expose.ExposedSet;
-import org.python.expose.ExposedType;
 
 public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
 
@@ -32,7 +28,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
     public PyDataDescr makeDescriptor(DescSetup setup, String name) throws Exception {
         DescriptorExposer de = new DescriptorExposer(ASM_TYPE, name);
         setup.setup(de);
-        Class descriptor = de.load(new BytecodeLoader.Loader());
+        Class<?> descriptor = de.load(new BytecodeLoader.Loader());
         PyDataDescr descr = (PyDataDescr)descriptor.getDeclaredConstructor().newInstance();
         descr.setType(PY_TYPE);
         return descr;

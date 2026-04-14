@@ -22,7 +22,7 @@ public class ExposedTypeProcessorTest extends InterpTestCase {
         assertEquals(1, ice.getDescriptorExposers().size());
         assertEquals("simpleexposed", ice.getTypeExposer().getName());
         BytecodeLoader.Loader loader = new BytecodeLoader.Loader();
-        Class simple_method = null;
+        Class<?> simple_method = null;
         for(MethodExposer exposer : ice.getMethodExposers()) {
             if(exposer.getNames()[0].equals("invisible")) {
                 simple_method = exposer.load(loader);
@@ -30,10 +30,10 @@ public class ExposedTypeProcessorTest extends InterpTestCase {
                 exposer.load(loader);
             }
         }
-        Class tostringDesc = ice.getDescriptorExposers().iterator().next().load(loader);
+        Class<?> tostringDesc = ice.getDescriptorExposers().iterator().next().load(loader);
         ice.getNewExposer().load(loader);
         ice.getTypeExposer().load(loader);
-        Class doctoredSimple = loader.loadClassFromBytes("org.python.expose.generate.SimpleExposed",
+        Class<?> doctoredSimple = loader.loadClassFromBytes("org.python.expose.generate.SimpleExposed",
                                                          ice.getBytecode());
         PyObject simp = (PyObject)doctoredSimple.getDeclaredConstructor().newInstance();
         PyBuiltinCallable func = MethodExposerTest.instantiate(simple_method, "invisible");
