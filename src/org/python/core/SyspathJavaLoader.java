@@ -92,7 +92,7 @@ public class SyspathJavaLoader extends ClassLoader {
 	    	return null;
 	    }
         String pkgname = name.substring(0, lastDotIndex);
-        Package pkg = getPackage(pkgname);
+        Package pkg = getDefinedPackage(pkgname);
         if (pkg == null) {
             pkg = definePackage(pkgname, null, null, null, null, null, null, null);
         }
