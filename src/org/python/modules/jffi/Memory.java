@@ -11,23 +11,23 @@ public interface Memory {
     /**
      * Checks if the memory area is NULL.
      * 
-     * @return <tt>true</tt> if the memory area is invalid.
+     * @return {@code true} if the memory area is invalid.
      */
     public boolean isNull();
 
     /**
      * Checks if the memory area is a native memory pointer.
      *
-     * @return <tt>true</tt> if the memory area is a native pointer.
+     * @return {@code true} if the memory area is a native pointer.
      */
     public boolean isDirect();
 
     /**
      * Creates a new MemoryIO pointing to a subset of the memory area of this
-     * <tt>MemoryIO</tt>.
+     * {@code MemoryIO}.
      * @param offset The offset within the existing memory area to start the
-     * new <tt>MemoryIO</tt> at.
-     * @return A <tt>MemoryIO</tt> instance.
+     * new {@code MemoryIO} at.
+     * @return A {@code MemoryIO} instance.
      */
     public Memory slice(long offset);
 
@@ -35,7 +35,7 @@ public interface Memory {
      * Reads an 8 bit integer value from the memory area.
      * 
      * @param offset The offset within the memory area to read the value.
-     * @return The 8 bit integer value read from <tt>offset</tt>
+     * @return The 8 bit integer value read from {@code offset}
      */
     public byte getByte(long offset);
     
@@ -43,7 +43,7 @@ public interface Memory {
      * Reads a 16 bit integer value from the memory area.
      * 
      * @param offset The offset within the memory area to read the value.
-     * @return The 16 bit integer value read from <tt>offset</tt>
+     * @return The 16 bit integer value read from {@code offset}
      */
     public short getShort(long offset);
     
@@ -51,7 +51,7 @@ public interface Memory {
      * Reads a 32 bit integer value from the memory area.
      * 
      * @param offset The offset within the memory area to read the value.
-     * @return The 32 bit integer value read from <tt>offset</tt>
+     * @return The 32 bit integer value read from {@code offset}
      */
     public int getInt(long offset);
     
@@ -59,7 +59,7 @@ public interface Memory {
      * Reads a 64 bit integer value from the memory area.
      * 
      * @param offset The offset within the memory area to read the value.
-     * @return The 64 bit integer value read from <tt>offset</tt>
+     * @return The 64 bit integer value read from {@code offset}
      */
     public long getLong(long offset);
     
@@ -75,7 +75,7 @@ public interface Memory {
      * systems, and a 64bit value on 64bit systems.
      * 
      * @param offset The offset within the memory area to read the value.
-     * @return The native long value read from <tt>offset</tt>
+     * @return The native long value read from {@code offset}
      */
     public long getNativeLong(long offset);
     
@@ -83,7 +83,7 @@ public interface Memory {
      * Reads a float value from the memory area.
      * 
      * @param offset The offset within the memory area to read the value.
-     * @return The float value read from <tt>offset</tt>
+     * @return The float value read from {@code offset}
      */
     public float getFloat(long offset);
     
@@ -91,7 +91,7 @@ public interface Memory {
      * Reads a double value from the memory area.
      * 
      * @param offset The offset within the memory area to read the value.
-     * @return The double value read from <tt>offset</tt>
+     * @return The double value read from {@code offset}
      */
     public double getDouble(long offset);
 
@@ -99,7 +99,7 @@ public interface Memory {
      * Reads a pointer value at the specified offset within the memory area.
      *
      * @param offset The offset within the memory area to read the value.
-     * @return A <tt>long</tt> value that represents the address.
+     * @return A {@code long} value that represents the address.
      */
     public long getAddress(long offset);
 
@@ -108,7 +108,7 @@ public interface Memory {
      * wraps it in an abstract memory accessor.
      * 
      * @param offset The offset within the memory area to read the value.
-     * @return A <tt>DirectMemory</tt> accessor that can be used to access the memory
+     * @return A {@code DirectMemory} accessor that can be used to access the memory
      * pointed to by the address.
      */
     public DirectMemory getMemory(long offset);

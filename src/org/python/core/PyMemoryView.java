@@ -761,7 +761,7 @@ public class PyMemoryView extends PySequence implements BufferProtocol, Traverse
      * array, where the assigned value must be an int: here it must have the buffer API and length
      * one. This is an extension point called by PySequence in its implementation of
      * {@link #__setitem__} It is guaranteed by PySequence that the index is within the bounds of
-     * the memoryview. Any other clients calling <tt>pyset(int, PyObject)</tt> must make the same
+     * the memoryview. Any other clients calling {@code pyset(int, PyObject)} must make the same
      * guarantee.
      *
      * @param index index of the element to set.

@@ -42,7 +42,7 @@ public abstract class CType extends PyObject {
 
     final NativeType nativeType;
 
-    /** The <tt>MemoryOp</tt> used to read/write items of this type */
+    /** The {@code MemoryOp} used to read/write items of this type */
     private final MemoryOp memoryOp;
 
     CType(NativeType type, MemoryOp memoryOp) {

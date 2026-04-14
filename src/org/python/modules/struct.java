@@ -32,27 +32,27 @@ import java.math.BigInteger;
  * <P>
  * The module defines the following exception and functions:
  * <dl>
- * <dt><b><tt>error</tt></b></dt>
+ * <dt><b>{@code error}</b></dt>
  * <dd>
  *   Exception raised on various occasions; argument is a string
  *   describing what is wrong.
  * </dd>
- * <dt><b><tt>pack</tt></b> (<var>fmt, v1, v2,  ...</var>)</dt>
+ * <dt><b>{@code pack}</b> (<var>fmt, v1, v2,  ...</var>)</dt>
  * <dd>
  *   Return a string containing the values
- *   <tt><i>v1</i>, <i>v2</i>,  ...</tt> packed according to the given
+ *   {@code <i>v1</i>, <i>v2</i>,  ...} packed according to the given
  *   format.  The arguments must match the values required by the format
  *   exactly.
  * </dd>
- * <dt><b><tt>unpack</tt></b> (<var>fmt, string</var>)</dt>
+ * <dt><b>{@code unpack}</b> (<var>fmt, string</var>)</dt>
  * <dd>
- *   Unpack the string (presumably packed by <tt>pack(<i>fmt</i>,
- *    ...)</tt>) according to the given format.  The result is a
+ *   Unpack the string (presumably packed by {@code pack(<i>fmt</i>,
+ *    ...)}) according to the given format.  The result is a
  *   tuple even if it contains exactly one item.  The string must contain
  *   exactly the amount of data required by the format (i.e.
- *   <tt>len(<i>string</i>)</tt> must equal <tt>calcsize(<i>fmt</i>)</tt>).
+ *   {@code len(<i>string</i>)} must equal {@code calcsize(<i>fmt</i>)}).
  * </dd>
- * <dt><b><tt>calcsize</tt></b> (<var>fmt</var>)</dt>
+ * <dt><b>{@code calcsize}</b> (<var>fmt</var>)</dt>
  * <dd>
  *   Return the size of the struct (and hence of the string)
  *   corresponding to the given format.
@@ -70,76 +70,76 @@ import java.math.BigInteger;
  *       <td>pad byte</td>
  *       <td>no value</td>
  *   <tr><td align=center>{@code c}</td>
- *       <td><tt>char</tt></td>
+ *       <td>{@code char}</td>
  *       <td>string of length 1</td>
  *   <tr><td align=center>{@code b}</td>
- *       <td><tt>signed char</tt></td>
+ *       <td>{@code signed char}</td>
  *       <td>integer</td>
  *   <tr><td align=center>{@code B}</td>
- *       <td><tt>unsigned char</tt></td>
+ *       <td>{@code unsigned char}</td>
  *       <td>integer</td>
  *   <tr><td align=center>{@code h}</td>
- *       <td><tt>short</tt></td>
+ *       <td>{@code short}</td>
  *       <td>integer</td>
  *   <tr><td align=center>{@code H}</td>
- *       <td><tt>unsigned short</tt></td>
+ *       <td>{@code unsigned short}</td>
  *       <td>integer</td>
  *   <tr><td align=center>{@code i}</td>
- *       <td><tt>int</tt></td>
+ *       <td>{@code int}</td>
  *       <td>integer</td>
  *   <tr><td align=center>{@code I}</td>
- *       <td><tt>unsigned int</tt></td>
+ *       <td>{@code unsigned int}</td>
  *       <td>integer</td>
  *   <tr><td align=center>{@code size}</td>
- *       <td><tt>long</tt></td>
+ *       <td>{@code long}</td>
  *       <td>integer</td>
  *   <tr><td align=center>{@code L}</td>
- *       <td><tt>unsigned long</tt></td>
+ *       <td>{@code unsigned long}</td>
  *       <td>integer</td>
  *   <tr><td align=center>{@code f}</td>
- *       <td><tt>float</tt></td>
+ *       <td>{@code float}</td>
  *       <td>float</td>
  *   <tr><td align=center>{@code d}</td>
- *       <td><tt>double</tt></td>
+ *       <td>{@code double}</td>
  *       <td>float</td>
  *   <tr><td align=center>{@code s}</td>
- *       <td><tt>char[]</tt></td>
+ *       <td>{@code char[]}</td>
  *       <td>string</td>
  *   <tr><td align=center>{@code p}</td>
- *       <td><tt>char[]</tt></td>
+ *       <td>{@code char[]}</td>
  *       <td>string</td>
  * </table>
  *
  * <P>
  * A format character may be preceded by an integral repeat count;
- * e.g. the format string <tt>'4h'</tt> means exactly the same as
- * <tt>'hhhh'</tt>.
+ * e.g. the format string {@code '4h'} means exactly the same as
+ * {@code 'hhhh'}.
  *
  * <P>
  * Whitespace characters between formats are ignored; a count and its
  * format must not contain whitespace though.
  *
  * <P>
- * For the "<tt>s</tt>" format character, the count is interpreted as the
+ * For the "{@code s}" format character, the count is interpreted as the
  * size of the string, not a repeat count like for the other format
- * characters; e.g. <tt>'10s'</tt> means a single 10-byte string, while
- * <tt>'10c'</tt> means 10 characters.  For packing, the string is
+ * characters; e.g. {@code '10s'} means a single 10-byte string, while
+ * {@code '10c'} means 10 characters.  For packing, the string is
  * truncated or padded with null bytes as appropriate to make it fit.
  * For unpacking, the resulting string always has exactly the specified
- * number of bytes.  As a special case, <tt>'0s'</tt> means a single, empty
- * string (while <tt>'0c'</tt> means 0 characters).
+ * number of bytes.  As a special case, {@code '0s'} means a single, empty
+ * string (while {@code '0c'} means 0 characters).
  *
  * <P>
- * The "<tt>p</tt>" format character can be used to encode a Pascal
+ * The "{@code p}" format character can be used to encode a Pascal
  * string.  The first byte is the length of the stored string, with the
  * bytes of the string following.  If count is given, it is used as the
  * total number of bytes used, including the length byte.  If the string
- * passed in to <tt>pack()</tt> is too long, the stored representation
+ * passed in to {@code pack()} is too long, the stored representation
  * is truncated.  If the string is too short, padding is used to ensure
  * that exactly enough bytes are used to satisfy the count.
  *
  * <P>
- * For the "<tt>I</tt>" and "<tt>L</tt>" format characters, the return
+ * For the "{@code I}" and "{@code L}" format characters, the return
  * value is a Python long integer.
  *
  * <P>
@@ -177,7 +177,7 @@ import java.math.BigInteger;
  * </table>
  *
  * <P>
- * If the first character is not one of these, "<tt>@</tt>" is assumed.
+ * If the first character is not one of these, "{@code @}" is assumed.
  *
  * <P>
  * Native byte order is big-endian or little-endian, depending on the
@@ -185,32 +185,32 @@ import java.math.BigInteger;
  * little-endian).
  *
  * <P>
- * Native size and alignment are defined as follows: <tt>short</tt> is
- * 2 bytes; <tt>int</tt> and <tt>long</tt> are 4 bytes; <tt>float</tt>
- * are 4 bytes and <tt>double</tt> are 8 bytes. Native byte order is
+ * Native size and alignment are defined as follows: {@code short} is
+ * 2 bytes; {@code int} and {@code long} are 4 bytes; {@code float}
+ * are 4 bytes and {@code double} are 8 bytes. Native byte order is
  * chosen as big-endian.
  *
  * <P>
  * Standard size and alignment are as follows: no alignment is required
- * for any type (so you have to use pad bytes); <tt>short</tt> is 2 bytes;
- * <tt>int</tt> and <tt>long</tt> are 4 bytes.  <tt>float</tt> and
- * <tt>double</tt> are 32-bit and 64-bit IEEE floating point numbers,
+ * for any type (so you have to use pad bytes); {@code short} is 2 bytes;
+ * {@code int} and {@code long} are 4 bytes.  {@code float} and
+ * {@code double} are 32-bit and 64-bit IEEE floating point numbers,
  * respectively.
  *
  * <P>
- * Note the difference between "<tt>@</tt>" and "<tt>=</tt>": both use
+ * Note the difference between "{@code @}" and "{@code =}": both use
  * native byte order, but the size and alignment of the latter is
  * standardized.
  *
  * <P>
- * The form "<tt>!</tt>" is available for those poor souls who claim they
+ * The form "{@code !}" is available for those poor souls who claim they
  * can't remember whether network byte order is big-endian or
  * little-endian.
  *
  * <P>
  * There is no way to indicate non-native byte order (i.e. force
- * byte-swapping); use the appropriate choice of "<tt>&lt;</tt>" or
- * "<tt>&gt;</tt>".
+ * byte-swapping); use the appropriate choice of "{@code &lt;}" or
+ * "{@code &gt;}".
  *
  * <P>
  * Examples (all using native byte order, size and alignment, on a
@@ -228,7 +228,7 @@ import java.math.BigInteger;
  * <P>
  * Hint: to align the end of a structure to the alignment requirement of
  * a particular type, end the format with the code for that type with a
- * repeat count of zero, e.g. the format <tt>'llh0l'</tt> specifies two
+ * repeat count of zero, e.g. the format {@code 'llh0l'} specifies two
  * pad bytes at the end, assuming longs are aligned on 4-byte boundaries.
  * This only works when native size and alignment are in effect;
  * standard size and alignment does not enforce any alignment.

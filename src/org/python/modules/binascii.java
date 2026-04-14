@@ -23,61 +23,61 @@ import org.python.core.PyUnicode;
 import org.python.core.buffer.SimpleStringBuffer;
 
 /**
- * The <tt>binascii.java</tt> module contains a number of methods to convert between binary and
+ * The {@code binascii.java} module contains a number of methods to convert between binary and
  * various ASCII-encoded binary representations. Normally, you will not use these modules directly
- * but use wrapper modules like <tt>uu</tt> or <tt>hexbin</tt> instead, this module solely exists
+ * but use wrapper modules like {@code uu} or {@code hexbin} instead, this module solely exists
  * because bit-manipulation of large amounts of data is slow in Python.
  *
  * <P>
- * The <tt>binascii.java</tt> module defines the following functions:
+ * The {@code binascii.java} module defines the following functions:
  *
  * <dl>
- * <dt><b><tt>a2b_uu</tt></b> (string)</dt>
+ * <dt><b>{@code a2b_uu}</b> (string)</dt>
  * <dd>Convert a single line of uuencoded data back to binary and return the binary data. Lines
  * normally contain 45 (binary) bytes, except for the last line. Line data may be followed by
  * whitespace.</dd>
  *
- * <dt><b><tt>b2a_uu</tt></b> (data)</dt>
+ * <dt><b>{@code b2a_uu}</b> (data)</dt>
  * <dd>Convert binary data to a line of ASCII characters, the return value is the converted line,
  * including a newline char. The length of <i>data</i> should be at most 45.</dd>
  *
- * <dt><b><tt>a2b_base64</tt></b> (string)</dt>
+ * <dt><b>{@code a2b_base64}</b> (string)</dt>
  * <dd>Convert a block of base64 data back to binary and return the binary data. More than one line
  * may be passed at a time.</dd>
  *
- * <dt><b><tt>b2a_base64</tt></b> (data)</dt>
+ * <dt><b>{@code b2a_base64}</b> (data)</dt>
  * <dd>Convert binary data to a line of ASCII characters in base64 coding. The return value is the
  * converted line, including a newline char. The length of <i>data</i> should be at most 57 to
  * adhere to the base64 standard.</dd>
  *
- * <dt><b><tt>a2b_hqx</tt></b> (string)</dt>
+ * <dt><b>{@code a2b_hqx}</b> (string)</dt>
  * <dd>Convert binhex4 formatted ASCII data to binary, without doing RLE-decompression. The string
  * should contain a complete number of binary bytes, or (in case of the last portion of the binhex4
  * data) have the remaining bits zero.</dd>
  *
- * <dt><b><tt>rledecode_hqx</tt></b> (data)</dt>
+ * <dt><b>{@code rledecode_hqx}</b> (data)</dt>
  * <dd>Perform RLE-decompression on the data, as per the binhex4 standard. The algorithm uses
- * <tt>0x90</tt> after a byte as a repeat indicator, followed by a count. A count of <tt>0</tt>
- * specifies a byte value of <tt>0x90</tt>. The routine returns the decompressed data, unless data
- * input data ends in an orphaned repeat indicator, in which case the <tt>Incomplete</tt> exception
+ * {@code 0x90} after a byte as a repeat indicator, followed by a count. A count of {@code 0}
+ * specifies a byte value of {@code 0x90}. The routine returns the decompressed data, unless data
+ * input data ends in an orphaned repeat indicator, in which case the {@code Incomplete} exception
  * is raised.</dd>
  *
- * <dt><b><tt>rlecode_hqx</tt></b> (data)</dt>
+ * <dt><b>{@code rlecode_hqx}</b> (data)</dt>
  * <dd>Perform binhex4 style RLE-compression on <i>data</i> and return the result.</dd>
  *
- * <dt><b><tt>b2a_hqx</tt></b> (data)</dt>
+ * <dt><b>{@code b2a_hqx}</b> (data)</dt>
  * <dd>Perform hexbin4 binary-to-ASCII translation and return the resulting string. The argument
  * should already be RLE-coded, and have a length divisible by 3 (except possibly the last
  * fragment).</dd>
  *
- * <dt><b><tt>crc_hqx</tt></b> (data, crc)</dt>
+ * <dt><b>{@code crc_hqx}</b> (data, crc)</dt>
  * <dd>Compute the binhex4 crc value of <i>data</i>, starting with an initial <i>crc</i> and
  * returning the result.</dd>
  *
- * <dt><b><tt>Error</tt></b></dt>
+ * <dt><b>{@code Error}</b></dt>
  * <dd>Exception raised on errors. These are usually programming errors.</dd>
  *
- * <dt><b><tt>Incomplete</tt></b></dt>
+ * <dt><b>{@code Incomplete}</b></dt>
  * <dd>Exception raised on incomplete data. These are usually not programming errors, but may be
  * handled by reading a little more data and trying again.</dd>
  * </dl>
@@ -629,9 +629,9 @@ public class binascii {
 
     /**
      * Perform RLE-decompression on the data, as per the binhex4 standard. The algorithm uses
-     * <tt>0x90</tt> after a byte as a repeat indicator, followed by a count. A count of <tt>0</tt>
-     * specifies a byte value of <tt>0x90</tt>. The routine returns the decompressed data, unless
-     * data input data ends in an orphaned repeat indicator, in which case the <tt>Incomplete</tt>
+     * {@code 0x90} after a byte as a repeat indicator, followed by a count. A count of {@code 0}
+     * specifies a byte value of {@code 0x90}. The routine returns the decompressed data, unless
+     * data input data ends in an orphaned repeat indicator, in which case the {@code Incomplete}
      * exception is raised.
      */
     static public PyString rledecode_hqx(PyObject data) {

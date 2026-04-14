@@ -51,30 +51,30 @@ import org.python.util.Generic;
  *
  * From the python documentation:
  * <p>
- * The <tt>cPickle.java</tt> module implements a basic but powerful algorithm
+ * The {@code cPickle.java} module implements a basic but powerful algorithm
  * for ``pickling'' (a.k.a. serializing, marshalling or flattening) nearly
  * arbitrary Python objects.  This is the act of converting objects to a
  * stream of bytes (and back: ``unpickling'').
  * This is a more primitive notion than
- * persistency -- although <tt>cPickle.java</tt> reads and writes file
+ * persistency -- although {@code cPickle.java} reads and writes file
  * objects, it does not handle the issue of naming persistent objects, nor
  * the (even more complicated) area of concurrent access to persistent
- * objects.  The <tt>cPickle.java</tt> module can transform a complex object
+ * objects.  The {@code cPickle.java} module can transform a complex object
  * into a byte stream and it can transform the byte stream into an object
  * with the same internal structure.  The most obvious thing to do with these
  * byte streams is to write them onto a file, but it is also conceivable
  * to send them across a network or store them in a database.  The module
- * <tt>shelve</tt> provides a simple interface to pickle and unpickle
+ * {@code shelve} provides a simple interface to pickle and unpickle
  * objects on ``dbm''-style database files.
  * <P>
- * <b>Note:</b> The <tt>cPickle.java</tt> have the same interface as the
- * standard module <tt>pickle</tt>except that <tt>Pickler</tt> and
- * <tt>Unpickler</tt> are factory functions, not classes (so they cannot be
+ * <b>Note:</b> The {@code cPickle.java} have the same interface as the
+ * standard module {@code pickle}except that {@code Pickler} and
+ * {@code Unpickler} are factory functions, not classes (so they cannot be
  * used as base classes for inheritance).
  * This limitation is similar for the original cPickle.c version.
  *
  * <P>
- * Unlike the built-in module <tt>marshal</tt>, <tt>cPickle.java</tt> handles
+ * Unlike the built-in module {@code marshal}, {@code cPickle.java} handles
  * the following correctly:
  * <P>
  *
@@ -93,40 +93,40 @@ import org.python.util.Generic;
  * </UL>
  *
  * <P>
- * The data format used by <tt>cPickle.java</tt> is Python-specific.  This has
+ * The data format used by {@code cPickle.java} is Python-specific.  This has
  * the advantage that there are no restrictions imposed by external
  * standards such as XDR (which can't represent pointer sharing); however
  * it means that non-Python programs may not be able to reconstruct
  * pickled Python objects.
  *
  * <P>
- * By default, the <tt>cPickle.java</tt> data format uses a printable ASCII
+ * By default, the {@code cPickle.java} data format uses a printable ASCII
  * representation.  This is slightly more voluminous than a binary
  * representation.  The big advantage of using printable ASCII (and of
- * some other characteristics of <tt>cPickle.java</tt>'s representation) is
+ * some other characteristics of {@code cPickle.java}'s representation) is
  * that for debugging or recovery purposes it is possible for a human to read
  * the pickled file with a standard text editor.
  *
  * <P>
  * A binary format, which is slightly more efficient, can be chosen by
  * specifying a nonzero (true) value for the <i>bin</i> argument to the
- * <tt>Pickler</tt> constructor or the <tt>dump()</tt> and <tt>dumps()</tt>
+ * {@code Pickler} constructor or the {@code dump()} and {@code dumps()}
  * functions.  The binary format is not the default because of backwards
  * compatibility with the Python 1.4 pickle module.  In a future version,
  * the default may change to binary.
  *
  * <P>
- * The <tt>cPickle.java</tt> module doesn't handle code objects.
+ * The {@code cPickle.java} module doesn't handle code objects.
  * <P>
- * For the benefit of persistency modules written using <tt>cPickle.java</tt>,
+ * For the benefit of persistency modules written using {@code cPickle.java},
  * it supports the notion of a reference to an object outside the pickled
  * data stream.  Such objects are referenced by a name, which is an
  * arbitrary string of printable ASCII characters.  The resolution of
- * such names is not defined by the <tt>cPickle.java</tt> module -- the
+ * such names is not defined by the {@code cPickle.java} module -- the
  * persistent object module will have to implement a method
- * <tt>persistent_load()</tt>.  To write references to persistent objects,
- * the persistent module must define a method <tt>persistent_id()</tt> which
- * returns either <tt>None</tt> or the persistent ID of the object.
+ * {@code persistent_load()}.  To write references to persistent objects,
+ * the persistent module must define a method {@code persistent_id()} which
+ * returns either {@code None} or the persistent ID of the object.
  *
  * <P>
  * There are some restrictions on the pickling of class instances.
@@ -138,34 +138,34 @@ import org.python.util.Generic;
  * <P>
  *
  * <P>
- * When a pickled class instance is unpickled, its <tt>__init__()</tt> method
+ * When a pickled class instance is unpickled, its {@code __init__()} method
  * is normally <i>not</i> invoked.  <b>Note:</b> This is a deviation
  * from previous versions of this module; the change was introduced in
  * Python 1.5b2.  The reason for the change is that in many cases it is
  * desirable to have a constructor that requires arguments; it is a
- * (minor) nuisance to have to provide a <tt>__getinitargs__()</tt> method.
+ * (minor) nuisance to have to provide a {@code __getinitargs__()} method.
  *
  * <P>
- * If it is desirable that the <tt>__init__()</tt> method be called on
- * unpickling, a class can define a method <tt>__getinitargs__()</tt>,
+ * If it is desirable that the {@code __init__()} method be called on
+ * unpickling, a class can define a method {@code __getinitargs__()},
  * which should return a <i>tuple</i> containing the arguments to be
- * passed to the class constructor (<tt>__init__()</tt>).  This method is
+ * passed to the class constructor ({@code __init__()}).  This method is
  * called at pickle time; the tuple it returns is incorporated in the
  * pickle for the instance.
  * <P>
  * Classes can further influence how their instances are pickled -- if the
- * class defines the method <tt>__getstate__()</tt>, it is called and the
+ * class defines the method {@code __getstate__()}, it is called and the
  * return state is pickled as the contents for the instance, and if the class
- * defines the method <tt>__setstate__()</tt>, it is called with the
+ * defines the method {@code __setstate__()}, it is called with the
  * unpickled state.  (Note that these methods can also be used to
  * implement copying class instances.)  If there is no
- * <tt>__getstate__()</tt> method, the instance's <tt>__dict__</tt> is
- * pickled.  If there is no <tt>__setstate__()</tt> method, the pickled
+ * {@code __getstate__()} method, the instance's {@code __dict__} is
+ * pickled.  If there is no {@code __setstate__()} method, the pickled
  * object must be a dictionary and its items are assigned to the new
- * instance's dictionary.  (If a class defines both <tt>__getstate__()</tt>
- * and <tt>__setstate__()</tt>, the state object needn't be a dictionary
+ * instance's dictionary.  (If a class defines both {@code __getstate__()}
+ * and {@code __setstate__()}, the state object needn't be a dictionary
  * -- these methods can do what they want.)  This protocol is also used
- * by the shallow and deep copying operations defined in the <tt>copy</tt>
+ * by the shallow and deep copying operations defined in the {@code copy}
  * module.
  * <P>
  * Note that when class instances are pickled, their class's code and
@@ -175,7 +175,7 @@ import org.python.util.Generic;
  * version of the class.  If you plan to have long-lived objects that
  * will see many versions of a class, it may be worthwhile to put a version
  * number in the objects so that suitable conversions can be made by the
- * class's <tt>__setstate__()</tt> method.
+ * class's {@code __setstate__()} method.
  *
  * <P>
  * When a class itself is pickled, only its name is pickled -- the class
@@ -189,7 +189,7 @@ import org.python.util.Generic;
  * The interface can be summarized as follows.
  *
  * <P>
- * To pickle an object <tt>x</tt> onto a file <tt>f</tt>, open for writing:
+ * To pickle an object {@code x} onto a file {@code f}, open for writing:
  *
  * <P>
  * <dl><dd><pre>
@@ -206,7 +206,7 @@ import org.python.util.Generic;
  * </pre></dl>
  *
  * <P>
- * To unpickle an object <tt>x</tt> from a file <tt>f</tt>, open for reading:
+ * To unpickle an object {@code x} from a file {@code f}, open for reading:
  *
  * <P>
  * <dl><dd><pre>
@@ -223,24 +223,24 @@ import org.python.util.Generic;
  * </pre></dl>
  *
  * <P>
- * The <tt>Pickler</tt> class only calls the method <tt>f.write()</tt> with a
- * string argument.  The <tt>Unpickler</tt> calls the methods
- * <tt>f.read()</tt> (with an integer argument) and <tt>f.readline()</tt>
+ * The {@code Pickler} class only calls the method {@code f.write()} with a
+ * string argument.  The {@code Unpickler} calls the methods
+ * {@code f.read()} (with an integer argument) and {@code f.readline()}
  * (without argument), both returning a string.  It is explicitly allowed to
  * pass non-file objects here, as long as they have the right methods.
  *
  * <P>
- * The constructor for the <tt>Pickler</tt> class has an optional second
+ * The constructor for the {@code Pickler} class has an optional second
  * argument, <i>bin</i>.  If this is present and nonzero, the binary
  * pickle format is used; if it is zero or absent, the (less efficient,
  * but backwards compatible) text pickle format is used.  The
- * <tt>Unpickler</tt> class does not have an argument to distinguish
+ * {@code Unpickler} class does not have an argument to distinguish
  * between binary and text pickle formats; it accepts either format.
  *
  * <P>
  * The following types can be pickled:
  *
- * <UL><LI><tt>None</tt>
+ * <UL><LI>{@code None}
  *
  * <P>
  *
@@ -260,8 +260,8 @@ import org.python.util.Generic;
  *
  * <P>
  *
- * <LI>instances of such classes whose <tt>__dict__</tt> or
- * <tt>__setstate__()</tt> is picklable
+ * <LI>instances of such classes whose {@code __dict__} or
+ * {@code __setstate__()} is picklable
  *
  * <P>
  *
@@ -269,46 +269,46 @@ import org.python.util.Generic;
  *
  * <P>
  * Attempts to pickle unpicklable objects will raise the
- * <tt>PicklingError</tt> exception; when this happens, an unspecified
+ * {@code PicklingError} exception; when this happens, an unspecified
  * number of bytes may have been written to the file.
  *
  * <P>
- * It is possible to make multiple calls to the <tt>dump()</tt> method of
- * the same <tt>Pickler</tt> instance.  These must then be matched to the
- * same number of calls to the <tt>load()</tt> method of the
- * corresponding <tt>Unpickler</tt> instance.  If the same object is
- * pickled by multiple <tt>dump()</tt> calls, the <tt>load()</tt> will all
+ * It is possible to make multiple calls to the {@code dump()} method of
+ * the same {@code Pickler} instance.  These must then be matched to the
+ * same number of calls to the {@code load()} method of the
+ * corresponding {@code Unpickler} instance.  If the same object is
+ * pickled by multiple {@code dump()} calls, the {@code load()} will all
  * yield references to the same object.  <i>Warning</i>: this is intended
  * for pickling multiple objects without intervening modifications to the
  * objects or their parts.  If you modify an object and then pickle it
- * again using the same <tt>Pickler</tt> instance, the object is not
+ * again using the same {@code Pickler} instance, the object is not
  * pickled again -- a reference to it is pickled and the
- * <tt>Unpickler</tt> will return the old value, not the modified one.
+ * {@code Unpickler} will return the old value, not the modified one.
  * (There are two problems here: (a) detecting changes, and (b)
  * marshalling a minimal set of changes.  I have no answers.  Garbage
  * Collection may also become a problem here.)
  *
  * <P>
- * Apart from the <tt>Pickler</tt> and <tt>Unpickler</tt> classes, the
+ * Apart from the {@code Pickler} and {@code Unpickler} classes, the
  * module defines the following functions, and an exception:
  * <dl>
- * <dt><b><tt>dump</tt></b> (object, file[, bin])</dt>
+ * <dt><b>{@code dump}</b> (object, file[, bin])</dt>
  * <dd>
  * Write a pickled representation of <i>obect</i> to the open file object
  * <i>file</i>.  This is equivalent to
- * "<tt>Pickler(<i>file</i>, <i>bin</i>).dump(<i>object</i>)</tt>".
+ * "{@code Pickler(<i>file</i>, <i>bin</i>).dump(<i>object</i>)}".
  * If the optional <i>bin</i> argument is present and nonzero, the binary
  * pickle format is used; if it is zero or absent, the (less efficient)
  * text pickle format is used.
  * </dd>
  *
- * <dt><b><tt>load</tt></b> (file)</dt>
+ * <dt><b>{@code load}</b> (file)</dt>
  * <dd>
  * Read a pickled object from the open file object <i>file</i>.  This is
- * equivalent to "<tt>Unpickler(<i>file</i>).load()</tt>".
+ * equivalent to "{@code Unpickler(<i>file</i>).load()}".
  * </dd>
  *
- * <dt><b><tt>dumps</tt></b> (object[, bin])</dt>
+ * <dt><b>{@code dumps}</b> (object[, bin])</dt>
  * <dd>
  * Return the pickled representation of the object as a string, instead
  * of writing it to a file.  If the optional <i>bin</i> argument is
@@ -316,16 +316,16 @@ import org.python.util.Generic;
  * or absent, the (less efficient) text pickle format is used.
  * </dd>
  *
- * <dt><b><tt>loads</tt></b> (string)</dt>
+ * <dt><b>{@code loads}</b> (string)</dt>
  * <dd>
  * Read a pickled object from a string instead of a file.  Characters in
  * the string past the pickled object's representation are ignored.
  * </dd>
  *
- * <dt><b><tt>PicklingError</tt></b></dt>
+ * <dt><b>{@code PicklingError}</b></dt>
  * <dd>
  * This exception is raised when an unpicklable object is passed to
- * <tt>Pickler.dump()</tt>.
+ * {@code Pickler.dump()}.
  * </dd>
  * </dl>
  *

@@ -543,7 +543,7 @@ public abstract class BaseBytes extends PySequence implements List<PyInteger> {
     protected int offset = 0;
 
     /**
-     * Check that an index is within the range of the array, that is <tt>0&lt;=index&lt;size</tt>.
+     * Check that an index is within the range of the array, that is {@code 0&lt;=index&lt;size}.
      *
      * @param index to check
      * @throws PyException {@code IndexError} if the index is outside the array bounds

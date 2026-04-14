@@ -687,7 +687,7 @@ public class BaseBytesTest extends TestCase {
 
         /**
          * Returns a MyBytes that repeats this sequence the given number of times, as in the
-         * implementation of <tt>__mul__</tt> for strings.
+         * implementation of {@code __mul__} for strings.
          *
          * @param count the number of times to repeat this.
          * @return this byte array repeated count times.
