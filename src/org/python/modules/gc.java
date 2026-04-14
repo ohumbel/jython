@@ -2989,7 +2989,7 @@ public class gc {
                 for (int i = 0; i < declFields.length; ++i) {
                     if (!Modifier.isStatic(declFields[i].getModifiers()) &&
                             !declFields[i].getType().isPrimitive()) {
-                        if (!declFields[i].isAccessible()) {
+                        if (!declFields[i].canAccess(ob)) {
                             declFields[i].setAccessible(true);
                         }
                         if (canLinkToPyObject(declFields[i].getType(), false)) {

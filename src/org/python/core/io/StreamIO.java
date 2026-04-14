@@ -16,8 +16,6 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 
-import java.nio.channels.spi.AbstractInterruptibleChannel;
-
 import org.python.core.Py;
 import org.python.modules.posix.PosixModule;
 
@@ -188,7 +186,7 @@ public class StreamIO extends RawIOBase {
             } catch (Exception e) {
                 // XXX: masking other exceptions
             } finally {
-                if (inField != null && inField.isAccessible()) {
+                if (inField != null && inField.canAccess(stream)) {
                     inField.setAccessible(false);
                 }
             }
@@ -213,7 +211,7 @@ public class StreamIO extends RawIOBase {
             } catch (Exception e) {
                 // XXX: masking other exceptions
             } finally {
-                if (outField != null && outField.isAccessible()) {
+                if (outField != null && outField.canAccess(stream)) {
                     outField.setAccessible(false);
                 }
             }
