@@ -3,6 +3,8 @@ package org.python.core;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
@@ -100,7 +102,7 @@ public class PySystemStateTest extends TestCase {
         // Examples from the table
         for (JarExample ex : jarExamples) {
             // Something like jar:file:/some_dir/some.jar!/a/package/with/A.class
-            URL url = new URL("jar:file:" + ex.urlJarPath + "!/" + ex.urlClassPath);
+            URL url = new URI("jar:file:" + ex.urlJarPath + "!/" + ex.urlClassPath).toURL();
             assertEquals(ex.filePath, Py.getJarFileNameFromURL(url));
         }
     }
@@ -113,8 +115,6 @@ public class PySystemStateTest extends TestCase {
      */
     public void testGetJarFileNameFromURL_jboss() throws Exception {
         final String protocol = "vfszip";
-        final String host = "";
-        final int port = -1;
         final URLStreamHandler handler = new TestJBossURLStreamHandler();
         // Test with any class file in org.python.core
         final String classPart = "/org/python/core/PySystemState.class";
@@ -123,51 +123,51 @@ public class PySystemStateTest extends TestCase {
         if (Platform.IS_WINDOWS) {
             // plain jboss url
             file = "/C:/some_dir/some.jar" + classPart;
-            url = new URL(protocol, host, port, file, handler);
+            url = URL.of(new URI(protocol + ":" + file), handler);
             // tests with jboss on windows gave URL's like this:
             assertEquals("vfszip:/C:/some_dir/some.jar" + classPart, url.toString());
             String result = Py.getJarFileNameFromURL(url);
             assertEquals("C:\\some_dir\\some.jar", result);
             // jboss url to decode
             file = "/C:/some%20dir/some.jar" + classPart;
-            url = new URL(protocol, host, port, file, handler);
+            url = URL.of(new URI(protocol + ":" + file), handler);
             assertEquals("vfszip:/C:/some%20dir/some.jar" + classPart, url.toString());
             result = Py.getJarFileNameFromURL(url);
             assertEquals("C:\\some dir\\some.jar", result);
             // jboss url with + to escape
             file = "/C:/some+dir/some.jar" + classPart;
-            url = new URL(protocol, host, port, file, handler);
+            url = URL.of(new URI(protocol + ":" + file), handler);
             assertEquals("vfszip:/C:/some+dir/some.jar" + classPart, url.toString());
             result = Py.getJarFileNameFromURL(url);
             assertEquals("C:\\some+dir\\some.jar", result);
             // jboss url with challenging JAR name (assume will be provided RFC-2396 encoded)
             file = "/C:/n%c3%a5gon/katalog/r%c3%a4tt.jar" + classPart;
-            url = new URL(protocol, host, port, file, handler);
+            url = URL.of(new URI(protocol + ":" + file), handler);
             assertEquals("vfszip:/C:/n%c3%a5gon/katalog/r%c3%a4tt.jar" + classPart, url.toString());
             result = Py.getJarFileNameFromURL(url);
             assertEquals("C:\\någon\\katalog\\rätt.jar", result);
         } else {
             // plain jboss url
             file = "/some_dir/some.jar" + classPart;
-            url = new URL(protocol, host, port, file, handler);
+            url = URL.of(new URI(protocol + ":" + file), handler);
             assertEquals("vfszip:/some_dir/some.jar" + classPart, url.toString());
             String result = Py.getJarFileNameFromURL(url);
             assertEquals("/some_dir/some.jar", result);
             // jboss url to decode
             file = "/some%20dir/some.jar" + classPart;
-            url = new URL(protocol, host, port, file, handler);
+            url = URL.of(new URI(protocol + ":" + file), handler);
             assertEquals("vfszip:/some%20dir/some.jar" + classPart, url.toString());
             result = Py.getJarFileNameFromURL(url);
             assertEquals("/some dir/some.jar", result);
             // jboss url with + to escape
             file = "/some+dir/some.jar" + classPart;
-            url = new URL(protocol, host, port, file, handler);
+            url = URL.of(new URI(protocol + ":" + file), handler);
             assertEquals("vfszip:/some+dir/some.jar" + classPart, url.toString());
             result = Py.getJarFileNameFromURL(url);
             assertEquals("/some+dir/some.jar", result);
             // jboss url with challenging JAR name (assume will be provided RFC-2396 encoded)
             file = "/n%c3%a5gon/katalog/r%c3%a4tt.jar" + classPart;
-            url = new URL(protocol, host, port, file, handler);
+            url = URL.of(new URI(protocol + ":" + file), handler);
             assertEquals("vfszip:/n%c3%a5gon/katalog/r%c3%a4tt.jar" + classPart, url.toString());
             result = Py.getJarFileNameFromURL(url);
             assertEquals("/någon/katalog/rätt.jar", result);
@@ -179,12 +179,11 @@ public class PySystemStateTest extends TestCase {
      * as reported by a JavaWebStart application. As the path points to a HTTP resource, there is no
      * way to find the jar in the local file system: in this case, the method must return null.
      */
-    public void testGetJarFileNameFromURL_javaWebStart() throws MalformedURLException {
+    public void testGetJarFileNameFromURL_javaWebStart() throws MalformedURLException, URISyntaxException {
         // Examples from the table
         for (JarExample ex : jarExamples) {
             // Something like jar:file:/some_dir/some.jar!/a/package/with/A.class
-            URL url = new URL("jar:http://server:8080/signedWebApp/" + ex.urlJarPath + "!/"
-                    + ex.urlClassPath);
+            URL url = new URI("jar:http://server:8080/signedWebApp/" + ex.urlJarPath + "!/" + ex.urlClassPath).toURL();
             assertNull(PrePy.getJarFileNameFromURL(url));
         }
     }

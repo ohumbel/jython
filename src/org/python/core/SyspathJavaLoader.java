@@ -9,6 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -146,11 +148,11 @@ public class SyspathJavaLoader extends ClassLoader {
                 SyspathArchive archive = (SyspathArchive) entry;
                 ZipEntry ze = archive.getEntry(entryRes);
                 if (ze != null) {
-                	try {
-						return new URL("jar:file:" + archive.asUriCompatibleString() + "!/" + entryRes);
-					} catch (MalformedURLException e) {
-						throw new RuntimeException(e);
-					}
+                    try {
+                        return new URI("jar:file:" + archive.asUriCompatibleString() + "!/" + entryRes).toURL();
+                    } catch (MalformedURLException | URISyntaxException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 continue;
             }
@@ -191,8 +193,8 @@ public class SyspathJavaLoader extends ClassLoader {
                 ZipEntry ze = archive.getEntry(entryRes);
                 if (ze != null) {
                     try {
-                        resources.add(new URL("jar:file:" + archive.asUriCompatibleString() + "!/" + entryRes));
-                    } catch (MalformedURLException e) {
+                        resources.add(new URI("jar:file:" + archive.asUriCompatibleString() + "!/" + entryRes).toURL());
+                    } catch (MalformedURLException | URISyntaxException e) {
                         throw new RuntimeException(e);
                     }
                 }

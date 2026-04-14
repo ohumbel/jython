@@ -414,8 +414,8 @@ public class PrePy {
                     Matcher m = p.matcher(path);
                     if (m.find()) {
                         // path contains the target class in a JAR (named in group 1).
-                        // Make a file URL from all the text up to the end of group 1.
-                        fileURI = new URL("file:" + path.substring(0, m.end(1))).toURI();
+                        // Make a file URI from all the text up to the end of group 1.
+                        fileURI = new URI("file:" + path.substring(0, m.end(1)));
                     }
                     break;
 
@@ -449,14 +449,14 @@ public class PrePy {
      * @param url Possibly malformed URL
      * @return corrected URL
      */
-    private static URL tweakWindowsFileURL(URL url) throws MalformedURLException {
+    private static URL tweakWindowsFileURL(URL url) throws MalformedURLException, URISyntaxException {
         String urlstr = url.toString();
         int fileIndex = urlstr.indexOf("file://"); // 7 chars
         if (fileIndex >= 0) {
             // Intended UNC path. If there is no slash following these two, insert "/" here:
             int insert = fileIndex + 7;
             if (urlstr.length() > insert && urlstr.charAt(insert) != '/') {
-                url = new URL(urlstr.substring(0, insert) + "//" + urlstr.substring(insert));
+                url = new URI(urlstr.substring(0, insert) + "//" + urlstr.substring(insert)).toURL();
             }
         }
         return url;
