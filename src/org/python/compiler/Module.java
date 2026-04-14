@@ -784,13 +784,14 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
             String CPython_command = System.getProperty(PYTHON_CPYTHON);
             if (try_cpython && CPython_command != null) {
                 // check version...
-                String command_ver = CPython_command + " --version";
-                String command = CPython_command + " -m py_compile " + filename;
+                final List<String> command_version_List = List.of(CPython_command, " --version");
+                final List<String> commandList = List.of(CPython_command, "-m", "py_compile", filename);
                 Exception exc = null;
                 int result = 0;
                 String reason;
                 try {
-                    Process p = Runtime.getRuntime().exec(command_ver);
+                    ProcessBuilder pb = new ProcessBuilder(command_version_List);
+                    Process p = pb.start();
                     // Python 2.7 writes version to error-stream for some reason:
                     BufferedReader br =
                             new BufferedReader(new InputStreamReader(p.getErrorStream()));
@@ -807,9 +808,9 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
                     result = p.waitFor();
                     if (!cp_version.startsWith("Python 2.7.")) {
                         reason = cp_version + " has been provided, but 2.7.x is required.";
-                        throw new RuntimeException(String.format(LARGE_METHOD_MSG, filename)
-                                + String.format(TRIED_CREATE_PYC_MSG, command, reason)
-                                + String.format(PLEASE_PROVIDE_MSG, filename) + CPYTHON_CMD_MSG);
+                        throw new RuntimeException(String.format(LARGE_METHOD_MSG, filename) + //
+                                        String.format(TRIED_CREATE_PYC_MSG, command_version_List.toString(), reason) + //
+                                        String.format(PLEASE_PROVIDE_MSG, filename) + CPYTHON_CMD_MSG);
                     }
                 } catch (InterruptedException | IOException e) {
                     exc = e;
@@ -817,7 +818,8 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
 
                 if (exc == null && result == 0) {
                     try {
-                        Process p = Runtime.getRuntime().exec(command);
+                        ProcessBuilder pb = new ProcessBuilder(commandList);
+                        Process p = pb.start();
                         result = p.waitFor();
                         if (result == 0) {
                             return loadPyBytecode(filename, false);
@@ -827,9 +829,9 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
                     }
                 }
                 reason = exc != null ? "of " + exc.toString() : "of a bad return: " + result;
-                String exc_msg = String.format(LARGE_METHOD_MSG, filename)
-                        + String.format(TRIED_CREATE_PYC_MSG, command, reason)
-                        + String.format(PLEASE_PROVIDE_MSG, filename) + CPYTHON_CMD_MSG;
+                String exc_msg = String.format(LARGE_METHOD_MSG, filename) + //
+                                String.format(TRIED_CREATE_PYC_MSG, commandList.toString(), reason) + //
+                                String.format(PLEASE_PROVIDE_MSG, filename) + CPYTHON_CMD_MSG;
                 throw exc != null ? new RuntimeException(exc_msg, exc)
                         : new RuntimeException(exc_msg);
             } else {
