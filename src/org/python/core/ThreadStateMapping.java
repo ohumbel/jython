@@ -103,7 +103,7 @@ class ThreadStateMapping {
         i = 0;
         for (Map.Entry<Thread, ThreadState> entry: entries) {
             if (entry.getValue().frame != null) {
-                elements[i++] = Py.newInteger(entry.getKey().getId());
+                elements[i++] = Py.newInteger(entry.getKey().threadId());
                 elements[i++] = entry.getValue().frame;
             }
         }

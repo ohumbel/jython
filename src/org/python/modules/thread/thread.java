@@ -82,7 +82,7 @@ public class thread implements ClassDictInit {
     }
 
     public static long get_ident() {
-        return Thread.currentThread().getId();
+        return Thread.currentThread().threadId();
     }
 
     public static long stack_size(PyObject[] args) {

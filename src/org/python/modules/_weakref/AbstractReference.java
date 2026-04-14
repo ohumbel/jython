@@ -89,7 +89,7 @@ public abstract class AbstractReference extends PyObject implements Traverseproc
             }
             if ((gc.getJythonGCFlags() & gc.VERBOSE_WEAKREF) != 0) {
                 gc.writeDebug("gc", "pending in get of abstract ref "+this+": "+
-                        Thread.currentThread().getId());
+                                Thread.currentThread().threadId());
             }
             JyAttribute.setAttr(this, JyAttribute.WEAKREF_PENDING_GET_ATTR,
                     Thread.currentThread());
@@ -102,7 +102,7 @@ public abstract class AbstractReference extends PyObject implements Traverseproc
             JyAttribute.delAttr(this, JyAttribute.WEAKREF_PENDING_GET_ATTR);
             if ((gc.getJythonGCFlags() & gc.VERBOSE_WEAKREF) != 0) {
                 gc.writeDebug("gc", "pending of "+this+" resolved: "+
-                        Thread.currentThread().getId());
+                                Thread.currentThread().threadId());
                 if (gref.isCleared()) {
                     gc.writeDebug("gc", "reference was cleared.");
                 } else if (result != null){
