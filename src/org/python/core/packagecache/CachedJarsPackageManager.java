@@ -28,7 +28,6 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -851,8 +850,8 @@ public abstract class CachedJarsPackageManager extends PackageManager {
                     warning("failed to create cache dir ''{0}''", cachedir);
                 }
             }
-        } catch (AccessControlException ace) {
-            warning("Not permitted to access cache ''{0}'' ({1})", cachedir, ace.getMessage());
+        } catch (SecurityException se) {
+            warning("Not permitted to access cache ''{0}'' ({1})", cachedir, se.getMessage());
         }
         return false;
     }
