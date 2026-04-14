@@ -64,48 +64,48 @@ import java.math.BigInteger;
  * <table border>
  *   <caption>Format characters</caption>
  *   <tr><th><b>Format</b></th>
- *       <th align=left><b>C Type</b></th>
- *       <th align=left><b>Python</b></th>
- *   <tr><td align=center>{@code x}</td>
+ *       <th><b>C Type</b></th>
+ *       <th><b>Python</b></th>
+ *   <tr><td>{@code x}</td>
  *       <td>pad byte</td>
  *       <td>no value</td>
- *   <tr><td align=center>{@code c}</td>
+ *   <tr><td>{@code c}</td>
  *       <td>{@code char}</td>
  *       <td>string of length 1</td>
- *   <tr><td align=center>{@code b}</td>
+ *   <tr><td>{@code b}</td>
  *       <td>{@code signed char}</td>
  *       <td>integer</td>
- *   <tr><td align=center>{@code B}</td>
+ *   <tr><td>{@code B}</td>
  *       <td>{@code unsigned char}</td>
  *       <td>integer</td>
- *   <tr><td align=center>{@code h}</td>
+ *   <tr><td>{@code h}</td>
  *       <td>{@code short}</td>
  *       <td>integer</td>
- *   <tr><td align=center>{@code H}</td>
+ *   <tr><td>{@code H}</td>
  *       <td>{@code unsigned short}</td>
  *       <td>integer</td>
- *   <tr><td align=center>{@code i}</td>
+ *   <tr><td>{@code i}</td>
  *       <td>{@code int}</td>
  *       <td>integer</td>
- *   <tr><td align=center>{@code I}</td>
+ *   <tr><td>{@code I}</td>
  *       <td>{@code unsigned int}</td>
  *       <td>integer</td>
- *   <tr><td align=center>{@code size}</td>
+ *   <tr><td>{@code size}</td>
  *       <td>{@code long}</td>
  *       <td>integer</td>
- *   <tr><td align=center>{@code L}</td>
+ *   <tr><td>{@code L}</td>
  *       <td>{@code unsigned long}</td>
  *       <td>integer</td>
- *   <tr><td align=center>{@code f}</td>
+ *   <tr><td>{@code f}</td>
  *       <td>{@code float}</td>
  *       <td>float</td>
- *   <tr><td align=center>{@code d}</td>
+ *   <tr><td>{@code d}</td>
  *       <td>{@code double}</td>
  *       <td>float</td>
- *   <tr><td align=center>{@code s}</td>
+ *   <tr><td>{@code s}</td>
  *       <td>{@code char[]}</td>
  *       <td>string</td>
- *   <tr><td align=center>{@code p}</td>
+ *   <tr><td>{@code p}</td>
  *       <td>{@code char[]}</td>
  *       <td>string</td>
  * </table>
@@ -156,21 +156,21 @@ import java.math.BigInteger;
  * <table border>
  *   <caption>Byte order and alignment characters</caption>
  *   <tr><th><b>Character</b></th>
- *       <th align=left><b>Byte order</b></th>
- *       <th align=left><b>Size and alignment</b></th>
- *   <tr><td align=center>{@code @}</td>
+ *       <th><b>Byte order</b></th>
+ *       <th><b>Size and alignment</b></th>
+ *   <tr><td>{@code @}</td>
  *       <td>native</td>
  *       <td>native</td>
- *   <tr><td align=center>{@code =}</td>
+ *   <tr><td>{@code =}</td>
  *       <td>native</td>
  *       <td>standard</td>
- *   <tr><td align=center>{@code <}</td>
+ *   <tr><td>{@code <}</td>
  *       <td>little-endian</td>
  *       <td>standard</td>
- *   <tr><td align=center>{@code >}</td>
+ *   <tr><td>{@code >}</td>
  *       <td>big-endian</td>
  *       <td>standard</td>
- *   <tr><td align=center>{@code !}</td>
+ *   <tr><td>{@code !}</td>
  *       <td>network (= big-endian)</td>
  *       <td>standard</td>
  *

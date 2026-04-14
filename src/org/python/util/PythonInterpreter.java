@@ -157,29 +157,29 @@ public class PythonInterpreter implements AutoCloseable, Closeable {
      * The behaviour as implemented is:
      * <table border=1>
      * <caption>Stream behaviour for various object types</caption>
-     * <tr align=center>
+     * <tr>
      * <td></td>
      * <td colspan=3>Python type of object <code>o</code> written</td>
      * </tr>
-     * <tr align=left>
+     * <tr>
      * <th></th>
      * <th><code>str/bytes</code></th>
      * <th><code>unicode</code></th>
      * <th>Any other type</th>
      * </tr>
-     * <tr align=left>
+     * <tr>
      * <th>{@link PyFile}</th>
      * <td>as bytes directly</td>
      * <td>respect {@link PyFile#encoding}</td>
      * <td>call <code>str(o)</code> first</td>
      * </tr>
-     * <tr align=left>
+     * <tr>
      * <th>{@link PyFileWriter}</th>
      * <td>each byte value as a <code>char</code></td>
      * <td>write as Java <code>char</code>s</td>
      * <td>call <code>o.toString()</code> first</td>
      * </tr>
-     * <tr align=left>
+     * <tr>
      * <th>Other {@link PyObject} <code>f</code></th>
      * <td>invoke <code>f.write(str(o))</code></td>
      * <td>invoke <code>f.write(o)</code></td>
