@@ -483,30 +483,14 @@ public class imp {
             }
             compiledFilename = makeCompiledFilename(sourceFilename);
         }
-        FileOutputStream fop = null;
-        try {
-            SecurityManager man = System.getSecurityManager();
-            if (man != null) {
-                man.checkWrite(compiledFilename);
-            }
-            fop = new FileOutputStream(FileUtil.makePrivateRW(compiledFilename));
+        try (FileOutputStream fop = new FileOutputStream(FileUtil.makePrivateRW(compiledFilename))) {
             fop.write(compiledSource);
-            fop.close();
             return compiledFilename;
         } catch (IOException | SecurityException exc) {
             // If we can't write the cache file, just log and continue
             logger.log(Level.FINE, "Unable to write to source cache file ''{0}'' due to {1}",
                     new Object[] {compiledFilename, exc});
             return null;
-        } finally {
-            if (fop != null) {
-                try {
-                    fop.close();
-                } catch (IOException e) {
-                    logger.log(Level.FINE, "Unable to close source cache file ''{0}'' due to {1}",
-                            new Object[] {compiledFilename, e});
-                }
-            }
         }
     }
 
