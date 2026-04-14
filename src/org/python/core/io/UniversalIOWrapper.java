@@ -24,10 +24,9 @@ public class UniversalIOWrapper extends TextIOBase {
     private EnumSet<Newline> newlineTypes = EnumSet.noneOf(Newline.class);
 
     /**
-     * Contruct a UniversalIOWrapper wrapping the given
-     * BufferedIOBase.
+     * Construct a UniversalIOWrapper wrapping the given BufferedIOBase.
      *
-     * @param bufferedIO {@inheritDoc}
+     * @param bufferedIO
      */
     public UniversalIOWrapper(BufferedIOBase bufferedIO) {
         super(bufferedIO);

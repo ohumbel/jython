@@ -13,10 +13,9 @@ import org.python.core.util.StringUtil;
 public class BinaryIOWrapper extends TextIOBase {
 
     /**
-     * Contruct a TextIOBase in binary mode, wrapping the given
-     * BufferedIOBase.
-     *
-     * @param bufferedIO {@inheritDoc}
+     * Construct a TextIOBase in binary mode, wrapping the given BufferedIOBase.
+     * 
+     * @param bufferedIO
      */
     public BinaryIOWrapper(BufferedIOBase bufferedIO) {
         super(bufferedIO);

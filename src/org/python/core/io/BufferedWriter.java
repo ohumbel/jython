@@ -14,11 +14,10 @@ public class BufferedWriter extends BufferedIOMixin {
     protected ByteBuffer buffer;
 
     /**
-     * Construct a BufferedWriter of bufferSize, wrapping the given
-     * RawIOBase.
+     * Construct a BufferedWriter of bufferSize, wrapping the given RawIOBase.
      *
-     * @param rawIO {@inheritDoc}
-     * @param bufferSize {@inheritDoc}
+     * @param rawIO
+     * @param bufferSize
      */
     public BufferedWriter(RawIOBase rawIO, int bufferSize) {
         super(rawIO, bufferSize);

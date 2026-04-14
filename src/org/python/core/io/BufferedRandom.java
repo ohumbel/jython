@@ -17,11 +17,10 @@ public class BufferedRandom extends BufferedIOMixin {
     protected BufferedIOBase writer;
 
     /**
-     * Construct a BufferedRandom of bufferSize, wrapping the given
-     * RawIOBase.
+     * Construct a BufferedRandom of bufferSize, wrapping the given RawIOBase.
      *
-     * @param rawIO {@inheritDoc}
-     * @param bufferSize {@inheritDoc}
+     * @param rawIO
+     * @param bufferSize
      */
     public BufferedRandom(RawIOBase rawIO, int bufferSize) {
         super(rawIO, bufferSize);
