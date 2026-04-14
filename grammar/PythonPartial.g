@@ -45,7 +45,7 @@
  *  could understand the problem better.  This grammar requires
  *  PythonTokenStream.java to work.  Also I used some rules from the
  *  semi-formal grammar on the web for Python (automatically
- *  translated to ANTLR format by an ANTLR grammar, naturally <grin>).
+ *  translated to ANTLR format by an ANTLR grammar, naturally &semi;-)).
  *  The lexical rules for python are particularly nasty and it took me
  *  a long time to get it 'right'; i.e., think about it in the proper
  *  way.  Resist changing the lexer unless you've used ANTLR a lot. ;)
