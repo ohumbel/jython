@@ -796,7 +796,7 @@ public class PyString extends PyBaseString implements BufferProtocol {
         }
 
         if (c.isAssignableFrom(Collection.class)) {
-            List<Object> list = new ArrayList();
+            List<Object> list = new ArrayList<>();
             for (int i = 0; i < __len__(); i++) {
                 list.add(pyget(i).__tojava__(String.class));
             }

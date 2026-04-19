@@ -24,6 +24,7 @@ public class Visitor extends VisitorBase {
      * Visit the node by calling a visitXXX method.
      */
     public Object visit(PythonTree node) throws Exception {
+        @SuppressWarnings("unchecked")
         Object ret = node.accept(this);
         return ret;
     }

@@ -66,6 +66,7 @@ public class DBSink extends BaseDB implements Sink {
      * @param bindings    the optional bindings for the destination, this allows morphing of types during the copy
      * @param batchsize   the optional batchsize for the inserts
      */
+    @SuppressWarnings("unchecked")
     public DBSink(PyConnection connection, Class dataHandler, String tableName, PyObject exclude, PyObject bindings, int batchsize) {
 
         super(connection, dataHandler, tableName);

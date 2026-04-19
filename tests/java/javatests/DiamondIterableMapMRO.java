@@ -2,13 +2,12 @@
 
 package javatests;
 
-import java.io.Serializable;
-import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+
 import org.python.util.Generic;
 
 // The following tag interfaces duplicate the interface/abstract class supertypes of
@@ -77,6 +76,7 @@ public class DiamondIterableMapMRO extends AFn implements ILookup, IPersistentMa
         return backing.get(key);
     }
 
+    @SuppressWarnings("unchecked")
     public Object put(Object key, Object value) {
         return backing.put(key, value);
     }
@@ -86,6 +86,7 @@ public class DiamondIterableMapMRO extends AFn implements ILookup, IPersistentMa
         return backing.remove(key);
     }
 
+    @SuppressWarnings("unchecked")
     public void putAll(Map m) {
         backing.putAll(m);
     }

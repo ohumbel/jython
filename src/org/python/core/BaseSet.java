@@ -654,6 +654,7 @@ public abstract class BaseSet extends PyObject implements Set, Traverseproc {
         if (a.length < size) {
             a = (Object[])Array.newInstance(a.getClass().getComponentType(), size);
         }
+        @SuppressWarnings("unchecked")
         Iterator<PyObject> it = iterator();
         for (int i = 0; i < size; i++) {
             a[i] = it.next();

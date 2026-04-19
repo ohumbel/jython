@@ -63,6 +63,7 @@ final class AsmClassBuilder {
                 p(parentClass), new String[0]);
     }
     
+    @SuppressWarnings("unchecked")
     Class<? extends Invoker> build() {
         // Create the constructor to set the 'library' & functions fields
         SkinnyMethodAdapter init = new SkinnyMethodAdapter(classVisitor, ACC_PUBLIC, "<init>",

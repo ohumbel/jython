@@ -43,6 +43,7 @@ public class PyList extends PySequenceList {
         list = Generic.list();
     }
 
+    @SuppressWarnings("unchecked")
     private PyList(List<?> list, boolean convert) {
         super(TYPE);
         if (!convert) {

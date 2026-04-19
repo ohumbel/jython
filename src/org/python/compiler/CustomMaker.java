@@ -35,7 +35,7 @@ public class CustomMaker extends JavaMaker {
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             build(bytes); // Side effect of writing to bytes
             saveBytes(bytes);
-            List<Class<?>> secondary = new LinkedList(Arrays.asList(interfaces));
+            List<Class<?>> secondary = new LinkedList<>(Arrays.asList(interfaces));
             List<Class<?>> referents = null;
             if (superclass != null) {
                 secondary.add(0, superclass);

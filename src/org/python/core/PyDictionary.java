@@ -476,6 +476,7 @@ public class PyDictionary extends AbstractDict implements ConcurrentMap, Travers
         updateCommon(args, keywords, "update");
     }
 
+    @SuppressWarnings("unchecked")
     public void updateCommon(PyObject[] args, String[] keywords, String methName) {
         int nargs = args.length - keywords.length;
         if (nargs > 1) {

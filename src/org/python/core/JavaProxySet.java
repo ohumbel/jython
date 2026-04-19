@@ -262,6 +262,7 @@ class JavaProxySet {
         return items;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private static Collection<Object>[] getJavaCollections(PyObject[] objs) {
         Collection[] collections = new Collection[objs.length];
         int i = 0;

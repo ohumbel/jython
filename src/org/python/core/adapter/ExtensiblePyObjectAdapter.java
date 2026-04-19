@@ -55,7 +55,8 @@ public class ExtensiblePyObjectAdapter implements PyObjectAdapter {
 	 * Adds an adapter to the list of adapters to be tried before the
 	 * ClassAdapters.
 	 */
-	public void addPreClass(PyObjectAdapter adapter) {
+    @SuppressWarnings("unchecked")
+    public void addPreClass(PyObjectAdapter adapter) {
 		preClassAdapters.add(adapter);
 	}
 
@@ -63,7 +64,8 @@ public class ExtensiblePyObjectAdapter implements PyObjectAdapter {
 	 * Adds a Class handling adapter that will adapt any objects of its Class if
 	 * that object hasn't already been handled by one of the pre class adapters.
 	 */
-	public void add(ClassAdapter adapter) {
+    @SuppressWarnings("unchecked")
+    public void add(ClassAdapter adapter) {
 		classAdapters.put(adapter.getAdaptedClass(), adapter);
 	}
 
@@ -71,7 +73,8 @@ public class ExtensiblePyObjectAdapter implements PyObjectAdapter {
 	 * Adds an adapter to the list of adapters to be tried after the
 	 * ClassAdapters.
 	 */
-	public void addPostClass(PyObjectAdapter converter) {
+    @SuppressWarnings("unchecked")
+    public void addPostClass(PyObjectAdapter converter) {
 		postClassAdapters.add(converter);
 	}
 

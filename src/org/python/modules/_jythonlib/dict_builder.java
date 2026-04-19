@@ -41,6 +41,7 @@ public class dict_builder extends PyObject implements Traverseproc {
 	this.dict_type = dict_type;
     }
 
+    @SuppressWarnings("unchecked")
     public PyObject __call__(PyObject[] args, String[] keywords) {
         ConcurrentMap map = (ConcurrentMap) (factory.__call__().__tojava__(ConcurrentMap.class));
 	PyDictionary dict;

@@ -746,7 +746,9 @@ public class GrammarActions {
         return result;
     }
 
-    BoolOp makeBoolOp(Token t, PythonTree left, boolopType op, List right) {
+    @SuppressWarnings("unchecked")
+    BoolOp makeBoolOp(Token t, PythonTree left, boolopType op, @SuppressWarnings("rawtypes") List right) {
+        @SuppressWarnings("rawtypes")
         List values = new ArrayList();
         values.add(left);
         values.addAll(right);

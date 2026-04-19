@@ -120,6 +120,7 @@ class JavaProxyList {
             return Py.java2py(list.get(idx));
         }
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public PyObject getSlice(int start, int stop, int step) {
             if (step > 0 && stop < start) {
@@ -166,11 +167,13 @@ class JavaProxyList {
             return i;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public void setItem(int idx, PyObject value) {
             list.set(idx, value.__tojava__(Object.class));
         }
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public void setSlice(int start, int stop, int step, PyObject value) {
             if (stop < start) {
@@ -192,7 +195,8 @@ class JavaProxyList {
             }
         }
 
-        final private void setsliceList(int start, int stop, int step, List value) {
+        @SuppressWarnings("unchecked")
+        final private void setsliceList(int start, int stop, int step, @SuppressWarnings("rawtypes") List value) {
             if (step == 1) {
                 list.subList(start, stop).clear();
                 list.addAll(start, value);
@@ -210,6 +214,7 @@ class JavaProxyList {
             }
         }
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         final private void setsliceIterator(int start, int stop, int step, Iterator<PyObject> iter) {
             if (step == 1) {
                 List insertion = new ArrayList();
@@ -233,6 +238,7 @@ class JavaProxyList {
             }
         }
 
+        @SuppressWarnings("unchecked")
         final private void setslicePyList(int start, int stop, int step, PyList value) {
             if (step == 1) {
                 list.subList(start, stop).clear();
@@ -271,6 +277,7 @@ class JavaProxyList {
             super(name, numArgs);
         }
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public PyObject __call__(PyObject obj) {
             List jList = asList();
@@ -347,9 +354,11 @@ class JavaProxyList {
         }
     }
 
-    private synchronized static void list_sort(List list, PyObject cmp, PyObject key, boolean reverse) {
+    @SuppressWarnings("unchecked")
+    private synchronized static void list_sort(@SuppressWarnings("rawtypes") List list, PyObject cmp, PyObject key,
+                    boolean reverse) {
         int size = list.size();
-        final ArrayList<KV> decorated = new ArrayList(size);
+        final ArrayList<KV> decorated = new ArrayList<>(size);
         for (Object value : list) {
             PyObject pyvalue = Py.java2py(value);
             if (key == null || key == Py.None) {
@@ -418,6 +427,7 @@ class JavaProxyList {
     };
 
     private static final PyBuiltinMethodNarrow listAppendProxy = new ListMethod("append", 1) {
+        @SuppressWarnings("unchecked")
         @Override
         public PyObject __call__(PyObject value) {
             asList().add(value);
@@ -425,6 +435,7 @@ class JavaProxyList {
         }
     };
     private static final PyBuiltinMethodNarrow listExtendProxy = new ListMethod("extend", 1) {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public PyObject __call__(PyObject obj) {
             List jList = asList();
@@ -440,6 +451,7 @@ class JavaProxyList {
         }
     };
     private static final PyBuiltinMethodNarrow listInsertProxy = new ListMethod("insert", 2) {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public PyObject __call__(PyObject index, PyObject object) {
             List jlist = asList();
@@ -548,6 +560,7 @@ class JavaProxyList {
         }
     };
     private static final PyBuiltinMethodNarrow listRAddProxy = new ListMethod("__radd__", 1) {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public PyObject __call__(PyObject obj) {
             // first, clone the self list
@@ -580,6 +593,7 @@ class JavaProxyList {
         }
     };
     private static final PyBuiltinMethodNarrow listIAddProxy = new ListMethod("__iadd__", 1) {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public PyObject __call__(PyObject obj) {
             List jList = asList();
@@ -594,6 +608,7 @@ class JavaProxyList {
         }
     };
     private static final PyBuiltinMethodNarrow listIMulProxy = new ListMethod("__imul__", 1) {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public PyObject __call__(PyObject obj) {
             List jList = asList();

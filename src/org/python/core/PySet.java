@@ -35,11 +35,13 @@ public class PySet extends BaseSet {
         super(TYPE, _update(Generic.<PyObject>concurrentSet(), data));
     }
 
-    public PySet(Set backing_set, PyObject data) {
+    @SuppressWarnings("unchecked")
+    public PySet(@SuppressWarnings("rawtypes") Set backing_set, PyObject data) {
         super(TYPE, _update(backing_set, data));
     }
 
-    public PySet(PyType type, Set backing_set, PyObject data) {
+    @SuppressWarnings("unchecked")
+    public PySet(PyType type, @SuppressWarnings("rawtypes") Set backing_set, PyObject data) {
         super(type, _update(backing_set, data));
     }
 

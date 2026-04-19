@@ -24,6 +24,7 @@ class JavaProxyMap {
             super(name, minArgs, maxArgs);
         }
 
+        @SuppressWarnings("unchecked")
         protected Map<Object, Object> asMap() {
             return (Map<Object, Object>) self.getJavaProxy();
         }
@@ -52,6 +53,7 @@ class JavaProxyMap {
         if (isPyDict(other)) {
             // Being compared to Python dict
             PyDictionary oDict = (PyDictionary) other;
+            @SuppressWarnings("unchecked")
             Map<Object, Object> selfMap = (Map<Object, Object>) self.getJavaProxy();
             if (selfMap.size() != oDict.size()) {
                 // Map/dict are different sizes therefore not equal
@@ -78,6 +80,7 @@ class JavaProxyMap {
             Object oj = other.getJavaProxy();
             if (oj instanceof Map) {
                 // Being compared to a Java Map convert to Python
+                @SuppressWarnings({ "unchecked", "rawtypes" })
                 Map<Object, Object> map = (Map) oj;
                 final Map<PyObject, PyObject> pyMap = new HashMap<>();
                 for (Entry<Object, Object> el : map.entrySet()) {
@@ -132,6 +135,7 @@ class JavaProxyMap {
      * mapEq for total ordering of such key sets
      */
     private static PyObject mapLe(PyObject self, PyObject other) {
+        @SuppressWarnings("unchecked")
         Set<Object> selfKeys = ((Map<Object, Object>) self.getJavaProxy()).keySet();
         if (other.getType().isSubType(PyDictionary.TYPE)) {
             PyDictionary oDict = (PyDictionary) other;
@@ -144,6 +148,7 @@ class JavaProxyMap {
         } else {
             Object oj = other.getJavaProxy();
             if (oj instanceof Map) {
+                @SuppressWarnings("unchecked")
                 Map<Object, Object> map = (Map<Object, Object>) oj;
                 return Py.newBoolean(map.keySet().containsAll(selfKeys));
             } else {
@@ -481,6 +486,7 @@ class JavaProxyMap {
 
     private static final PyBuiltinMethodNarrow mapCopyProxy = new MapMethod("copy", 0) {
 
+        @SuppressWarnings("unchecked")
         @Override
         public PyObject __call__() {
             Map<Object, Object> map = asMap();
@@ -519,6 +525,7 @@ class JavaProxyMap {
             return __call__(new PyObject[] {other}, new String[] {});
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public PyObject __call__(PyObject[] args, String[] keywords) {
             // Adapted from PyDictionary#update
@@ -602,6 +609,7 @@ class JavaProxyMap {
                     return __call__(keys, null);
                 }
 
+                        @SuppressWarnings("unchecked")
                 @Override
                 public PyObject __call__(PyObject keys, PyObject _default) {
                     Object defobj = tojava(_default);

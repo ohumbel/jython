@@ -86,6 +86,7 @@ public class PyDictionaryDerived extends PyDictionary implements Slotted,Finaliz
         return visit.visit(dict,arg);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public PyDictionaryDerived(PyType subtype,ConcurrentMap backingMap,boolean useBackingMap) {
         super(subtype,backingMap,useBackingMap);
         slots=new PyObject[subtype.getNumSlots()];

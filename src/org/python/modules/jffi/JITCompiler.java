@@ -40,6 +40,7 @@ class JITCompiler {
     private static final class HandleRef extends WeakReference<JITHandle> {
         JITSignature signature;
 
+        @SuppressWarnings("unchecked")
         public HandleRef(JITHandle handle, JITSignature signature, ReferenceQueue refqueue) {
             super(handle, refqueue);
             this.signature = signature;

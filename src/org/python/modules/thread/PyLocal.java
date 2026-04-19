@@ -18,6 +18,7 @@ public class PyLocal extends PyObject implements Traverseproc {
 
     public static final PyType TYPE = PyType.fromClass(PyLocal.class);
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private ThreadLocal<Object[]> tdict = new ThreadLocal() {
         @Override
         protected Object initialValue() {

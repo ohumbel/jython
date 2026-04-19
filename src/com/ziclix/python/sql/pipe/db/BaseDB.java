@@ -60,6 +60,7 @@ public abstract class BaseDB {
      * desired.  This allows additional functionality without losing any previous work or requiring any
      * complicated inheritance dependencies.
      */
+    @SuppressWarnings("unchecked")
     protected PyCursor cursor() {
 
         PyCursor cursor = this.connection.cursor(true);

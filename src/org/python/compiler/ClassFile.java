@@ -62,6 +62,7 @@ public class ClassFile
             av.visitEnum(fieldName, ProxyCodeHelpers.mapType(fieldValueClass), fieldValue.toString());
         } else if (fieldValue instanceof List) {
             AnnotationVisitor arrayVisitor = av.visitArray(fieldName);
+            @SuppressWarnings("unchecked")
             List<Object> fieldList = (List<Object>)fieldValue;
             for (Object arrayField: fieldList) {
                 visitAnnotation(arrayVisitor, null, arrayField);

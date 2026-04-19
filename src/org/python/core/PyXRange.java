@@ -204,7 +204,7 @@ public class PyXRange extends PySequence {
             return (new JavaIterator(range_iter())).iterator();
         }
         if (c.isAssignableFrom(Collection.class)) {
-            List<Object> list = new ArrayList();
+            List<Object> list = new ArrayList<>();
             for (Object obj : new JavaIterator(range_iter())) {
                 list.add(obj);
             }

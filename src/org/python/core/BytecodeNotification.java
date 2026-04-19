@@ -22,7 +22,7 @@ public class BytecodeNotification {
      * The list is shared among the PySystemState objects
      * if there are multiple instances.
      */
-    private static List<Callback> callbacks = new CopyOnWriteArrayList();
+    private static List<Callback> callbacks = new CopyOnWriteArrayList<>();
 
     static {
         // Maintain legacy behavior

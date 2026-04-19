@@ -334,8 +334,8 @@ public class codecs {
 
     private static void backslashreplace_internal(int start, int end, String object,
             StringBuilder replacement) {
-        for (Iterator<Integer> iter = new StringSubsequenceIterator(object, start, end, 1); iter
-                .hasNext();) {
+        for (@SuppressWarnings("unchecked")
+        Iterator<Integer> iter = new StringSubsequenceIterator(object, start, end, 1); iter.hasNext();) {
             int c = iter.next();
             replacement.append('\\');
             if (c >= 0x00010000) {
