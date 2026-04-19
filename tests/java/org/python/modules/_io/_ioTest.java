@@ -1,8 +1,11 @@
 /* Copyright (c)2013 Jython Developers */
 package org.python.modules._io;
 
-import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -82,8 +85,8 @@ public class _ioTest {
         PyObject e = interp.get("e");
 
         String m = e.toString();
-        assertThat(m, both(containsString("UnsupportedOperation")).and(containsString("fileno")));
-
+        assertTrue("Exception '" + m + "' should both contain 'UnsupportedOperation' and 'fileno'",
+                        m.contains("UnsupportedOperation") && m.contains("fileno"));
     }
 
     /**
@@ -103,6 +106,7 @@ public class _ioTest {
     /** Check <code>PyFile().fileno()</code> is acceptable to <code>_io.open()</code> */
     @Test
     public void openPyFileByFileno() throws IOException {
+        @SuppressWarnings("unused")
         PySystemState sys = Py.getSystemState();
         PyFile file = new PyFile(FILE1, "w", 1);
         openByFilenoTest(file, "wb");
@@ -111,6 +115,7 @@ public class _ioTest {
     /** Check <code>PyFile(OutputStream).fileno()</code> is acceptable to <code>_io.open()</code> */
     @Test
     public void openPyFileOStreamByFileno() throws IOException {
+        @SuppressWarnings("unused")
         PySystemState sys = Py.getSystemState();
         OutputStream ostream = new FileOutputStream(FILE1);
         PyFile file = new PyFile(ostream);
@@ -148,6 +153,7 @@ public class _ioTest {
      */
     public void openByFilenoTest(PyObject file, String mode) throws IOException {
         PyObject pyfd = file.invoke("fileno");
+        @SuppressWarnings("unused")
         RawIOBase fd = (RawIOBase)pyfd.__tojava__(RawIOBase.class);
         PyObject[] args = new PyObject[] {pyfd, Py.newString(mode), Py.False};
         String[] kwds = {"closefd"};
