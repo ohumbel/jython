@@ -83,7 +83,6 @@ public class PyBZ2Compressor extends PyObject {
         PyString finalData = Py.EmptyString;
         try {
             compressStream.finish();
-            compressStream.close();
 
             finalData = readData();
 
