@@ -104,7 +104,11 @@ fi
 # ----- Execute the requested command -----------------------------------------
 
 if [ -z "$JAVA_MEM" ] ; then
-  JAVA_MEM=-Xmx512m
+  JAVA_MEM=-Xmx2g
+fi
+
+if [ -z "$JAVA_METASPACE" ] ; then
+  JAVA_METASPACE=-XX:MaxMetaspaceSize=512m
 fi
 
 if [ -z "$JAVA_STACK" ]; then
@@ -222,7 +226,7 @@ python_args=("${python_args[@]}" "$@")
 # Put the python_args back into the position arguments $1, $2 etc
 set -- "${python_args[@]}"
 
-JAVA_OPTS="$JAVA_OPTS $JAVA_MEM $JAVA_STACK"
+JAVA_OPTS="$JAVA_OPTS $JAVA_MEM $JAVA_METASPACE $JAVA_STACK"
 
 if $cygwin; then
   JAVA_HOME=`cygpath --mixed "$JAVA_HOME"`
