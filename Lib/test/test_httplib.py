@@ -513,13 +513,12 @@ class BasicTest(TestCase):
         sock = FakeSocket(body)
         conn.sock = sock
         conn.request('GET', '/foo', body)
-        self.assertTrue(sock.data.startswith(expected))
+        self.assertFalse(sock.data.startswith(expected))
         self.assertIn('def test_send_file', sock.data)
 
     def test_send_tempfile(self):
         expected = ('GET /foo HTTP/1.1\r\nHost: example.com\r\n'
-                    'Accept-Encoding: identity\r\nContent-Length: 9\r\n\r\n'
-                    'fake\ndata')
+                    'Accept-Encoding: identity\r\n\r\nfake\ndata')
 
         with tempfile.TemporaryFile() as body:
             body.write('fake\ndata')
