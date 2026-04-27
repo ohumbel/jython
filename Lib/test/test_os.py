@@ -592,6 +592,7 @@ class TestInvalidFD(unittest.TestCase):
         if hasattr(os, "isatty"):
             self.assertEqual(os.isatty(test_support.make_bad_fd()), False)
 
+    @unittest.skipUnless(hasattr(os, 'validFileDescriptor'), "test fails due to invalid fd")
     def test_closerange(self):
         if hasattr(os, "closerange"):
             fd = int(test_support.make_bad_fd())  # need to take an int for Jython, given this test
