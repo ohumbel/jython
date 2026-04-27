@@ -205,6 +205,7 @@ class PosixTester(unittest.TestCase):
                                   os.O_RDONLY|os.O_EXLOCK|os.O_NONBLOCK)
                 os.close(fd)
 
+    @unittest.skipUnless(hasattr(posix, 'validFileDescriptor'), "test fails due to invalid fd")
     def test_fstat(self):
         if hasattr(posix, 'fstat'):
             fp = open(test_support.TESTFN)
