@@ -1,60 +1,33 @@
 # Run ant regrtest on Jython 2.7 (GitHub action)
 
-name: ant regrtest 2.7
+name: Ant
 
 on:
   push:
-    branches: [ master ]
+    branches: [ develop ]
   pull_request:
-    branches: [ master ]
+    branches: [ develop ]
 
 permissions:
   contents: read
 
+
 jobs:
-
-  ant-regrtest-ubuntu-jdk8:
-
-    runs-on: ubuntu-latest
-    timeout-minutes: 40
-
+  regrtest:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-    - run: echo "Branch ${{ github.ref }} of repository ${{ github.repository }}."
+      - run: echo "Branch ${{ github.ref }} of repository ${{ github.repository }}."
 
-    # Some tests require exactly-expected line endings
-    - run: git config --global core.autocrlf input
+      - uses: actions/checkout@v6
 
-    - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
 
-    - name: Set up JDK 8
-      uses: actions/setup-java@v4
-      with:
-        java-version: '8'
-        distribution: 'temurin'
-
-    - name: Regression test with Ant
-      run: ant -noinput -buildfile build.xml regrtest-ci
-
-
-  ant-regrtest-windows-jdk11:
-
-    runs-on: windows-latest
-    timeout-minutes: 60
-
-    steps:
-    - run: echo "Branch ${{ github.ref }} of repository ${{ github.repository }}."
-
-    # Some tests require exactly-expected line endings
-    - run: git config --global core.autocrlf input
-
-    - uses: actions/checkout@v4
-
-    - name: Set up JDK 11
-      uses: actions/setup-java@v4
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-
-    - name: Regression test with Ant
-      run: ant -noinput -buildfile build.xml regrtest-ci
-
+      - name: Build with Ant and run regression tests
+        run: ant -noinput -buildfile build.xml regrtest-ci
