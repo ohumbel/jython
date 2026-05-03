@@ -76,6 +76,7 @@ class TestLauncher(unittest.TestCase):
                 props[k] = v
         return props
 
+    @unittest.skipIf(sys.platform.startswith("win") or test_support.is_jython_nt, "Skip classpath splitting on windows")
     def test_classpath_env(self):
         env = self.get_newenv()
         env["CLASSPATH"] = some_jar
@@ -87,6 +88,7 @@ class TestLauncher(unittest.TestCase):
                 self.assertEqual(next(it).split(classpath_delimiter())[-1], some_jar)
                 break
 
+    @unittest.skipIf(sys.platform.startswith("win") or test_support.is_jython_nt, "Skip classpath splitting on windows")
     def test_classpath(self):
         env = self.get_newenv()
         args = self.get_cmdline([launcher, "--print", "-J-cp", some_jar], env=env)
@@ -107,6 +109,7 @@ class TestLauncher(unittest.TestCase):
         self.assertEqual(args[2], "-Xss2560k")
         self.assertEqual(args[-1], "org.python.util.jython")
 
+    @unittest.skipIf(sys.platform.startswith("win") or test_support.is_jython_nt, "Skip classpath splitting on windows")
     def test_java_opts(self):
         env = self.get_newenv()
         env["JAVA_OPTS"] = '-Dfoo=bar -Dbaz="some property" -Xmx2g -classpath %s' % some_jar
