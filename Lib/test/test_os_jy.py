@@ -404,6 +404,7 @@ class LocaleTestCase(unittest.TestCase):
                     env=newenv),
                 "2015-01-22 00:00:00" + os.linesep)
 
+    @unittest.skipIf(sys.platform.startswith("win") or test_support.is_jython_nt, "Skip Japanese on windows")
     def test_strftime_japanese_locale(self):
         # Verifies fix of http://bugs.jython.org/issue2301 - produces
         # UTF-8 encoded output per what CPython does, rather than Unicode.
