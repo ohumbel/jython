@@ -9,6 +9,7 @@ import sys
 import unittest
 from collections import OrderedDict
 from test import test_support
+from java.io import File
 
 launcher = None
 uname = None
@@ -44,7 +45,7 @@ def get_uname():
 
 
 def classpath_delimiter():
-    return ";" if (os._name == "nt" or uname == "cygwin") else ":"
+    return File.pathSeparator
 
 
 class TestLauncher(unittest.TestCase):
