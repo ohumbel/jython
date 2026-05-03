@@ -1533,8 +1533,6 @@ The text for an official release would continue like ...
             <!-- Only run the tests that are expected to work on Jython -->
             <arg value="--expected"/>
             <!-- Exclude particular tests troublesome on the build bots -->
-            <arg value="--exclude"/>
-            <arg value="test_pep277"/>           <!-- UnicodeDecode errors on windows -->
         </exec>
     </target>
 
