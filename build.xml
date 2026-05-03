@@ -1535,7 +1535,6 @@ The text for an official release would continue like ...
             <!-- Exclude particular tests troublesome on the build bots -->
             <arg value="--exclude"/>
             <arg value="test_pep277"/>           <!-- UnicodeDecode errors on windows -->
-            <arg value="test_jython_launcher"/> <!-- (on git bash) -->
         </exec>
     </target>
 
