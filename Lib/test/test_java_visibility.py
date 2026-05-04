@@ -265,8 +265,9 @@ class RespectJavaAccessibilityTest(unittest.TestCase):
         self.command.append("-J-Dpython.cachedir.skip=true")
         self.command.append("-J-Dpython.security.respectJavaAccessibility=false")
         if test_support.get_java_version() >= (9,):
-            # See all the cases for which we have forgotten --add-opens
-            self.command.append("-J--illegal-access=warn")
+            if test_support.get_java_version() < (17,):
+                # See all the cases for which we have forgotten --add-opens
+                self.command.append("-J--illegal-access=warn")
             # Open the packages used in the scripts
             self.add_opens("java.desktop", "java.awt.geom")
             for package in ("lang", "util", "nio", "nio.charset"):
