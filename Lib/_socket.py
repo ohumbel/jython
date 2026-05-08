@@ -382,7 +382,7 @@ def raises_java_exception(method_or_function):
             try:
                 return method_or_function(*args, **kwargs)
             except java.lang.Exception, jlx:
-                raise _map_exception(jlx)
+                jlx.printStackTrace()
         except error, e:
             if is_socket:
                 args[0]._last_error = e[0]

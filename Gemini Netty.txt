@@ -1,0 +1,956 @@
+Gemini
+SSL Handshake Fehler in Netty
+Unterhaltung mit Gemini
+Was geht falsch, wenn ich folgende Exception bekomme:
+
+
+
+javax.net.ssl.SSLHandshakeException: SslHandler removed before handshake completed
+
+at io.netty.handler.ssl.SslHandler.handlerRemoved0(SslHandler.java:729)
+
+at io.netty.handler.codec.ByteToMessageDecoder.handlerRemoved(ByteToMessageDecoder.java:276)
+
+at io.netty.channel.AbstractChannelHandlerContext.callHandlerRemoved(AbstractChannelHandlerContext.java:997)
+
+at io.netty.channel.DefaultChannelPipeline.callHandlerAdded0(DefaultChannelPipeline.java:563)
+
+at io.netty.channel.DefaultChannelPipeline.access$100(DefaultChannelPipeline.java:45)
+
+at io.netty.channel.DefaultChannelPipeline$6.run(DefaultChannelPipeline.java:1162)
+
+at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:148)
+
+at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:141)
+
+at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:535)
+
+at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:201)
+
+at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1195)
+
+at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+
+at java.base/java.lang.Thread.run(Thread.java:1583)
+
+Diese spezifische Fehlermeldung in Netty ist oft etwas irreführend, da sie technisch gesehen nur besagt, dass der SslHandler aus der Pipeline entfernt wurde, während er eigentlich noch damit beschäftigt war, die verschlüsselte Verbindung aufzubauen.
+
+Das ist meistens kein Fehler im SSL-Code selbst, sondern ein Symptom dafür, dass die Verbindung vorzeitig geschlossen wurde. Hier sind die häufigsten Ursachen und wie du sie behebst:
+
+1. Vorzeitiges Schließen der Verbindung (TCP Close)
+Die häufigste Ursache ist, dass die Gegenseite (Client oder Server) die TCP-Verbindung hart abbricht, während der TLS-Handshake noch läuft.
+
+Ursache: Ein Firewall-Timeout, ein Load Balancer oder die Gegenseite stellt fest, dass sie dem Zertifikat nicht vertraut und bricht sofort ab.
+
+Lösung: Prüfe die Logs der Gegenseite. Wenn es ein Client ist, schau nach "Connection reset by peer" oder Zertifikatsfehlern.
+
+2. Fehlkonfiguration in der Netty Pipeline
+Wenn du die Pipeline dynamisch änderst, kann es sein, dass dein Code den SslHandler versehentlich entfernt oder den Channel schließt, bevor der Handshake-Future abgeschlossen ist.
+
+Prüfung: Suchst du in deinem Code nach pipeline.remove(...) oder ctx.close()?
+
+Lösung: Warte immer auf das Resultat des Handshakes, bevor du die Pipeline umbaust:
+
+Java
+sslHandler.handshakeFuture().addListener(future -> {
+    if (future.isSuccess()) {
+        // Jetzt ist es sicher!
+    } else {
+        // Handshake fehlgeschlagen
+    }
+});
+3. Protokoll-Mismatch (HTTP vs. HTTPS)
+Ein klassischer Fehler: Ein Client versucht via HTTP (unverschlüsselt) auf einen Port zuzugreifen, der HTTPS (Netty mit SslHandler) erwartet.
+
+Was passiert: Der SslHandler empfängt Daten, die nicht nach TLS aussehen, erkennt den Fehler und Netty schließt den Channel bzw. entfernt den Handler.
+
+Lösung: Sicherstellen, dass der Client wirklich https:// nutzt.
+
+4. Idle State Timeouts
+Hast du einen IdleStateHandler in der Pipeline?
+
+Ursache: Wenn der Handshake (warum auch immer) länger dauert als dein definiertes Timeout (z. B. wegen hoher CPU-Last oder langsamer Entropie-Generierung für Keys), löst der IdleStateHandler ein Schließen des Channels aus.
+
+Lösung: Timeout-Werte während der Entwicklungsphase testweise erhöhen.
+
+Zusammenfassung der Diagnose-Schritte
+Zertifikate prüfen: Nutzt du ein selbstsigniertes Zertifikat? Falls ja, muss die Gegenseite dieses explizit akzeptieren.
+
+Netty Logging: Aktiviere das Debug-Logging für SSL, um zu sehen, was genau während des Handshakes passiert:
+
+Setze das System-Property: -Djavax.net.debug=ssl,handshake
+
+Pipeline-Reihenfolge: Der SslHandler muss in der Regel als allererstes (bzw. direkt nach einem optionalen Proxy-Handler) in der Pipeline stehen.
+
+Kurztipp: Schau dir in deinem Stacktrace besonders Zeile 729 im SslHandler an. Dort wird handlerRemoved0 aufgerufen, weil der Channel inaktiv wurde. Das Problem liegt also fast immer "außerhalb" des Handlers – die Verbindung unter ihm ist einfach weggebrochen.
+
+Der Output des javax.net.debug ist ziemlich beeindruckend. Die geladenen Zertifikate habe ich herausgeschnitten.
+
+Kannst du da etwas verdächtiges erkennen?
+
+
+
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:36.946 CEST|SSLContextImpl.java:414|System property jdk.tls.client.cipherSuites is set to 'null'
+
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:36.952 CEST|SSLContextImpl.java:414|System property jdk.tls.server.cipherSuites is set to 'null'
+
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:36.967 CEST|SSLCipher.java:432|jdk.tls.keyLimits:  entry = AES/GCM/NoPadding KeyUpdate 2^37. AES/GCM/NOPADDING:KEYUPDATE = 137438953472
+
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:36.968 CEST|SSLCipher.java:432|jdk.tls.keyLimits:  entry =  ChaCha20-Poly1305 KeyUpdate 2^37. CHACHA20-POLY1305:KEYUPDATE = 137438953472
+
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:36.975 CEST|SSLContextImpl.java:388|Ignore disabled cipher suite: TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384
+
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:36.975 CEST|SSLContextImpl.java:397|Ignore unsupported cipher suite: TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384
+
+/Users/oti/.sdkman/candidates/java/21.0.10-tem/lib/security/jssecacerts
+
+  <viele nicht unterstützte cipher Suiten>
+
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.004 CEST|TrustStoreManager.java:113|trustStore is: /Users/oti/.sdkman/candidates/java/21.0.10-tem/lib/security/cacerts
+
+trustStore type is: pkcs12
+
+trustStore provider is: 
+
+the last modified time is: Wed Jan 21 03:35:02 CET 2026
+
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.004 CEST|TrustStoreManager.java:333|Reload the trust store
+
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.034 CEST|TrustStoreManager.java:341|Reload trust certs
+
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.035 CEST|TrustStoreManager.java:346|Reloaded 144 trust certs
+
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.096 CEST|X509TrustManagerImpl.java:82|adding as trusted certificates (
+
+  <viele Zertifikate>
+
+)
+
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.122 CEST|SSLContextImpl.java:108|trigger seeding of SecureRandom
+
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.122 CEST|SSLContextImpl.java:112|done seeding of SecureRandom
+
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.131 CEST|SSLConfiguration.java:486|System property jdk.tls.server.SignatureSchemes is set to 'null'
+
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.142 CEST|SSLConfiguration.java:486|System property jdk.tls.client.SignatureSchemes is set to 'null'
+
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.143 CEST|SSLContextImpl.java:108|trigger seeding of SecureRandom
+
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.143 CEST|SSLContextImpl.java:112|done seeding of SecureRandom
+
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.143 CEST|SSLContextImpl.java:108|trigger seeding of SecureRandom
+
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.143 CEST|SSLContextImpl.java:112|done seeding of SecureRandom
+
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.144 CEST|SSLContextImpl.java:108|trigger seeding of SecureRandom
+
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.144 CEST|SSLContextImpl.java:112|done seeding of SecureRandom
+
+javax.net.ssl.SSLHandshakeException: SslHandler removed before handshake completed
+
+Das Spannende an diesem Log ist tatsächlich nicht das, was drinsteht, sondern wo es aufhört.
+
+Der Log zeigt die komplette Initialisierungsphase des SSL-Kontexts (Laden der Cipher Suites, Einlesen des Truststores mit 144 Zertifikaten, Seeding von SecureRandom), aber er bricht ab, bevor das erste Byte des eigentlichen Handshakes (das ClientHello) gesendet oder empfangen wurde.
+
+Hier ist die Analyse der "verdächtigen" Punkte:
+
+1. Das abrupte Ende (Der "Silent Death")
+Normalerweise müssten nach dem Seeding von SecureRandom Einträge folgen wie:
+[PRODUCING] ClientHello oder [RECEIVING] ServerHello.
+Dass sofort die Exception kommt, bedeutet: Die Verbindung wurde geschlossen, noch bevor Netty überhaupt das erste TLS-Paket auf die Leitung schicken konnte.
+
+2. Die Seeding-Wiederholungen
+Plaintext
+javax.net.ssl|ALL|...|trigger seeding of SecureRandom
+javax.net.ssl|ALL|...|done seeding of SecureRandom
+Dass dies viermal hintereinander passiert, ist bei Netty oft ein Zeichen dafür, dass mehrere Channels gleichzeitig versucht haben zu starten oder die Pipeline mehrfach initialisiert wurde. Das ist an sich kein Fehler, deutet aber auf eine hohe Dynamik beim Verbindungsaufbau hin.
+
+3. Wahrscheinlichste Ursache: "Racing Condition" in der Pipeline
+Da die Fehlermeldung SslHandler removed before handshake completed lautet und im Log keinerlei TLS-Protokoll-Aktivität zu sehen ist, passiert folgendes:
+
+Netty öffnet den TCP-Channel.
+
+Der SslHandler wird hinzugefügt.
+
+Der SslContext wird initialisiert (das ist das, was du im Log siehst).
+
+Noch während die Initialisierung läuft oder unmittelbar danach, wird der Channel von einer anderen Komponente (oder dem Betriebssystem/Remote Peer) geschlossen.
+
+Netty sieht: "Channel inaktiv" -> "Entferne alle Handler" -> SslHandler wirft die Exception, weil er noch nicht fertig war.
+
+Was du jetzt prüfen solltest:
+Netzwerk-Ebene: Versuche einen simplen Verbindungstest mit curl -v https://dein-ziel oder openssl s_client -connect dein-ziel:port. Wenn das auch sofort scheitert, liegt es an der Firewall oder dem Routing, nicht an Java.
+
+Port-Verwechslung: Bist du sicher, dass die Gegenseite auf diesem Port TLS spricht? Wenn du versuchst, TLS gegen einen Plain-HTTP-Port zu sprechen, schließen manche Server die Verbindung sofort, wenn sie die ersten "komischen" (binären) Bytes sehen.
+
+Netty Version & EventLoop: Nutzt du eine sehr alte Netty-Version oder mischst du verschiedene Versionen (z.B. durch transitive Abhängigkeiten)? Das handlerRemoved0 in deinem ersten Stacktrace deutet darauf hin, dass Netty den Handler aktiv wegen eines Channel-Events rauswirft.
+
+Zusammenfassend: Dein Java/Zertifikats-Setup sieht bis zum Abbruch sauber aus. Das Problem ist mit 90%iger Wahrscheinlichkeit ein Netzwerk-Event (TCP Close), das von außen kommt oder durch einen fehlerhaften Zustandsautomaten in deiner Netty-Pipeline ausgelöst wird, noch bevor das erste verschlüsselte Paket gesendet wurde.
+
+Ich habe die beiden Befehle der Netzwerk-Ebene ausgeführt, beide sind gescheitert
+
+
+
+curl -v https://self-signed.pythontest.net
+
+* Host self-signed.pythontest.net:443 was resolved.
+
+* IPv6: (none)
+
+* IPv4: 68.183.26.59
+
+*   Trying 68.183.26.59:443...
+
+* Connected to self-signed.pythontest.net (68.183.26.59) port 443
+
+* ALPN: curl offers h2,http/1.1
+
+* (304) (OUT), TLS handshake, Client hello (1):
+
+*  CAfile: /etc/ssl/cert.pem
+
+*  CApath: none
+
+* (304) (IN), TLS handshake, Server hello (2):
+
+* (304) (IN), TLS handshake, Unknown (8):
+
+* (304) (IN), TLS handshake, Certificate (11):
+
+* SSL certificate problem: self signed certificate
+
+* Closing connection
+
+curl: (60) SSL certificate problem: self signed certificate
+
+More details here: https://curl.se/docs/sslcerts.html
+
+
+
+curl failed to verify the legitimacy of the server and therefore could not
+
+establish a secure connection to it. To learn more about this situation and
+
+how to fix it, please visit the web page mentioned above.
+
+
+
+
+
+openssl s_client -connect self-signed.pythontest.net:8443 
+
+4033B044F87F0000:error:8000003D:system library:BIO_connect:Connection refused:crypto/bio/bio_sock2.c:178:calling connect()
+
+4033B044F87F0000:error:10000067:BIO routines:BIO_connect:connect error:crypto/bio/bio_sock2.c:180:
+
+connect:errno=61
+
+Das ist ein hervorragender Befund! Die Ergebnisse deiner Tests zeigen genau, wo die Reise hingeht. Wir haben hier zwei verschiedene Probleme, die uns aber beide zur Lösung führen:
+
+1. Die curl-Analyse: Das Vertrauensproblem
+curl kommt deutlich weiter als dein Java-Programm. Es schafft den TCP-Connect und empfängt sogar das Zertifikat, bricht dann aber ab:
+
+SSL certificate problem: self signed certificate
+
+Das bestätigt: Die Gegenseite nutzt ein selbstsigniertes Zertifikat, dem dein lokales System (und auch dein Java-Truststore) nicht vertraut.
+
+2. Die openssl-Analyse: Der falsche Port
+Der Befehl openssl s_client -connect ...:8443 scheitert mit:
+
+Connection refused
+
+Das bedeutet, auf Port 8443 läuft überhaupt kein Dienst. Port 443 hingegen (den curl genutzt hat) ist offen. Prüfe in deinem Netty-Code unbedingt, welchen Port du dort ansprichst. Wenn du in Java Port 8443 nutzt, wäre das die Erklärung für den sofortigen Abbruch.
+
+Warum bricht Java/Netty so früh ab?
+Während curl erst nach dem Empfang des Zertifikats "meckert", wirft Netty die Exception oft schon früher. Wenn dein Java-Code so konfiguriert ist, dass er den Handshake sofort abbricht, wenn die Zertifikatskette nicht validiert werden kann, sieht das in der Pipeline genau so aus, wie du es erlebst: Der Handler wird entfernt, weil die TLS-Engine den Fehler intern bereits beim ersten Validierungsversuch wirft.
+
+Die Lösungsschritte
+Du hast zwei Möglichkeiten, das Problem zu beheben:
+
+A. Das Zertifikat zum Truststore hinzufügen (Sicherer Weg)
+Da du die Seite self-signed.pythontest.net aufrufst, ist das Ziel ja gerade, mit einem unsicheren Zertifikat zu arbeiten. Du musst Java mitteilen, dass dieses Zertifikat okay ist.
+
+Lade das Zertifikat herunter.
+
+Importiere es in deinen Java Truststore:
+
+Bash
+keytool -import -alias pythontest -file server.crt -keystore $JAVA_HOME/lib/security/cacerts
+B. Den SslContext in Netty "unsicher" machen (Entwickler-Weg)
+Wenn du nur testen willst und die Sicherheit ignorieren kannst, kannst du den SslContext so konfigurieren, dass er alle Zertifikate akzeptiert. In Netty geht das mit dem InsecureTrustManagerFactory:
+
+Java
+SslContext sslCtx = SslContextBuilder.forClient()
+    .trustManager(InsecureTrustManagerFactory.INSTANCE)
+    .build();
+Zusammenfassung:
+
+Stelle sicher, dass dein Netty-Client Port 443 nutzt (nicht 8443).
+
+Nutze den InsecureTrustManagerFactory, um den Fehler mit dem selbstsignierten Zertifikat zu umgehen.
+
+Probiere den InsecureTrustManagerFactory mal aus – damit sollte der Handshake in deinem Log über das Seeding hinausgehen und die Verbindung stehen!
+
+Da ich kompletter Laie bin, habe ich oben eventuell den falschen Port angegeben.
+
+Hier ist noch der Versuch mit 443:
+
+
+
+openssl s_client -connect self-signed.pythontest.net:443 
+
+Connecting to 68.183.26.59
+
+CONNECTED(00000005)
+
+depth=0 C=XY, ST=Castle Anthrax, L=Argument Clinic, O=Python Software Foundation, CN=self-signed.pythontest.net
+
+verify error:num=18:self-signed certificate
+
+verify return:1
+
+depth=0 C=XY, ST=Castle Anthrax, L=Argument Clinic, O=Python Software Foundation, CN=self-signed.pythontest.net
+
+verify return:1
+
+---
+
+Certificate chain
+
+ 0 s:C=XY, ST=Castle Anthrax, L=Argument Clinic, O=Python Software Foundation, CN=self-signed.pythontest.net
+
+   i:C=XY, ST=Castle Anthrax, L=Argument Clinic, O=Python Software Foundation, CN=self-signed.pythontest.net
+
+   a:PKEY: rsaEncryption, 4096 (bit); sigalg: RSA-SHA256
+
+   v:NotBefore: May  8 01:02:43 2019 GMT; NotAfter: Jul 24 01:02:43 2027 GMT
+
+---
+
+Server certificate
+
+-----BEGIN CERTIFICATE-----
+
+MIIF9zCCA9+gAwIBAgIUH98b4Fw/DyugC9cV7VK7ZODzHsIwDQYJKoZIhvcNAQEL
+
+BQAwgYoxCzAJBgNVBAYTAlhZMRcwFQYDVQQIDA5DYXN0bGUgQW50aHJheDEYMBYG
+
+A1UEBwwPQXJndW1lbnQgQ2xpbmljMSMwIQYDVQQKDBpQeXRob24gU29mdHdhcmUg
+
+Rm91bmRhdGlvbjEjMCEGA1UEAwwac2VsZi1zaWduZWQucHl0aG9udGVzdC5uZXQw
+
+HhcNMTkwNTA4MDEwMjQzWhcNMjcwNzI0MDEwMjQzWjCBijELMAkGA1UEBhMCWFkx
+
+FzAVBgNVBAgMDkNhc3RsZSBBbnRocmF4MRgwFgYDVQQHDA9Bcmd1bWVudCBDbGlu
+
+aWMxIzAhBgNVBAoMGlB5dGhvbiBTb2Z0d2FyZSBGb3VuZGF0aW9uMSMwIQYDVQQD
+
+DBpzZWxmLXNpZ25lZC5weXRob250ZXN0Lm5ldDCCAiIwDQYJKoZIhvcNAQEBBQAD
+
+ggIPADCCAgoCggIBAMKdJlyCThkahwoBb7pl5q64Pe9Fn5jrIvzsveHTc97TpjV2
+
+RLfICnXKrltPk/ohkVl6K5SUZQZwMVzFubkyxE0nZPHYHlpiKWQxbsYVkYv01rix
+
+IFdLvaxxbGYke2jwQao31s4o61AdlsfK1SdpHQUynBBMssqI3SB4XPmcA7e+wEEx
+
+jxjVish4ixA1vuIZOx8yibu+CFCf/geEjoBMF3QPdzULzlrCSw8k/45iZCSoNbvK
+
+DoL4TVV07PHOxpheDh8ZQmepGvU6pVqhb9m4lgmV0OGWHgozd5Ur9CbTVDmxIEz3
+
+TSoRtNJK7qtyZdGNqwjksQxgZTjM/d/Lm/BJG99AiOmYOjsl9gbQMZgvQmMAtUsI
+
+aMJnQuZ6R+KEpW/TR5qSKLWZSG45z/op+tzI2m+cE6HwTRVAWbcuJxcAA55MZjqU
+
+OOOu3BBYMjS5nf2sQ9uoXsVBFH7i0mQqoW1SLzr9opI8KsWwFxQmO2vBxWYaN+lH
+
+OmwBZBwyODIsmI1YGXmTp09NxRYz3Qe5GCgFzYowpMrcxUC24iduIdMwwhRM7rKg
+
+7GtIWMSrFfuI1XCLRmSlhDbhNN6fVg2f8Bo9PdH9ihiIyxSrc+FOUasUYCCJvlSZ
+
+8hFUlLvcmrZlWuazohm0lsXuMK1JflmQr/DA/uXxP9xzFfRy+RU3jDyxJbRHAgMB
+
+AAGjUzBRMB0GA1UdDgQWBBSQJyxiPMRK01i+0BsV9zUwDiBaHzAfBgNVHSMEGDAW
+
+gBSQJyxiPMRK01i+0BsV9zUwDiBaHzAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3
+
+DQEBCwUAA4ICAQCR+7a7N/m+WLkxPPIA/CB4MOr2Uf8ixTv435Nyv6rXOun0+lTP
+
+ExSZ0uYQ+L0WylItI3cQHULldDueD+s8TGzxf5woaLKf6tqyr0NYhKs+UeNEzDnN
+
+9PHQIhX0SZw3XyXGUgPNBfRCg2ZDdtMMdOU4XlQN/IN/9hbYTrueyY7eXq9hmtI9
+
+1srftAMqr9SR1JP7aHI6DVgrEsZVMTDnfT8WmLSGLlY1HmGfdEn1Ip5sbo9uSkiH
+
+AEPgPfjYIvR5LqTOMn4KsrlZyBbFIDh9Sl99M1kZzgH6zUGVLCDg1y6Cms69fx/e
+
+W1HoIeVkY4b4TY7Bk7JsqyNhIuqu7ARaxkdaZWhYaA2YyknwANdFfNpfH+elCLIk
+
+BUt5S3f4i7DaUePTvKukCZiCq4Oyln7RcOn5If73wCeLB/ZM9Ei1HforyLWP1CN8
+
+XLfpHaoeoPSWIveI0XHUl65LsPN2UbMbul/F23hwl+h8+BLmyAS680Yhn4zEN6Ku
+
+B7Po90HoFa1Du3bmx4jsN73UkT/dwMTi6K072FbipnC1904oGlWmLwvAHvrtxxmL
+
+Pl3pvEaZIu8wa/PNF6Y7J7VIewikIJq6Ta6FrWeFfzMWOj2qA1ZZi6fUaDSNYvuV
+
+J5quYKCc/O+I/yDDf8wyBbZ/gvUXzUHTMYGG+bFrn1p7XDbYYeEJ6R/xEg==
+
+-----END CERTIFICATE-----
+
+subject=C=XY, ST=Castle Anthrax, L=Argument Clinic, O=Python Software Foundation, CN=self-signed.pythontest.net
+
+issuer=C=XY, ST=Castle Anthrax, L=Argument Clinic, O=Python Software Foundation, CN=self-signed.pythontest.net
+
+---
+
+No client certificate CA names sent
+
+Peer signing digest: SHA256
+
+Peer signature type: RSA-PSS
+
+Server Temp Key: X25519, 253 bits
+
+---
+
+SSL handshake has read 2347 bytes and written 417 bytes
+
+Verification error: self-signed certificate
+
+---
+
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+
+Protocol: TLSv1.3
+
+Server public key is 4096 bit
+
+This TLS version forbids renegotiation.
+
+Compression: NONE
+
+Expansion: NONE
+
+No ALPN negotiated
+
+Early data was not sent
+
+Verify return code: 18 (self-signed certificate)
+
+---
+
+---
+
+Post-Handshake New Session Ticket arrived:
+
+SSL-Session:
+
+    Protocol  : TLSv1.3
+
+    Cipher    : TLS_AES_256_GCM_SHA384
+
+    Session-ID: C2341E1F1D5148BEC030B6140FD136636FFE82A50FDC1AC83FA2A51ADF1B5448
+
+    Session-ID-ctx: 
+
+    Resumption PSK: AD8B0A2B8111369E671EB8EF10ED7EABBF82C3ABD45247EA1A93A82DA9E8BF8422CC4ACE68EA19D91943B1E9D8CFEFD8
+
+    PSK identity: None
+
+    PSK identity hint: None
+
+    SRP username: None
+
+    TLS session ticket lifetime hint: 300 (seconds)
+
+    TLS session ticket:
+
+    0000 - 36 a9 2f d4 07 e5 77 c3-92 6f 7f 3f 69 d3 d4 e5   6./...w..o.?i...
+
+    0010 - 21 78 eb 1c 40 5b d8 a8-a5 26 88 ea d5 a6 4e 82   !x..@[...&....N.
+
+    0020 - 9e a1 48 1c cc 49 19 d3-6e b1 59 55 23 3e 9f 86   ..H..I..n.YU#>..
+
+    0030 - ff ce 25 3b bf 8e 26 58-55 2b cf 30 27 d5 8c 6f   ..%;..&XU+.0'..o
+
+    0040 - 23 c3 6b e6 c5 87 33 91-d9 86 64 28 f2 fc 6d 34   #.k...3...d(..m4
+
+    0050 - 2a e9 92 10 cc 7f 39 a9-b4 7e 0f d0 bd 0a 92 3c   *.....9..~.....<
+
+    0060 - 6a 62 d1 b1 71 cc e0 52-76 6c d7 fe bd fd 5b 65   jb..q..Rvl....[e
+
+    0070 - 2b 23 6c 86 1d ca 8c ba-dd 8e cd 28 a8 d9 e5 ca   +#l........(....
+
+    0080 - 43 97 9a 37 6d 70 86 a9-4d 9c af b3 1d 00 cf c0   C..7mp..M.......
+
+    0090 - 6c 16 04 be 51 2b 6d 1a-71 dd 39 0f d3 38 97 fe   l...Q+m.q.9..8..
+
+    00a0 - dc 4f da bf 7f 35 99 9d-07 3e 94 e5 8e ac 18 14   .O...5...>......
+
+    00b0 - 1c 95 96 73 ac fb ac 47-0c e7 fb ad 02 6c 1c 07   ...s...G.....l..
+
+    00c0 - 9e ae e6 32 f9 4a 2c 21-94 54 98 b4 62 a1 a9 d7   ...2.J,!.T..b...
+
+    00d0 - 95 a3 09 0d b2 bd 28 c3-de 53 e7 82 b1 87 81 cc   ......(..S......
+
+    00e0 - af 73 89 94 8a c3 c5 32-f2 16 75 df ac 9e fe e8   .s.....2..u.....
+
+    00f0 - b1 f5 27 74 e4 fb 56 a9-e9 82 8c 1f 0a 2f 3b d9   ..'t..V....../;.
+
+
+
+    Start Time: 1777906219
+
+    Timeout   : 7200 (sec)
+
+    Verify return code: 18 (self-signed certificate)
+
+    Extended master secret: no
+
+    Max Early Data: 0
+
+---
+
+read R BLOCK
+
+---
+
+Post-Handshake New Session Ticket arrived:
+
+SSL-Session:
+
+    Protocol  : TLSv1.3
+
+    Cipher    : TLS_AES_256_GCM_SHA384
+
+    Session-ID: 50D4DEB5FA89BD5E660E22A50BEFB88484CF57169B41F28985CF8C85E6C2F42A
+
+    Session-ID-ctx: 
+
+    Resumption PSK: A05DCDC048161D1C409BDF8AD3F2C1EADD05595D7E0203132EE12385EF9BCEDBE45015D35B9C2E2CEEDE58FEC6424B2F
+
+    PSK identity: None
+
+    PSK identity hint: None
+
+    SRP username: None
+
+    TLS session ticket lifetime hint: 300 (seconds)
+
+    TLS session ticket:
+
+    0000 - 36 a9 2f d4 07 e5 77 c3-92 6f 7f 3f 69 d3 d4 e5   6./...w..o.?i...
+
+    0010 - 49 7e b0 8a 53 b0 f3 f6-af e7 bf f9 79 26 5e fd   I~..S.......y&^.
+
+    0020 - de 84 88 98 26 c6 bd 43-e8 54 d8 cf 65 3d 1f 93   ....&..C.T..e=..
+
+    0030 - 7c aa 31 c8 e2 ab d5 5c-03 ba b4 a5 c7 6c 08 6a   |.1....\.....l.j
+
+    0040 - a2 41 11 d9 31 97 48 2d-ac 0a c0 46 ad b5 ed cd   .A..1.H-...F....
+
+    0050 - 57 22 30 d9 8b 22 a2 d9-ac ff d2 4d 4c 60 e0 e3   W"0..".....ML`..
+
+    0060 - 06 c3 2e 07 7f e5 a7 39-74 3a b5 29 63 c8 c4 31   .......9t:.)c..1
+
+    0070 - 96 f5 61 ce 31 5e f8 15-68 d5 27 25 d7 c1 a2 c1   ..a.1^..h.'%....
+
+    0080 - de de 2c 97 bf 2e 02 d9-c8 26 7a 43 4c 17 b8 93   ..,......&zCL...
+
+    0090 - 2c dd c4 62 ba 9e 52 d8-a6 b5 80 04 62 e2 8f 6a   ,..b..R.....b..j
+
+    00a0 - a3 5e 67 85 b8 b0 78 6c-64 d1 c0 14 ea 86 3f 45   .^g...xld.....?E
+
+    00b0 - 55 87 50 38 df a9 33 bb-0c b4 78 76 59 43 75 4d   U.P8..3...xvYCuM
+
+    00c0 - b0 a9 39 41 45 c9 4a 8a-0e 92 83 c8 11 00 6a 34   ..9AE.J.......j4
+
+    00d0 - bf e6 b6 a5 fe cc 80 30-28 ac 93 e6 a2 89 fd 4c   .......0(......L
+
+    00e0 - b4 be f5 80 52 c2 dd a0-49 4c 22 50 24 20 af 85   ....R...IL"P$ ..
+
+    00f0 - fe ec 4a ed 16 a5 76 87-0d 87 54 ab 8a 50 0d 27   ..J...v...T..P.'
+
+
+
+    Start Time: 1777906219
+
+    Timeout   : 7200 (sec)
+
+    Verify return code: 18 (self-signed certificate)
+
+    Extended master secret: no
+
+    Max Early Data: 0
+
+---
+
+read R BLOCK
+
+
+
+^C
+
+Das openssl-Log ist die "Smoking Gun" – also der eindeutige Beweis. Es bestätigt schwarz auf weiß, was passiert:
+
+Verbindung steht: Auf Port 443 meldet openssl sofort CONNECTED. Der Server ist also da und erreichbar.
+
+Zertifikats-Fehler: OpenSSL meldet Verification error: self-signed certificate und Verify return code: 18.
+
+TLS-Handshake klappt trotzdem (technisch): Da OpenSSL ein Diagnose-Tool ist, bricht es nicht sofort ab, sondern zeigt dir die Details an (RSA 4096 Bit, TLS v1.3).
+
+Was bedeutet das für dein Netty-Problem?
+In deinem Java-Programm ist der SslHandler strenger eingestellt als das openssl-Kommandozeilentool. Sobald der Server sein Zertifikat schickt, prüft die Java-Laufzeitumgebung dieses gegen den lokalen Truststore (cacerts). Da es selbstsigniert ist, sagt Java: "Halt! Diesem Server vertraue ich nicht."
+
+Netty reagiert darauf, indem es die Verbindung sofort kappt. Da dies mitten im Prozess geschieht, wird der SslHandler entfernt, bevor er "Erfolg" melden konnte – und das löst die eingangs erwähnte SSLHandshakeException aus.
+
+So löst du es in deinem Code
+Da du auf eine Test-Domain (pythontest.net) zugreifst, die explizit für Versuche mit selbstsignierten Zertifikaten gedacht ist, musst du Netty anweisen, die Validierung zu ignorieren.
+
+Hier ist das Code-Snippet, mit dem du deinen SslContext für den Client erstellen solltest:
+
+Java
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+
+// ...
+
+// Erstellt einen Kontext, der JEDEM Zertifikat vertraut (nur für Tests!)
+SslContext sslCtx = SslContextBuilder.forClient()
+    .trustManager(InsecureTrustManagerFactory.INSTANCE)
+    .build();
+
+// Diesen Kontext nutzt du dann in deiner Pipeline:
+pipeline.addLast(sslCtx.newHandler(channel.alloc(), "self-signed.pythontest.net", 443));
+Zusammenfassung der Diagnose
+Netzwerk: Okay (Port 443 ist offen).
+
+Protokoll: Okay (Server spricht TLS 1.3).
+
+Fehler: Java blockiert die Verbindung, weil es das Zertifikat nicht kennt.
+
+Lösung: Nutze den InsecureTrustManagerFactory oder importiere das Zertifikat in deinen Keystore.
+
+Wenn du den InsecureTrustManagerFactory eingebaut hast, sollte dein Java-Log nicht mehr beim Seeding abbrechen, sondern die Datenübertragung starten.
+
+Hast du Kontrolle über den Java-Quellcode, um diese Änderung am SslContext vorzunehmen?
+
+Nicht direkt Java Code, sondern ein paar Jython Module. Die `InsecureTrustManagerFactory` wird dort verwendet, aber ich glaube nur TLS 1.2.
+
+Ich glaube ich muss dies in einen pur Java Test übersetzten, um durchzublicken.
+
+Das ist eine hervorragende Idee. Ein purer Java-Test eliminiert die "Magie" von Jython und zeigt dir sofort, ob das Problem an der TLS-Version, der Handhabung der Factory oder der Pipeline-Reihenfolge liegt.
+
+Dass du vermutest, es würde nur TLS 1.2 unterstützt, ist ein wichtiger Hinweis. Seit Java 11 (und du nutzt laut Log Java 21) ist TLS 1.3 der Standard. Wenn dein Jython-Modul oder der Server hart auf eine alte Version fixiert ist, kann es zu "Version Mismatch"-Fehlern kommen.
+
+Warum TLS 1.3 anders ist
+In TLS 1.3 ist der Handshake viel aggressiver optimiert. Während bei TLS 1.2 noch viele Informationen im Klartext flossen (was beim Debuggen half), verschlüsselt TLS 1.3 fast alles sofort nach dem ClientHello.
+
+Minimaler Java-Test (Netty Client)
+Hier ist ein kompakter Entwurf für deinen Test. Wenn dieser funktioniert, wissen wir, dass dein lokales JDK und das Netzwerk bereit sind:
+
+Java
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+
+public class NettySslTest {
+    public static void main(String[] args) throws Exception {
+        String host = "self-signed.pythontest.net";
+        int port = 443;
+
+        // 1. SslContext erstellen (erlaubt TLS 1.2 und 1.3)
+        final SslContext sslCtx = SslContextBuilder.forClient()
+                .trustManager(InsecureTrustManagerFactory.INSTANCE)
+                .build();
+
+        EventLoopGroup group = new NioEventLoopGroup();
+        try {
+            Bootstrap b = new Bootstrap();
+            b.group(group)
+             .channel(NioSocketChannel.class)
+             .handler(new ChannelInitializer<SocketChannel>() {
+                 @Override
+                 public void initChannel(SocketChannel ch) {
+                     ChannelPipeline p = ch.pipeline();
+                     // SslHandler muss ZUERST kommen
+                     p.addLast(sslCtx.newHandler(ch.alloc(), host, port));
+                     p.addLast(new SimpleChannelInboundHandler<Object>() {
+                         @Override
+                         public void channelActive(ChannelHandlerContext ctx) {
+                             System.out.println("TCP Verbindung steht. Handshake läuft...");
+                         }
+                         @Override
+                         protected void channelRead0(ChannelHandlerContext ctx, Object msg) {
+                             System.out.println("Daten empfangen!");
+                         }
+                         @Override
+                         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+                             cause.printStackTrace();
+                             ctx.close();
+                         }
+                     });
+                 }
+             });
+
+            System.out.println("Verbinde mit " + host + "...");
+            b.connect(host, port).sync().channel().closeFuture().sync();
+        } finally {
+            group.shutdownGracefully();
+        }
+    }
+}
+Worauf du beim Vergleich mit Jython achten solltest:
+Reihenfolge der Handler: In Jython/Netty Pipelines schleicht sich oft ein Fehler ein, bei dem der SslHandler nicht an die erste Stelle gesetzt wird.
+
+SslContext vs. SSLEngine: Manche älteren Skripte nutzen direkt die SSLEngine des JDKs statt des Netty-Wrappers. Der Netty-Wrapper (SslContextBuilder) ist deutlich robuster gegen moderne TLS-Eigenheiten.
+
+Protokoll-Einschränkung: Wenn du in Java siehst, dass es klappt, schau im Jython-Code nach .protocols("TLSv1.2"). Falls das dort steht, lösche es testweise, um TLS 1.3 zu erlauben.
+
+Sobald du diesen Java-Test ausführst, achte auf die erste Zeile des Logs. Wenn dort wieder SslHandler removed steht, liegt es an einer lokalen Sicherheitssoftware (Virenscanner/Firewall), die den Java-Prozess blockiert. Wenn es klappt, liegt der Fehler in der Jython-Logik.
+
+Soll ich dir zeigen, wie du den SslContext im Code explizit auf TLS 1.2 zwingst, falls du das für die Kompatibilität mit dem Jython-Modul brauchst?
+
+Habe ich eventuell ein Klassenpfad-Problem? Die folgende Klasse wird nicht gefunden:
+
+
+
+Caused by: java.lang.NoClassDefFoundError: io/netty/channel/unix/UnixChannel
+
+at io.netty.handler.ssl.SslHandler.setOpensslEngineSocketFd(SslHandler.java:2278)
+
+at io.netty.handler.ssl.SslHandler.handlerAdded(SslHandler.java:2130)
+
+at io.netty.channel.AbstractChannelHandlerContext.callHandlerAdded(AbstractChannelHandlerContext.java:989)
+
+at io.netty.channel.DefaultChannelPipeline.callHandlerAdded0(DefaultChannelPipeline.java:558)
+
+... 41 more
+
+Caused by: java.lang.ClassNotFoundException: io.netty.channel.unix.UnixChannel
+
+at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641)
+
+at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188)
+
+at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526)
+
+... 45 more
+
+
+
+In welchem netty Artefakt befindet sie sich (ich verwende netty 4.2.12.Final)?
+
+Bingo! Das ist das "Missing Link". Du hast definitiv ein Abhängigkeitsproblem.
+
+Die Klasse io.netty.channel.unix.UnixChannel befindet sich im Artefakt netty-transport-native-unix-common.
+
+Warum passiert das ausgerechnet beim SSL-Handshake?
+Netty versucht heutzutage sehr intelligent zu sein: Wenn es auf einem Linux- oder macOS-System läuft, prüft es, ob es native Bibliotheken (wie OpenSSL über JNI) nutzen kann, statt der oft langsameren Standard-Java-SSL-Implementierung.
+
+Sobald der SslHandler hinzugefügt wird, prüft er, ob er optimierte native Funktionen für "Unix-Sockets" nutzen kann. Dabei greift er auf die Klasse UnixChannel zu. Wenn diese im Klassenpfad fehlt, knallt es mit der NoClassDefFoundError.
+
+Die Lösung: Benötigte Artefakte
+Wenn du Netty manuell zusammenstellst (was bei Jython-Projekten oft der Fall ist), fehlen dir wahrscheinlich die "native" Brücken. Du solltest sicherstellen, dass folgende Artefakte im Klassenpfad liegen:
+
+netty-transport-native-unix-common-4.1.112.Final.jar (Hinweis unten zur Version)
+
+netty-common-4.1.112.Final.jar (Basis)
+
+Wichtiger Hinweis zur Version: Du hast oben geschrieben, dass du 4.2.12.Final verwendest. Netty 4.2 ist zum jetzigen Zeitpunkt (2026) zwar im Umlauf, aber sehr viele Projekte nutzen noch die extrem stabile 4.1.x-Serie. Stelle unbedingt sicher, dass alle Netty-JARs die exakt gleiche Version haben. Ein Mix aus 4.1 und 4.2 führt fast immer zu solchen Fehlern.
+
+Wie du es fixst (Maven/Gradle)
+Falls du ein Build-Tool nutzt, füge das entsprechende native Paket hinzu. Für macOS/Linux ist das oft:
+
+Maven:
+
+XML
+<dependency>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-transport-native-unix-common</artifactId>
+    <version>4.2.12.Final</version>
+</dependency>
+Für Jython/Manuell:
+Lade dir die netty-transport-native-unix-common-4.2.12.Final.jar herunter (z.B. von Maven Central) und füge sie deinem Klassenpfad hinzu.
+
+"Der schnelle Hack" (Falls du keine JARs hinzufügen kannst)
+Falls du die Umgebung nicht ändern kannst, kannst du versuchen, Netty zu zwingen, die nativen Features zu ignorieren und nur den Standard-Java-SSL-Weg zu gehen. Setze dazu dieses System-Property beim Start von Java:
+
+-Dio.netty.noNative=true
+
+Das verhindert, dass Netty überhaupt versucht, nach den unix-Klassen zu suchen.
+
+Fazit: Sobald die UnixChannel-Klasse verfügbar ist (oder der native Support abgeschaltet wurde), wird dein SslHandler auch nicht mehr "removed", bevor er fertig ist, weil er dann nicht mehr über diesen Class-Loading-Fehler stolpert!
+
+Ich kann durchaus .jar Dateien hinzufügen - wie du sagst bei Jython ist es ziemlich handgestrickt.
+
+Würde das unix-common auch auf Ubuntu funktionieren (ich bin auf einem Intel Mac).
+
+Und brauche ich für Windows auch eine Brücke?
+
+Ja, das ist das Problem bei handgestrickten Setups: Netty ist sehr modular aufgebaut, was effizient ist, aber die Verwaltung der Abhängigkeiten erschwert.
+
+Hier ist die Aufschlüsselung für deine Plattform-Fragen:
+
+1. Brauchst du unix-common für Ubuntu?
+Ja, absolut.
+Das Artefakt netty-transport-native-unix-common enthält, wie der Name sagt, den gemeinsamen Code für alle Unix-basierten Systeme. Da Linux (Ubuntu) und macOS (Darwin) beide zur Unix-Familie gehören, ist diese JAR die absolute Grundvoraussetzung für beide Systeme, wenn Netty native Optimierungen nutzen will.
+
+2. Brauchst du für Windows eine Brücke?
+Nein.
+Windows nutzt eine völlig andere Architektur (I/O Completion Ports statt Epoll/KQueue). Netty sucht auf Windows gar nicht erst nach io.netty.channel.unix.*. Dort wird standardmäßig die Java-NIO-Implementierung verwendet, es sei denn, du fügst explizit das (selten genutzte) netty-transport-native-iocp hinzu. Dein aktueller Fehler würde auf Windows also vermutlich gar nicht erst auftreten.
+
+3. Was du für Ubuntu und Mac wirklich brauchst (Die Checkliste)
+Damit Netty auf Intel Mac und Ubuntu stabil läuft (und nicht über fehlende Klassen stolpert), solltest du folgende JARs im Klassenpfad haben:
+
+netty-common: Die Basis.
+
+netty-transport-native-unix-common: Die Brücke, die dir gerade fehlt.
+
+netty-handler: Enthält den SslHandler.
+
+netty-buffer, netty-transport, netty-codec: Die Kern-Komponenten.
+
+Pro-Tipp für native Performance:
+Wenn du willst, dass es auf Ubuntu richtig schnell läuft, könntest du noch netty-transport-native-epoll (mit dem Classifier linux-x86_64) hinzufügen. Aber für den Anfang reicht es völlig, die unix-common JAR hinzuzufügen, damit der ClassNotFound-Fehler verschwindet.
+
+Zusammenfassung für dein Jython-Setup:
+Füge einfach die netty-transport-native-unix-common-4.2.12.Final.jar zu deinem Lib-Ordner hinzu.
+
+Ein wichtiger technischer Hinweis:
+Wenn du die JAR hinzugefügt hast und der Fehler NoClassDefFound verschwindet, aber der SSL-Handshake immer noch hakt, könnte Netty versuchen, die native OpenSSL-Bibliothek zu laden (via netty-tcnative). Wenn das auch fehlt, fällt Netty automatisch auf das Java-eigene TLS zurück. Da du aber oben im Log SSLContextImpl.java (das ist Standard-Java) gesehen hast, wird das Hinzufügen der unix-common JAR den "Absturz" des Handlers verhindern, und Netty wird brav das Standard-Java-SSL nutzen.
+
+Probier es aus – danach sollte der SslHandler stabil in der Pipeline bleiben!
+
+Leider muss ich berichten dass meine GitHub Pipeline auch mit `windows-latest` und java temurin 21 mit genau demselben Fehler abbricht.
+
+Das ist eine wirklich wertvolle Information! Wenn derselbe NoClassDefFoundError: UnixChannel auch auf Windows auftritt, haben wir es mit einem sehr spezifischen Verhalten von Netty 4.2 zu tun.
+
+Warum passiert das auf Windows?
+Normalerweise ist UnixChannel, wie besprochen, ein Unix-Konzept. In der Netty-Version 4.2.x wurde jedoch intern umstrukturiert. Der SslHandler in dieser Version hat eine engere Kopplung an bestimmte Hilfsklassen. Wenn der SslHandler initialisiert wird, scannt er (über Reflection oder direkte Zugriffe) nach verfügbaren Optimierungen.
+
+In deinem Fall scheint das "handgestrickte" Setup dazu zu führen, dass die JVM versucht, die Klasse SslHandler vollständig zu verifizieren, dabei über die Referenz auf UnixChannel stolpert und – da die JAR fehlt – die gesamte Initialisierung des Handlers abbricht.
+
+Die endgültige Lösung für den Klassenpfad
+In Netty 4.x (besonders 4.2) gibt es eine "Fat-Jar"-Option, die genau für solche Fälle (Jython, manuelle Setups) gedacht ist, damit man nicht 20 Einzel-Dateien jonglieren muss.
+
+Statt vieler kleiner JARs empfehle ich dir dringend, die netty-all-4.2.12.Final.jar zu verwenden.
+
+Warum? Diese JAR enthält alle Plattform-Brücken (Unix, MacOS, Windows-Spezialitäten) und alle Codecs (HTTP, SSL, etc.) in einer einzigen Datei.
+
+Der Vorteil: Es spielt keine Rolle mehr, ob du auf einem Intel Mac, Ubuntu oder windows-latest bist – alle Klassen, die Netty jemals "quer-referenzieren" könnte, sind vorhanden.
+
+Falls du bei Einzel-JARs bleiben musst:
+Wenn netty-all zu groß ist, benötigst du für Netty 4.2 zwingend diese Kombination im Klassenpfad, damit der SslHandler auf allen OS-Plattformen überlebt:
+
+netty-handler-4.2.12.Final.jar
+
+netty-buffer-4.2.12.Final.jar
+
+netty-common-4.2.12.Final.jar
+
+netty-transport-4.2.12.Final.jar
+
+netty-codec-4.2.12.Final.jar
+
+netty-transport-native-unix-common-4.2.12.Final.jar (Ja, auch für Windows, da die Klasse dort referenziert wird!)
+
+Warum hat sich das Verhalten geändert?
+Früher (Netty < 4.1.x) waren diese Abhängigkeiten oft optional ("optional dependencies"). In neueren Versionen und unter Java 21 ist die Klassen-Verifizierung strenger geworden. Wenn der SslHandler geladen wird und eine Methode besitzt, die UnixChannel im Argument hat, will Java wissen, was das für eine Klasse ist – auch wenn die Methode auf Windows nie aufgerufen wird. Fehlt die JAR, knallt es sofort.
+
+Nächster Schritt:
+Tausche deine Netty-Einzel-JARs gegen die eine netty-all-4.2.12.Final.jar aus. Das wird diesen "Klassensuchlauf-Fehler" auf allen Betriebssystemen in deiner GitHub Action ein für alle Mal beenden. Danach wird vermutlich nur noch der "Self-Signed"-Fehler von vorhin übrig bleiben, den du mit der InsecureTrustManagerFactory lösen kannst.
+
+Nein ich meinte mit der ursprünglich gemeldete `SslHandler removed before handshake completed`
+
+Ah, verstehe! Wir sind durch den NoClassDefFoundError ein wenig vom Weg abgekommen. Lass uns zurück zum Kern kommen: Warum bricht der Handshake mit der Meldung SslHandler removed before handshake completed ab, selbst auf Windows, wo die Klassenpfad-Problematik vielleicht gar nicht die Hauptursache war?
+
+Dass dieser Fehler auch auf windows-latest in der GitHub Pipeline auftritt, ist ein starkes Indiz dafür, dass es kein lokales Mac-Problem ist, sondern ein strukturelles Problem in der Pipeline-Initialisierung oder der Zertifikats-Validierung.
+
+Hier ist die logische Kette, was in deiner GitHub Pipeline passiert:
+
+1. Das "Silent Failure" Muster
+In Netty 4.2 führt ein interner Fehler (wie eine fehlende Klasse oder eine Exception bei der Zertifikatsprüfung) dazu, dass der SslHandler sich selbst aus der Pipeline entfernt, um den Channel nicht zu blockieren.
+
+Der Effekt: Netty wirft die SSLHandshakeException, weil der Handler "weg" ist, bevor er success melden konnte.
+
+Die Ursache: Meistens liegt ein Fehler in der initChannel-Methode vor, oder die SSLEngine bricht wegen der InsecureTrustManagerFactory Konfiguration ab.
+
+2. TLS 1.3 und GitHub Actions (Temurin 21)
+Da du Java 21 nutzt, erzwingt Netty standardmäßig modernste Sicherheitsfeatures. GitHub Pipelines sind oft sehr restriktiv.
+
+Mögliches Problem: Wenn deine Jython-Module die InsecureTrustManagerFactory nutzen, aber gleichzeitig versuchen, Parameter zu setzen, die nur für TLS 1.2 gültig sind (z.B. bestimmte Cipher Suites), kollidiert das mit dem TLS 1.3 Standard von Java 21.
+
+3. Diagnose-Checkliste für die Pipeline
+Da du sagst, es ist "handgestricktes" Jython, prüfe folgende drei Punkte:
+
+Punkt	Prüfung	Warum wichtig?
+Pipeline Order	Ist der SslHandler wirklich der erste?	Wenn ein anderer Handler (z.B. ein Logger) vorher die Bytes "frisst", kann der SslHandler den Handshake nicht starten.
+Zertifikats-Typ	Ist self-signed.pythontest.net die Ziel-URL?	Wie wir bei curl sahen, ist das Zertifikat dort "self-signed". Ohne funktionierenden TrustManager bricht Java 21 den Handshake sofort ab.
+SniHelper	Nutzt du SNI?	Java 21 ist bei SNI (Server Name Indication) strenger. Wenn der Hostname im SslHandler nicht exakt mit der URL übereinstimmt, wird die Verbindung oft sofort getrennt.
+Was du jetzt tun kannst (ohne Code-Änderung)
+Um zu sehen, ob es an den "Handgestrickten" JARs liegt, füge deiner GitHub Pipeline einen Schritt hinzu, der die JARs explizit auflistet, bevor der Test läuft:
+ls -R lib/ (oder wo auch immer deine Netty-JARs liegen).
+
+Meine Vermutung für die Pipeline:
+In der GitHub-Umgebung schlägt die Zertifikatsprüfung der InsecureTrustManagerFactory fehl, weil vielleicht eine Abhängigkeit zur Validierung (wie netty-codec-http oder ähnliches) fehlt, die Netty intern für manche Prüfungen heranzieht.
+
+Ein Versuch zur Heilung:
+Versuche in deinem Jython-Skript, wo der SslContext erstellt wird, die Protokolle explizit auf TLS 1.2 zu begrenzen, um zu sehen, ob der Fehler bestehen bleibt:
+
+Python
+# Pseudo-Jython
+sslCtxBuilder.protocols("TLSv1.2")
+Wenn das Problem dann verschwindet, liegt es an der Inkompatibilität zwischen deinem Jython-Modul und dem neuen TLS 1.3 Handling von Java 21.
+
+Soll ich dir helfen, ein minimales Jython-Skript aufzusetzen, um genau diesen Punkt in der GitHub Pipeline zu isolieren?
+
+Ich habe jetzt viel gelernt - Danke!
+
+Das gibt mit einiges zum Ausprobieren, zuerst lokal und dann auf Github.
+
+Letzte Frage für heute: kann ich unser Transskript lokal speichern, damit ich auch in einer Woche noch darauf zugreifen kann?
+
+Das freut mich sehr! Wir haben uns ja einmal quer durch den "Netzwerk-Dschungel" von TLS, Klassenpfaden und Netty-Internals gekämpft.
+
+Um unser Gespräch für später zu sichern, gibt es leider (noch) keinen direkten "Download"-Button in der Gemini-Oberfläche, aber du hast drei einfache Möglichkeiten:
+
+1. Die klassische Methode: Copy & Paste
+Markiere einfach den Text mit der Maus (oder Cmd+A / Strg+A) und kopiere ihn in ein Dokument (z.B. Markdown, Word oder ein einfaches Text-File). Da ich viel Markdown-Formatierung nutze, sieht es in Editoren wie VS Code, Obsidian oder Typora besonders gut aus.
+
+2. Als PDF drucken
+Das ist oft die schnellste Lösung für das Archiv:
+
+Drücke Cmd + P (Mac) oder Strg + P (Windows).
+
+Wähle als Drucker "Als PDF speichern".
+
+So bleiben alle Formatierungen, Code-Blöcke und Tabellen exakt so erhalten, wie du sie hier siehst.
+
+3. Link teilen (falls verfügbar)
+In vielen Versionen des Gemini-Interface gibt es oben oder unten ein "Teilen"-Icon (ein kleiner Pfeil, der aus einem Quadrat nach oben zeigt).
+
+Du kannst dort einen permanenten Link zu diesem Chat erstellen.
+
+Wichtig: Wenn du den Link in einer Woche öffnest, kannst du das Gespräch dort weiterführen, wo wir aufgehört haben.
+
+Kleiner Spickzettel für nächste Woche
+Falls du das hier in ein paar Tagen öffnest, sind das deine drei "Hauptverdächtigen":
+
+JAR-Check: Ist netty-transport-native-unix-common dabei? (Wichtig für die Klassen-Validierung in Java 21).
+
+Zertifikats-Check: Greift die InsecureTrustManagerFactory wirklich, oder grätscht die Java-Default-Sicherheit dazwischen?
+
+Port-Check: Immer die 443 statt der 8443 für pythontest.net.
+
+Viel Erfolg beim Ausprobieren! Wenn du in ein paar Tagen hängen bleibst, kopier einfach den neuen Stacktrace hier rein. Ich bin gespannt, ob der Wechsel auf die netty-all JAR oder der InsecureTrustManager den Durchbruch bringt!
+
+
+
+Unterhaltung wieder aufnehmen: https://gemini.google.com/share/d9a6edbee7c4

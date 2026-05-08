@@ -1,0 +1,42 @@
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:36.946 CEST|SSLContextImpl.java:414|System property jdk.tls.client.cipherSuites is set to 'null'
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:36.952 CEST|SSLContextImpl.java:414|System property jdk.tls.server.cipherSuites is set to 'null'
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:36.967 CEST|SSLCipher.java:432|jdk.tls.keyLimits:  entry = AES/GCM/NoPadding KeyUpdate 2^37. AES/GCM/NOPADDING:KEYUPDATE = 137438953472
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:36.968 CEST|SSLCipher.java:432|jdk.tls.keyLimits:  entry =  ChaCha20-Poly1305 KeyUpdate 2^37. CHACHA20-POLY1305:KEYUPDATE = 137438953472
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:36.975 CEST|SSLContextImpl.java:388|Ignore disabled cipher suite: TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:36.975 CEST|SSLContextImpl.java:397|Ignore unsupported cipher suite: TLS_ECDH_ECDSA_WITH_AES_256_GCM_SHA384
+/Users/oti/.sdkman/candidates/java/21.0.10-tem/lib/security/jssecacerts
+  <viele nicht unterstützte cipher Suiten>
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.004 CEST|TrustStoreManager.java:113|trustStore is: /Users/oti/.sdkman/candidates/java/21.0.10-tem/lib/security/cacerts
+trustStore type is: pkcs12
+trustStore provider is: 
+the last modified time is: Wed Jan 21 03:35:02 CET 2026
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.004 CEST|TrustStoreManager.java:333|Reload the trust store
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.034 CEST|TrustStoreManager.java:341|Reload trust certs
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.035 CEST|TrustStoreManager.java:346|Reloaded 144 trust certs
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.096 CEST|X509TrustManagerImpl.java:82|adding as trusted certificates (
+  <viele Zertifikate>
+)
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.122 CEST|SSLContextImpl.java:108|trigger seeding of SecureRandom
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.122 CEST|SSLContextImpl.java:112|done seeding of SecureRandom
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.131 CEST|SSLConfiguration.java:486|System property jdk.tls.server.SignatureSchemes is set to 'null'
+javax.net.ssl|DEBUG|10|MainThread|2026-05-04 16:30:37.142 CEST|SSLConfiguration.java:486|System property jdk.tls.client.SignatureSchemes is set to 'null'
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.143 CEST|SSLContextImpl.java:108|trigger seeding of SecureRandom
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.143 CEST|SSLContextImpl.java:112|done seeding of SecureRandom
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.143 CEST|SSLContextImpl.java:108|trigger seeding of SecureRandom
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.143 CEST|SSLContextImpl.java:112|done seeding of SecureRandom
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.144 CEST|SSLContextImpl.java:108|trigger seeding of SecureRandom
+javax.net.ssl|ALL|10|MainThread|2026-05-04 16:30:37.144 CEST|SSLContextImpl.java:112|done seeding of SecureRandom
+javax.net.ssl.SSLHandshakeException: SslHandler removed before handshake completed
+	at io.netty.handler.ssl.SslHandler.handlerRemoved0(SslHandler.java:729)
+	at io.netty.handler.codec.ByteToMessageDecoder.handlerRemoved(ByteToMessageDecoder.java:276)
+	at io.netty.channel.AbstractChannelHandlerContext.callHandlerRemoved(AbstractChannelHandlerContext.java:997)
+	at io.netty.channel.DefaultChannelPipeline.callHandlerAdded0(DefaultChannelPipeline.java:563)
+	at io.netty.channel.DefaultChannelPipeline.access$100(DefaultChannelPipeline.java:45)
+	at io.netty.channel.DefaultChannelPipeline$6.run(DefaultChannelPipeline.java:1162)
+	at io.netty.util.concurrent.AbstractEventExecutor.runTask(AbstractEventExecutor.java:148)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:141)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:535)
+	at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:201)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1195)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
