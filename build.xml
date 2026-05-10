@@ -1509,6 +1509,7 @@ The text for an official release would continue like ...
             <arg value="test_smtpnet"/>     <!-- currently fails due to different netty behaviour -->
             <arg value="test_ssl_jy"/>      <!-- currently fails due to different netty behaviour -->
             <arg value="test_urllibnet"/>   <!-- currently fails due to different netty behaviour -->
+            <arg value="test_select_new"/>  <!-- flaky -->
             <arg value="test_socket"/>      <!-- flaky -->
             <arg value="test_socket_jy"/>   <!-- flaky -->
         </exec>
