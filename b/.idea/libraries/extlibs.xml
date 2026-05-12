@@ -8,7 +8,7 @@
       <root url="jar://$PROJECT_DIR$/extlibs/bcpkix-jdk18on-1.84.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/bcprov-jdk18on-1.84.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/commons-compress-1.28.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/commons-io-2.21.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/commons-io-2.22.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/guava-33.6.0-jre.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/icu4j-78.3.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jarjar-1.7.2.jar!/" />
