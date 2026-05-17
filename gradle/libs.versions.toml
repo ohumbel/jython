@@ -18,7 +18,7 @@ rev_jnr_netdb =           "1.2.0"
 rev_jnr_posix =           "3.1.22"
 rev_junit =               "4.13.2"
 rev_netty =               "4.2.13.Final"
-rev_oracle =              "23.26.1.0.0"
+rev_oracle =              "23.26.2.0.0"
 
 [libraries]
 ant =                 { module = "org.apache.ant:ant",                     version.ref = "rev_ant" }
