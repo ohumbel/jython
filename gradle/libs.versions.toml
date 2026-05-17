@@ -1,7 +1,7 @@
 [versions]
 rev_ant =                 "1.10.17"
 rev_antlr =               "3.5.3"
-rev_asm =                 "9.9.1"
+rev_asm =                 "9.10"
 rev_bouncycastle =        "1.84"
 rev_commons_compress =    "1.28.0"
 rev_commons_io =          "2.22.0"
