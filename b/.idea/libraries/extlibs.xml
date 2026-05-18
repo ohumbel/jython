@@ -52,7 +52,7 @@
       <root url="jar://$PROJECT_DIR$/extlibs/profile.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jakarta.servlet-api-6.1.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/xercesImpl-2.12.2.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/ojdbc8-23.26.1.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/ojdbc8-23.26.2.0.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
