@@ -2,9 +2,9 @@
   <library name="extlibs">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/extlibs/antlr-complete-3.5.3.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/asm-9.9.1.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/asm-commons-9.9.1.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/asm-util-9.9.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/asm-9.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/asm-commons-9.10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/asm-util-9.10.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/bcpkix-jdk18on-1.84.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/bcprov-jdk18on-1.84.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/commons-compress-1.28.0.jar!/" />
