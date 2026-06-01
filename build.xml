@@ -901,6 +901,7 @@ The text for an official release would continue like ...
                 <attribute name="Implementation-Vendor" value="Python Software Foundation"/>
                 <attribute name="Implementation-Title" value="Jython fat jar"/>
                 <attribute name="Implementation-Version" value="${jython.version}"/>
+                <attribute name="Enable-Native-Access" value="ALL-UNNAMED"/>
                 <!-- info section. ATTN: no blanks, no '.' in the names -->
                 <section name="Build-Info">
                     <attribute name="version" value="${jython.version}" />
@@ -923,6 +924,7 @@ The text for an official release would continue like ...
                 <attribute name="Implementation-Vendor" value="Python Software Foundation"/>
                 <attribute name="Implementation-Title" value="Jython fat jar with stdlib"/>
                 <attribute name="Implementation-Version" value="${jython.version}"/>
+                <attribute name="Enable-Native-Access" value="ALL-UNNAMED"/>
                 <!-- info section. ATTN: no blanks, no '.' in the names -->
                 <section name="Build-Info">
                     <attribute name="version" value="${jython.version}" />
@@ -1260,6 +1262,20 @@ The text for an official release would continue like ...
     <target name="singlejavatest" depends="compile-test, expose"
         description="run a single JUnit test (specify with -Dtest=classname)">
         <junit haltonfailure="true" fork="true">
+            <formatter type="brief" usefile="false"/>
+            <sysproperty key="python.cachedir.skip" value="true"/>
+            <sysproperty key="python.home" value="${dist.dir}"/>
+            <classpath refid="test.classpath"/>
+            <batchtest skipNonTests="true">
+                <fileset dir="${test.source.dir}" includes="**/${test}.java"/>
+            </batchtest>
+        </junit>
+    </target>
+
+    <target name="debugjavatest" depends="compile-test, expose"
+        description="remotely debug a single JUnit test (specify with -Dtest=classname)">
+        <junit haltonfailure="true" fork="true">
+            <jvmarg value="-agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=y"/>
             <formatter type="brief" usefile="false"/>
             <sysproperty key="python.cachedir.skip" value="true"/>
             <sysproperty key="python.home" value="${dist.dir}"/>
