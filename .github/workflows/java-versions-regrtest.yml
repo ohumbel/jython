@@ -32,7 +32,7 @@ jobs:
     # Some tests require exactly-expected line endings
     - run: git config --global core.autocrlf input
 
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Set up JDK
       uses: actions/setup-java@v5
