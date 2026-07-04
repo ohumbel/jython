@@ -487,6 +487,38 @@ class JavaDelegationTest(unittest.TestCase):
         self.assertNotEquals(x, z)
         self.assertTrue(not (x == z))
 
+@unittest.skipIf(test_support.get_java_version() >= (25,),
+        "Security Manager cannot be enabled on Java 25+")
+class SecurityManagerTest(unittest.TestCase):
+
+    def test_nonexistent_import_with_security(self):
+        script = test_support.findfile("import_nonexistent.py")
+        home = os.path.realpath(sys.prefix)
+        if not os.path.commonprefix((home, os.path.realpath(script))) == home:
+            # script must lie within python.home for this test to work
+            return
+        policy = test_support.findfile("python_home.policy")
+        self.assertEquals(
+            subprocess.call([sys.executable,
+                             "-J-Dpython.cachedir.skip=true",
+                             "-J-Djava.security.manager",
+                             "-J-Djava.security.policy=%s" % policy, script]),
+            0)
+
+    def test_import_signal_fails_with_import_error_using_security(self):
+        policy = test_support.findfile("python_home.policy")
+        with self.assertRaises(subprocess.CalledProcessError) as cm:
+            subprocess.check_output(
+                [sys.executable,
+                 "-J-Dpython.cachedir.skip=true",
+                 "-J-Djava.security.manager",
+                 "-J-Djava.security.policy=%s" % policy,
+                 "-c", "import signal"],
+                stderr=subprocess.STDOUT)
+        self.assertIn(
+            'ImportError: signal module requires sun.misc.Signal, which is not allowed by your security profile',
+            cm.exception.output)
+
 
 class JavaWrapperCustomizationTest(unittest.TestCase):
     def tearDown(self):
@@ -619,6 +651,14 @@ def find_jython_jars():
     return jars
 
 
+def java_command():
+    cmd = [os.path.join(System.getProperty("java.home"), "bin", "java")]
+    if test_support.get_java_version() >= (25,):
+        cmd.extend(["--enable-native-access=ALL-UNNAMED",
+                    "--sun-misc-unsafe-memory-access=allow"])
+    return cmd
+
+
 class JavaSource(SimpleJavaFileObject):
 
     def __init__(self, name, source):
@@ -724,11 +764,11 @@ class SerializationTest(unittest.TestCase):
             jars = find_jython_jars()
             jars.append(proxies_jar_path)
             classpath = os.pathsep.join(jars)
-            cmd = [os.path.join(System.getProperty("java.home"), "bin", "java"),
-                   "-Dpython.path=" + os.path.dirname(__file__),
-                    "-classpath", classpath,
-                    "javatests.ProxyDeserialization",
-                    cat_path]
+            cmd = java_command()
+            cmd.extend(["-Dpython.path=" + os.path.dirname(__file__),
+                        "-classpath", classpath,
+                        "javatests.ProxyDeserialization",
+                        cat_path])
             self.assertEqual(subprocess.check_output(cmd, universal_newlines=True), "meow\n")
         finally:
             org.python.core.Options.proxyDebugDirectory = old_proxy_debug_dir
@@ -785,9 +825,9 @@ public class BarkTheDog {
             # PySystemState (and Jython runtime) is initialized for
             # the proxy
             classpath += os.pathsep + tempdir
-            cmd = [os.path.join(System.getProperty("java.home"), "bin", "java"),
-                   "-Dpython.path=" + os.path.dirname(__file__),
-                   "-classpath", classpath, "BarkTheDog"]
+            cmd = java_command()
+            cmd.extend(["-Dpython.path=" + os.path.dirname(__file__),
+                        "-classpath", classpath, "BarkTheDog"])
             self.assertRegexpMatches(
                 subprocess.check_output(cmd, universal_newlines=True,
                                         stderr=subprocess.STDOUT),
