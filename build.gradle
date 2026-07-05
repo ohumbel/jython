@@ -61,6 +61,34 @@ ext {
 }
 
 
+// Collect extra arguments for the JVM in the test task
+ext.jythonTestJvmArgs = []
+
+// Explicitly provided in a property
+def extraJythonTestJavaOpts = findProperty('jython.test.java.opts')
+if (extraJythonTestJavaOpts) {
+    ext.jythonTestJvmArgs.addAll(
+        extraJythonTestJavaOpts.toString().trim().split(/\s+/).findAll { it })
+}
+
+// JVM aguments necessitated by later versions of Java
+// FIXME: Gradle 7.4.2 returns at most 21 here even on Java 25.
+// (Fix by updating Gradle: the code is correct and the warnings harmless.)
+def currentJavaMajor = JavaVersion.current().majorVersion as int
+if (currentJavaMajor >= 9) {
+    ext.jythonTestJvmArgs.addAll([
+        '--add-opens=java.base/java.io=ALL-UNNAMED',
+        '--add-opens=java.base/sun.nio.ch=ALL-UNNAMED'
+    ])
+}
+if (currentJavaMajor >= 25) {
+    ext.jythonTestJvmArgs.addAll([
+        '--enable-native-access=ALL-UNNAMED',
+        '--sun-misc-unsafe-memory-access=allow'
+    ])
+}
+
+
 java {
   sourceCompatibility = JavaVersion.VERSION_21
   withSourcesJar()
@@ -592,7 +620,8 @@ jar {
       'Main-Class': 'org.python.util.jython',
       'Built-By': 'build.gradle',
       'Automatic-Module-Name': 'org.python.jython2',
-      'Enable-Native-Access': 'ALL-UNNAMED'
+      'Enable-Native-Access': 'ALL-UNNAMED',
+      'Add-Opens': 'java.base/java.io java.base/sun.nio.ch'
     ])
 
     attributes( [ // Build-Info section
@@ -604,6 +633,39 @@ jar {
       'oracle': false
     ], 'Build-Info' )
   }
+}
+
+/*
+ * This is a task complementary to the jar task, taking just the test material.
+ * This is not published via the main repositories because it counts as a
+ * distinct artefact with its own POM.
+ */
+// XXX Consider instead a multi-project build with one artefact per sub-project.
+task testJar(type: Jar) {
+    classifier = 'tests'
+
+    from sourceSets.test.output
+    // We don't JAR the expose tool, so we don't JAR the tests
+    exclude 'org/python/expose/generate/**'
+
+    // Build a custom manifest
+    manifest {
+        // These attribute values are based on inspecting the ant build
+        attributes ([
+            //'Main-Class': 'org.python.util.jython',
+            'Built-By': 'build.gradle',
+            'Enable-Native-Access': 'ALL-UNNAMED',
+            'Add-Opens': 'java.base/java.io java.base/sun.nio.ch'
+        ])
+
+        attributes( [ // Build-Info section
+            'version': project.version,
+            'build-compiler': 'modern',
+            'jdk-target-version': project.targetCompatibility,
+            'debug': compileTestJava.options.debug
+        ], 'Build-Info' )
+    }
+>>>>>>> 1737cd3cd (Correct test expectations of _localeTest for Java 25)
 }
 
 
@@ -759,6 +821,7 @@ test {
   systemProperty 'python.cachedir', "${project.buildDir}/cachedir"
   // Logging level: default is message=INFO
   //systemProperty 'python.verbose', 'CONFIG'
+  jvmArgs project.ext.jythonTestJvmArgs
 
   include '**/*Test*'
 
@@ -785,7 +848,10 @@ test {
   exclude 'org/python/util/InterpreterTest.class'
 
   doFirst {
-    println "systemProperties = $systemProperties"
+    println " systemProperties = $systemProperties"
+    println "      JavaVersion = ${JavaVersion.current()}"
+    println "jythonTestJvmArgs = ${project.ext.jythonTestJvmArgs}"
+    println "       allJvmArgs = ${allJvmArgs}"
   }
 
 }
