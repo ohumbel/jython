@@ -242,6 +242,7 @@ An example ant.properties file:
                 <file name="netty-handler-4.2.17.Final.jar"/>
                 <file name="netty-resolver-4.2.17.Final.jar"/>
                 <file name="netty-transport-4.2.17.Final.jar"/>
+                <file name="netty-transport-native-unix-common-4.2.17.Final.jar"/>
             </filelist>
         </path>
 
@@ -855,6 +856,8 @@ The text for an official release would continue like ...
             <zipfileset src="extlibs/netty-resolver-4.2.17.Final.jar" excludes="META-INF/**"/>
             <rule pattern="io.netty.**" result="org.python.netty.@1"/>
             <zipfileset src="extlibs/netty-transport-4.2.17.Final.jar" excludes="META-INF/**"/>
+            <rule pattern="io.netty.**" result="org.python.netty.@1"/>
+            <zipfileset src="extlibs/netty-transport-native-unix-common-4.2.17.Final.jar" excludes="META-INF/**"/>
             <rule pattern="io.netty.**" result="org.python.netty.@1"/>
             <zipfileset src="${extlibs.dir}/java-sizeof-0.0.5.jar"/>
             <rule pattern="com.carrotsearch.sizeof.**" result="org.python.sizeof.@1"/>

@@ -135,6 +135,7 @@ dependencies {
   implementation(libs.netty.handler)
   implementation(libs.netty.resolver)
   implementation(libs.netty.transport)
+  implementation(libs.netty.transport.native.unix.common)
 
   testImplementation(libs.junit)
 }
