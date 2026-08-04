@@ -176,7 +176,7 @@ dependencies {
      * version they prefer.
      */
     //implementation 'mysql:mysql-connector-java:5.1.42'
-    //implementation 'org.postgresql:postgresql:42.1.1.jre7'
+    //implementation 'org.postgresql:postgresql:42.7.13'
 
     // pin to Antlr 3 until we upgrade parsing
     antlr 'org.antlr:antlr:3.5.3'
@@ -193,8 +193,10 @@ dependencies {
     implementation 'org.ow2.asm:asm-util:9.10.1'
 
     implementation 'com.google.guava:guava:33.2.1-jre'
- 
-    implementation 'com.ibm.icu:icu4j:75.1'
+
+    // Pin icu4j to latest 77.x until Jython moves to Java 11.
+    // https://unicode-org.github.io/icu/download/77.html
+    implementation 'com.ibm.icu:icu4j:77.1'
 
     implementation 'com.carrotsearch:java-sizeof:0.0.5'
 
