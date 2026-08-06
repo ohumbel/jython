@@ -182,8 +182,8 @@ dependencies {
     antlr 'org.antlr:antlr:3.5.3'
     implementation 'org.antlr:antlr-runtime:3.5.3'
 
-    implementation 'org.apache.commons:commons-compress:1.26.2'
-    implementation 'commons-io:commons-io:2.16.1'
+    implementation 'org.apache.commons:commons-compress:1.28.0'
+    implementation 'commons-io:commons-io:2.22.0'
 
     implementation 'org.bouncycastle:bcpkix-jdk18on:1.85'
     implementation 'org.bouncycastle:bcprov-jdk18on:1.85'
@@ -191,8 +191,6 @@ dependencies {
     implementation 'org.ow2.asm:asm:9.10.1'
     implementation 'org.ow2.asm:asm-commons:9.10.1'
     implementation 'org.ow2.asm:asm-util:9.10.1'
-
-    implementation 'com.google.guava:guava:33.2.1-jre'
 
     // Pin icu4j to latest 77.x until Jython moves to Java 11.
     // https://unicode-org.github.io/icu/download/77.html
