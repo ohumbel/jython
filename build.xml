@@ -210,7 +210,7 @@ An example ant.properties file:
             <filelist dir="${extlibs.dir}">
                 <file name="jakarta.servlet-api-6.1.0.jar"/>
             	<file name="jdbc-15.0.1.4.jar"/>
-                <file name="mysql-connector-java-5.1.42-bin.jar"/>
+                <file name="mysql-connector-j-9.7.0.jar.jar"/>
             	<file name="ojdbc8-23.26.2.0.0.jar"/>
                 <file name="postgresql-42.7.13.jar"/>
             </filelist>
@@ -1089,7 +1089,7 @@ The text for an official release would continue like ...
                 <include name="CoreExposed.includes" />
                 <include name="extlibs/**/*.jar" />
                 <!-- don't distribute jdbc jars -->
-                <exclude name="extlibs/mysql-connector-java-*.jar" />
+                <exclude name="extlibs/mysql-connector-j-*.jar" />
                 <exclude name="extlibs/postgresql-*.jar" />
                 <exclude name="extlibs/ifxjdbc.jar" />
                 <exclude name="extlibs/ojdbc*.jar" />
