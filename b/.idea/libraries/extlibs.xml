@@ -5,8 +5,8 @@
       <root url="jar://$PROJECT_DIR$/extlibs/asm-9.10.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/asm-commons-9.10.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/asm-util-9.10.1.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/bcpkix-jdk18on-1.84.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/bcprov-jdk18on-1.84.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/bcpkix-jdk18on-1.85.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/bcprov-jdk18on-1.85.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/commons-compress-1.28.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/commons-io-2.22.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/guava-33.6.0-jre.jar!/" />
