@@ -166,6 +166,14 @@ public class Options {
             "weakKeys,concurrencyLevel=4,maximumWeight=2621440,expireAfterAccess=30s";
     public static String sreCacheSpec = sreCacheSpecDefault;
 
+    /**
+     * When true, Java varargs overload resolution uses the historical last-matching-overload
+     * behavior. When false, matching varargs overloads are ranked by conversion cost.
+     *
+     * @see org.python.core.RegistryKey#PYTHON_OPTIONS_REFLECTED_ARGS_LEGACY_MODE
+     */
+    public static volatile boolean reflectedArgsLegacyMode = true;
+
     //
     // ####### END OF OPTIONS
     //
@@ -207,6 +215,9 @@ public class Options {
 
         caseok = getBooleanOption(PYTHON_OPTIONS_CASE_OK, caseok);
         Qnew = getBooleanOption(PYTHON_OPTIONS_Q_NEW, Qnew);
+        reflectedArgsLegacyMode =
+                getBooleanOption(PYTHON_OPTIONS_REFLECTED_ARGS_LEGACY_MODE,
+                        reflectedArgsLegacyMode);
 
         setDivisionWarningFromRegistry();
 
