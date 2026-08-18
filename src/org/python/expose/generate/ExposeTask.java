@@ -58,7 +58,13 @@ public class ExposeTask extends GlobMatchingTask {
     }
 
     private void generate(Exposer exposer) {
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES) {
+            @Override
+            protected ClassLoader getClassLoader() {
+                ClassLoader cl = ExposeTask.this.getClass().getClassLoader();
+                return cl != null ? cl : super.getClassLoader();
+            }
+        };
         exposer.generate(writer);
         write(exposer.getClassName(), writer.toByteArray());
     }

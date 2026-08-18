@@ -46,7 +46,13 @@ public class ExposedTypeProcessor implements Opcodes, PyTypes {
      */
     public ExposedTypeProcessor(InputStream in) throws IOException {
         ClassReader cr = new ClassReader(in);
-        cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
+        cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES) {
+            @Override
+            protected ClassLoader getClassLoader() {
+                ClassLoader cl = ExposedTypeProcessor.this.getClass().getClassLoader();
+                return cl != null ? cl : super.getClassLoader();
+            }
+        };
         cr.accept(new TypeProcessor(cw), 0);
     }
 
