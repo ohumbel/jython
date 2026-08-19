@@ -89,7 +89,13 @@ public class ClassFile
         this.access = access;
         this.mtime = mtime;
 
-        cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES) {
+            @Override
+            protected ClassLoader getClassLoader() {
+                ClassLoader cl = ClassFile.class.getClassLoader();
+                return cl != null ? cl : super.getClassLoader();
+            }
+        };
         methodVisitors = Collections.synchronizedList(new ArrayList<MethodVisitor>());
         fieldVisitors = Collections.synchronizedList(new ArrayList<FieldVisitor>());
         annotationVisitors = Collections.synchronizedList(new ArrayList<AnnotationVisitor>());

@@ -57,7 +57,13 @@ final class AsmClassBuilder {
         
         className = p(Invoker.class) + "$ffi$" + nextClassID.getAndIncrement();
         
-        classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
+        classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES) {
+            @Override
+            protected ClassLoader getClassLoader() {
+                ClassLoader cl = AsmClassBuilder.class.getClassLoader();
+                return cl != null ? cl : super.getClassLoader();
+            }
+        };
         classVisitor = DEBUG ? newCheckClassAdapter(classWriter) : classWriter;
         classVisitor.visit(V1_5, ACC_PUBLIC | ACC_FINAL, className, null, 
                 p(parentClass), new String[0]);
