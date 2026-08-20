@@ -7,5 +7,9 @@
 
  Lib/test/test_float_jy.py (take the new variant)
  
- build.gradle (ext.jythonTestJvmArgs = [] section needs to be moved after ext{}, rest is straightforward)
+ build.gradle 
+   ext.jythonTestJvmArgs = [] section needs to be moved after ext{},
+   testJar section needs to be removed,
+   remove the print of project.ext.jythonTestJvmArgs,
+   rest is straightforward)
 

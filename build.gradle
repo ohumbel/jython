@@ -635,39 +635,6 @@ jar {
   }
 }
 
-/*
- * This is a task complementary to the jar task, taking just the test material.
- * This is not published via the main repositories because it counts as a
- * distinct artefact with its own POM.
- */
-// XXX Consider instead a multi-project build with one artefact per sub-project.
-task testJar(type: Jar) {
-    classifier = 'tests'
-
-    from sourceSets.test.output
-    // We don't JAR the expose tool, so we don't JAR the tests
-    exclude 'org/python/expose/generate/**'
-
-    // Build a custom manifest
-    manifest {
-        // These attribute values are based on inspecting the ant build
-        attributes ([
-            //'Main-Class': 'org.python.util.jython',
-            'Built-By': 'build.gradle',
-            'Enable-Native-Access': 'ALL-UNNAMED',
-            'Add-Opens': 'java.base/java.io java.base/sun.nio.ch'
-        ])
-
-        attributes( [ // Build-Info section
-            'version': project.version,
-            'build-compiler': 'modern',
-            'jdk-target-version': project.targetCompatibility,
-            'debug': compileTestJava.options.debug
-        ], 'Build-Info' )
-    }
->>>>>>> 1737cd3cd (Correct test expectations of _localeTest for Java 25)
-}
-
 
 
 
@@ -848,10 +815,9 @@ test {
   exclude 'org/python/util/InterpreterTest.class'
 
   doFirst {
-    println " systemProperties = $systemProperties"
-    println "      JavaVersion = ${JavaVersion.current()}"
-    println "jythonTestJvmArgs = ${project.ext.jythonTestJvmArgs}"
-    println "       allJvmArgs = ${allJvmArgs}"
+    println "systemProperties = $systemProperties"
+    println "     JavaVersion = ${JavaVersion.current()}"
+    println "      allJvmArgs = ${allJvmArgs}"
   }
 
 }
