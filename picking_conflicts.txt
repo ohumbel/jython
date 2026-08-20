@@ -6,3 +6,6 @@
  Lib/test/test_java_visibility.py (take the new variant)
 
  Lib/test/test_float_jy.py (take the new variant)
+ 
+ build.gradle (ext.jythonTestJvmArgs = [] section needs to be moved after ext{}, rest is straightforward)
+
