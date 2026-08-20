@@ -1,6 +1,8 @@
- src/shell/jython
+ src/shell/jython (add the new method)
  
  the 2 verbose tests file have 2 parent commits - cherry picking not possible
  
- Lib/test/test_java_integration.py
- Lib/test/test_java_visibility.py
+ Lib/test/test_java_integration.py (take the new variant)
+ Lib/test/test_java_visibility.py (take the new variant)
+
+ Lib/test/test_float_jy.py (take the new variant)
