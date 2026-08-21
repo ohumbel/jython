@@ -1,20 +1,21 @@
- src/shell/jython (add the new method)
+src/shell/jython (add the new method)
  
- the 2 verbose tests file have 2 parent commits - cherry picking not possible
+the 2 verbose tests file have 2 parent commits - cherry picking not possible
  
- Lib/test/test_java_integration.py (take the new variant)
- Lib/test/test_java_visibility.py (take the new variant)
+Lib/test/test_java_integration.py (take the new variant)
+Lib/test/test_java_visibility.py (take the new variant)
 
- Lib/test/test_float_jy.py (take the new variant)
+Lib/test/test_float_jy.py (take the new variant)
  
- build.gradle 
-   ext.jythonTestJvmArgs = [] section needs to be moved after ext{},
-   testJar section needs to be removed,
-   remove the print of project.ext.jythonTestJvmArgs,
-   rest is straightforward)
+build.gradle 
+  ext.jythonTestJvmArgs = [] section needs to be moved after ext{},
+  testJar section needs to be removed,
+  remove the print of project.ext.jythonTestJvmArgs, 
+  rest is straightforward)
 
 build.gradle (alread in)
 
 Module.java (take theirs)
 build.gradle (forget about the large .class files)
 
+netty upgrade: take a new set of jars - the new one being netty-transport-native-unix-common
