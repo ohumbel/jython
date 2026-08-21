@@ -25,3 +25,5 @@ Several external libraris would be downgraded - keep our latest version
 bz2 classes: keep our version
 
 failureaccess.jar is updated
+
+mysql connector: upgrade and artefact name change
