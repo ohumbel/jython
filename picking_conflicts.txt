@@ -14,3 +14,7 @@
    rest is straightforward)
 
 build.gradle (alread in)
+
+Module.java (take theirs)
+build.gradle (forget about the large .class files)
+
