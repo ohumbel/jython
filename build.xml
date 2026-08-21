@@ -210,9 +210,9 @@ An example ant.properties file:
             <filelist dir="${extlibs.dir}">
                 <file name="jakarta.servlet-api-6.1.0.jar"/>
             	<file name="jdbc-15.0.1.4.jar"/>
-                <file name="mysql-connector-java-5.1.42-bin.jar"/>
+                <file name="mysql-connector-j-9.7.0.jar.jar"/>
             	<file name="ojdbc8-23.26.2.0.0.jar"/>
-                <file name="postgresql-42.1.1.jre7.jar"/>
+                <file name="postgresql-42.7.13.jar"/>
             </filelist>
 
             <!-- Other JARs (alphabetical) -->
@@ -226,7 +226,7 @@ An example ant.properties file:
                 <file name="bcprov-jdk18on-1.85.jar"/>
                 <file name="commons-compress-1.28.0.jar"/>
                 <file name="commons-io-2.22.0.jar"/>
-                <file name="failureaccess-1.0.1.jar"/>
+                <file name="failureaccess-1.0.3.jar"/>
                 <file name="guava-33.7.1-jre.jar"/>
                 <file name="icu4j-78.3.jar"/>
                 <file name="jffi-1.4.0.jar"/>
@@ -242,6 +242,7 @@ An example ant.properties file:
                 <file name="netty-handler-4.2.17.Final.jar"/>
                 <file name="netty-resolver-4.2.17.Final.jar"/>
                 <file name="netty-transport-4.2.17.Final.jar"/>
+                <file name="netty-transport-native-unix-common-4.2.17.Final.jar"/>
             </filelist>
         </path>
 
@@ -839,7 +840,7 @@ The text for an official release would continue like ...
             <rule pattern="org.apache.commons.compress.**" result="org.python.apache.commons.compress.@1"/>
             <zipfileset src="extlibs/commons-io-2.22.0.jar" excludes="META-INF/versions/9/module-info.class"/>
             <rule pattern="org.apache.commons.io.**" result="org.python.apache.commons.io.@1"/>
-            <zipfileset src="extlibs/failureaccess-1.0.1.jar"/>
+            <zipfileset src="extlibs/failureaccess-1.0.3.jar" excludes="META-INF/**"/>
             <zipfileset src="extlibs/guava-33.7.1-jre.jar" excludes="META-INF/**"/>
             <rule pattern="com.google.**" result="org.python.google.@1"/>
             <zipfileset src="extlibs/icu4j-78.3.jar"/>
@@ -855,6 +856,8 @@ The text for an official release would continue like ...
             <zipfileset src="extlibs/netty-resolver-4.2.17.Final.jar" excludes="META-INF/**"/>
             <rule pattern="io.netty.**" result="org.python.netty.@1"/>
             <zipfileset src="extlibs/netty-transport-4.2.17.Final.jar" excludes="META-INF/**"/>
+            <rule pattern="io.netty.**" result="org.python.netty.@1"/>
+            <zipfileset src="extlibs/netty-transport-native-unix-common-4.2.17.Final.jar" excludes="META-INF/**"/>
             <rule pattern="io.netty.**" result="org.python.netty.@1"/>
             <zipfileset src="${extlibs.dir}/java-sizeof-0.0.5.jar"/>
             <rule pattern="com.carrotsearch.sizeof.**" result="org.python.sizeof.@1"/>
@@ -902,6 +905,7 @@ The text for an official release would continue like ...
                 <attribute name="Implementation-Title" value="Jython fat jar"/>
                 <attribute name="Implementation-Version" value="${jython.version}"/>
                 <attribute name="Enable-Native-Access" value="ALL-UNNAMED"/>
+                <attribute name="Add-Opens" value="java.base/java.io java.base/sun.nio.ch"/>
                 <!-- info section. ATTN: no blanks, no '.' in the names -->
                 <section name="Build-Info">
                     <attribute name="version" value="${jython.version}" />
@@ -925,6 +929,7 @@ The text for an official release would continue like ...
                 <attribute name="Implementation-Title" value="Jython fat jar with stdlib"/>
                 <attribute name="Implementation-Version" value="${jython.version}"/>
                 <attribute name="Enable-Native-Access" value="ALL-UNNAMED"/>
+                <attribute name="Add-Opens" value="java.base/java.io java.base/sun.nio.ch"/>
                 <!-- info section. ATTN: no blanks, no '.' in the names -->
                 <section name="Build-Info">
                     <attribute name="version" value="${jython.version}" />
@@ -967,6 +972,8 @@ The text for an official release would continue like ...
                 <attribute name="Implementation-Vendor" value="Python Software Foundation"/>
                 <attribute name="Implementation-Title" value="Jython"/>
                 <attribute name="Implementation-Version" value="${jython.version}"/>
+                <attribute name="Enable-Native-Access" value="ALL-UNNAMED"/>
+                <attribute name="Add-Opens" value="java.base/java.io java.base/sun.nio.ch"/>
                 <!-- info section. ATTN: no blanks, no '.' in the names -->
                 <section name="Build-Info">
                     <attribute name="version" value="${jython.version}" />
@@ -995,6 +1002,8 @@ The text for an official release would continue like ...
                 <attribute name="Implementation-Vendor" value="Python Software Foundation"/>
                 <attribute name="Implementation-Title" value="Jython Test JAR"/>
                 <attribute name="Implementation-Version" value="${jython.version}"/>
+                <attribute name="Enable-Native-Access" value="ALL-UNNAMED"/>
+                <attribute name="Add-Opens" value="java.base/java.io java.base/sun.nio.ch"/>
                 <!-- info section. ATTN: no blanks, no '.' in the names -->
                 <section name="Build-Info">
                     <attribute name="version" value="${jython.version}" />
@@ -1042,12 +1051,10 @@ The text for an official release would continue like ...
 
     <target name="jar-sources" depends="init">
         <jar destfile="dist/${jython.sources.jar}" update="${jar.update}">
-            <fileset dir="${basedir}">
-                <exclude name="build/**" />
-                <exclude name="dist/**" />
-                <exclude name="extlibs/**" />
-                <exclude name="Doc/**" />
+            <fileset dir="${basedir}/src">
+                <exclude name="*.exe" />  <!-- launcher -->
             </fileset>
+            <fileset dir="${basedir}/build/gensrc" />
         </jar>
     </target>
 
@@ -1080,7 +1087,7 @@ The text for an official release would continue like ...
                 <include name="CoreExposed.includes" />
                 <include name="extlibs/**/*.jar" />
                 <!-- don't distribute jdbc jars -->
-                <exclude name="extlibs/mysql-connector-java-*.jar" />
+                <exclude name="extlibs/mysql-connector-j-*.jar" />
                 <exclude name="extlibs/postgresql-*.jar" />
                 <exclude name="extlibs/ifxjdbc.jar" />
                 <exclude name="extlibs/ojdbc*.jar" />
@@ -1138,6 +1145,10 @@ The text for an official release would continue like ...
             <fileset dir="${basedir}/Lib">
                 <exclude name="**/*.class"/>
             </fileset>
+            <fileset dir="${basedir}/Lib">
+                <include name="test/large_methods_272$py.class"/>
+                <include name="test/large_module_272$py.class"/>
+            </fileset>
         </copy>
     </target>
 
@@ -1171,9 +1182,7 @@ The text for an official release would continue like ...
              $dist.dir/javalib/*, to be available when using jython-dev.jar
         -->
         <copy todir="${dist.dir}/javalib">
-            <fileset dir="${basedir}/extlibs">
-                <exclude name="profile.properties"/>
-            </fileset>
+            <fileset dir="${basedir}/extlibs"/>
             <fileset dir="${build.dir}">
                 <include name="*.jar"/>
                 <include name="*.properties"/>
@@ -1259,6 +1268,10 @@ The text for an official release would continue like ...
     <target name="test" depends="clean-test, javatest, launchertest, regrtest, modjytest"
         description="run all the tests"/>
 
+    <target name="test-built"
+            depends="init, clean-test, javatest-built, launchertest-built, regrtest-built, modjytest-built"
+            description="run all the tests against an existing built dist without rebuilding"/>
+
     <target name="singlejavatest" depends="compile-test, expose"
         description="run a single JUnit test (specify with -Dtest=classname)">
         <junit haltonfailure="true" fork="true">
@@ -1304,7 +1317,13 @@ The text for an official release would continue like ...
             description="run all the JUnit tests">
     </target>
 
-    <target name="javatest-basepath" depends="developer-build">
+    <target name="javatest-built" depends="javatest-basepath-built, javatest-import-built"
+            description="run all the JUnit tests against an existing built dist">
+    </target>
+
+    <target name="javatest-basepath" depends="developer-build, javatest-basepath-built"/>
+
+    <target name="javatest-basepath-built" depends="init">
         <mkdir dir="${junit.reports}"/>
         <junit haltonfailure="true" fork="true" printsummary="true">
             <formatter type="xml"/>
@@ -1324,8 +1343,11 @@ The text for an official release would continue like ...
         </junit>
     </target>
 
-    <target name="javatest-import" depends="developer-build"
+    <target name="javatest-import" depends="developer-build, javatest-import-built"
             description="run all the JUnit tests that need tests/python in the path.">
+    </target>
+
+    <target name="javatest-import-built" depends="init">
         <mkdir dir="${junit.reports}"/>
         <junit haltonfailure="true" fork="true" printsummary="true">
             <formatter type="xml"/>
@@ -1407,15 +1429,19 @@ The text for an official release would continue like ...
         </junit>
     </target>
 
-    <target name="modjytest" depends="developer-build">
+    <target name="modjytest" depends="developer-build, modjytest-built"/>
+
+    <target name="modjytest-built" depends="init">
         <ant dir="tests/modjy">
             <property name="jython_home" value="${dist.dir}"/>
             <property name="mockrunner_home" value="${extlibs.dir}/mockrunner-0.4.1"/>
         </ant>
     </target>
 
-    <target name="launchertest" depends="developer-build" if="os.family.unix">
-      <exec executable="${test.shell.dir}/test-jython.sh">
+    <target name="launchertest" depends="developer-build, launchertest-built" if="os.family.unix"/>
+
+    <target name="launchertest-built" depends="init" if="os.family.unix">
+      <exec executable="${test.shell.dir}/test-jython.sh" failonerror="true">
         <arg value="${dist.dir}"/>
       </exec>
     </target>
@@ -1424,7 +1450,7 @@ The text for an official release would continue like ...
         description="identify the versions of Jython and its platform (needs developer-build)"/>
 
     <target name="versions-unix" if="os.family.unix">
-        <exec executable="${dist.dir}/bin/jython">
+        <exec executable="${dist.dir}/bin/jython" failonerror="true">
             <env key="JAVA_OPTS" value="-Duser.language=en -Duser.region=US"/>
             <arg value="-c"/>
             <arg value="import sys, platform; print sys.version; print platform.java_ver()"/>
@@ -1433,18 +1459,21 @@ The text for an official release would continue like ...
 
     <target name="versions-windows" if="os.family.windows">
         <mkdir dir="${junit.reports}"/>
-        <exec executable="${dist.dir}/bin/jython.exe">
+        <exec executable="${dist.dir}/bin/jython.exe" failonerror="true">
             <arg value="-c"/>
             <arg value="import sys, platform; print sys.version; print platform.java_ver()"/>
         </exec>
     </target>
 
-    <target name="regrtest" depends="developer-build, regrtest-unix, regrtest-windows"
+    <target name="regrtest" depends="developer-build, regrtest-built"
         description="run Python tests expected to work on Jython"/>
+
+    <target name="regrtest-built" depends="init, regrtest-unix, regrtest-windows"
+        description="run Python tests against an existing built dist"/>
 
     <target name="regrtest-unix" if="os.family.unix">
         <mkdir dir="${junit.reports}"/>
-        <exec executable="${dist.dir}/bin/jython">
+        <exec executable="${dist.dir}/bin/jython" failonerror="true">
             <env key="JAVA_OPTS" value="-Duser.language=en -Duser.region=US"/>
             <arg value="${dist.dir}/Lib/test/regrtest.py"/>
             <!-- Only run the tests that are expected to work on Jython -->
@@ -1458,7 +1487,7 @@ The text for an official release would continue like ...
 
     <target name="regrtest-windows" if="os.family.windows">
         <mkdir dir="${junit.reports}"/>
-        <exec executable="${dist.dir}/bin/jython.exe">
+        <exec executable="${dist.dir}/bin/jython.exe" failonerror="true">
             <arg value="${dist.dir}/Lib/test/regrtest.py"/>
             <!-- Only run the tests that are expected to work on Jython -->
             <arg value="--expected"/>
@@ -1475,7 +1504,7 @@ The text for an official release would continue like ...
 
     <target name="regrtest-unix-file" if="os.family.unix">
         <mkdir dir="${junit.reports}"/>
-        <exec executable="${dist.dir}/bin/jython">
+        <exec executable="${dist.dir}/bin/jython" failonerror="true">
             <env key="JAVA_OPTS" value="-Duser.language=en -Duser.region=US"/>
             <arg value="${dist.dir}/Lib/test/regrtest.py"/>
             <arg value="--junit-xml"/>
@@ -1491,7 +1520,7 @@ The text for an official release would continue like ...
 
     <target name="regrtest-windows-file" if="os.family.windows">
         <mkdir dir="${junit.reports}"/>
-        <exec executable="${dist.dir}/bin/jython.exe">
+        <exec executable="${dist.dir}/bin/jython.exe" failonerror="true">
             <arg value="${dist.dir}/Lib/test/regrtest.py"/>
             <arg value="--junit-xml"/>
             <arg value="${junit.reports}"/>

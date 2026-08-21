@@ -41,14 +41,15 @@
       <root url="jar://$PROJECT_DIR$/extlibs/jnr-netdb-1.2.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jnr-posix-3.2.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/junit-4.13.2.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/mysql-connector-java-5.1.42-bin.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/mysql-connector-j-9.7.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/netty-buffer-4.2.17.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/netty-codec-base-4.2.17.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/netty-common-4.2.17.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/netty-handler-4.2.17.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/netty-resolver-4.2.17.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/netty-transport-4.2.17.Final.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/postgresql-42.1.1.jre7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/netty-transport-native-unix-common-4.2.17.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/postgresql-42.7.13.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/profile.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jakarta.servlet-api-6.1.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/xercesImpl-2.12.2.jar!/" />

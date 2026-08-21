@@ -20,8 +20,15 @@ class FloatTestCase(unittest.TestCase):
         self.assertEqual(repr(0.123456789e+35), '1.23456789e+34')
 
     def test_float_repr2(self):
-        self.assertEqual(repr(9876.543210e+15), '9.87654321e+18')
-        self.assertEqual(repr(1235235235235240000.0), '1.23523523523524e+18')
+        # Quite possibly these divergences result from JDK bug JDK-4511638:
+        if jython and test_support.get_java_version() < (19,):
+            expected1 = '9.876543209999999e+18'
+            expected2 = '1.2352352352352399e+18'
+        else:
+            expected1 = '9.87654321e+18'
+            expected2 = '1.23523523523524e+18'
+        self.assertEqual(repr(9876.543210e+15), expected1)
+        self.assertEqual(repr(1235235235235240000.0), expected2)
 
     def test_float_str(self):
         self.assertEqual(str(12345678.000005), '12345678.0')

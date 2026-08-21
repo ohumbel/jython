@@ -200,6 +200,20 @@ public class RegistryKey {
     public static final String PYTHON_OPTIONS_Q_NEW = "python.options.Qnew";
 
     /**
+     * {@code python.options.reflectedArgsLegacyMode} controls Java varargs overload resolution.
+     * Boolean, true by default.
+     * <p>
+     * When true, Jython uses the historical varargs behavior in which the last matching overload
+     * wins. When false, matching varargs overloads are ranked by conversion cost. This setting does
+     * not change fixed-arity overload resolution.
+     * <p>
+     * The same behavior may be changed at runtime with
+     * {@link org.python.core.ReflectedArgs#setLegacyMode(boolean)}.
+     */
+    public static final String PYTHON_OPTIONS_REFLECTED_ARGS_LEGACY_MODE =
+            "python.options.reflectedArgsLegacyMode";
+
+    /**
      * {@code python.os} defines the string used to report the underlying operating system. Used as
      * prefix when resolving which operating system, impacting some OS-specific behaviour.
      */

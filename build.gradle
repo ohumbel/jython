@@ -61,6 +61,34 @@ ext {
 }
 
 
+// Collect extra arguments for the JVM in the test task
+ext.jythonTestJvmArgs = []
+
+// Explicitly provided in a property
+def extraJythonTestJavaOpts = findProperty('jython.test.java.opts')
+if (extraJythonTestJavaOpts) {
+    ext.jythonTestJvmArgs.addAll(
+        extraJythonTestJavaOpts.toString().trim().split(/\s+/).findAll { it })
+}
+
+// JVM aguments necessitated by later versions of Java
+// FIXME: Gradle 7.4.2 returns at most 21 here even on Java 25.
+// (Fix by updating Gradle: the code is correct and the warnings harmless.)
+def currentJavaMajor = JavaVersion.current().majorVersion as int
+if (currentJavaMajor >= 9) {
+    ext.jythonTestJvmArgs.addAll([
+        '--add-opens=java.base/java.io=ALL-UNNAMED',
+        '--add-opens=java.base/sun.nio.ch=ALL-UNNAMED'
+    ])
+}
+if (currentJavaMajor >= 25) {
+    ext.jythonTestJvmArgs.addAll([
+        '--enable-native-access=ALL-UNNAMED',
+        '--sun-misc-unsafe-memory-access=allow'
+    ])
+}
+
+
 java {
   sourceCompatibility = JavaVersion.VERSION_21
   withSourcesJar()
@@ -107,6 +135,7 @@ dependencies {
   implementation(libs.netty.handler)
   implementation(libs.netty.resolver)
   implementation(libs.netty.transport)
+  implementation(libs.netty.transport.native.unix.common)
 
   testImplementation(libs.junit)
 }
@@ -592,7 +621,8 @@ jar {
       'Main-Class': 'org.python.util.jython',
       'Built-By': 'build.gradle',
       'Automatic-Module-Name': 'org.python.jython2',
-      'Enable-Native-Access': 'ALL-UNNAMED'
+      'Enable-Native-Access': 'ALL-UNNAMED',
+      'Add-Opens': 'java.base/java.io java.base/sun.nio.ch'
     ])
 
     attributes( [ // Build-Info section
@@ -759,6 +789,7 @@ test {
   systemProperty 'python.cachedir', "${project.buildDir}/cachedir"
   // Logging level: default is message=INFO
   //systemProperty 'python.verbose', 'CONFIG'
+  jvmArgs project.ext.jythonTestJvmArgs
 
   include '**/*Test*'
 
@@ -786,6 +817,8 @@ test {
 
   doFirst {
     println "systemProperties = $systemProperties"
+    println "     JavaVersion = ${JavaVersion.current()}"
+    println "      allJvmArgs = ${allJvmArgs}"
   }
 
 }
