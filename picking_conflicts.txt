@@ -21,3 +21,7 @@ build.gradle (forget about the large .class files)
 netty upgrade: take a new set of jars - the new one being netty-transport-native-unix-common
 
 Several external libraris would be downgraded - keep our latest version
+
+bz2 classes: keep our version
+
+failureaccess.jar is updated
