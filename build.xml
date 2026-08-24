@@ -232,9 +232,9 @@ An example ant.properties file:
                 <file name="jffi-1.4.0.jar"/>
                 <file name="java-sizeof-0.0.5.jar"/>
                 <file name="jnr-constants-0.11.0.jar"/>
-                <file name="jnr-ffi-2.3.0.jar"/>
+                <file name="jnr-ffi-2.3.1.jar"/>
                 <file name="jnr-netdb-1.2.0.jar"/>
-                <file name="jnr-posix-3.2.1.jar"/>
+                <file name="jnr-posix-3.2.2.jar"/>
                 <file name="jline-2.14.6.jar"/>
                 <file name="netty-buffer-4.2.17.Final.jar"/>
                 <file name="netty-codec-base-4.2.17.Final.jar"/>
@@ -883,9 +883,9 @@ The text for an official release would continue like ...
             <!-- remainder of JNR, JFFI -->
             <zipfileset src="extlibs/jffi-1.4.0.jar"/>
             <zipfileset src="${extlibs.dir}/jnr-constants-0.11.0.jar"/>
-            <zipfileset src="${extlibs.dir}/jnr-ffi-2.3.0.jar"/>
+            <zipfileset src="${extlibs.dir}/jnr-ffi-2.3.1.jar"/>
             <zipfileset src="${extlibs.dir}/jnr-netdb-1.2.0.jar"/>
-            <zipfileset src="${extlibs.dir}/jnr-posix-3.2.1.jar"/>
+            <zipfileset src="${extlibs.dir}/jnr-posix-3.2.2.jar"/>
             <zipfileset src="extlibs/xercesImpl-2.12.2.jar"
                 excludes="META-INF/services/*, org/w3c/**"/>
             <rule pattern="org.apache.xml.**" result="org.python.apache.xml.@1"/>
