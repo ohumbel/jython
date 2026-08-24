@@ -279,7 +279,6 @@ public class _localeTest {
     }
 
     @Test
-    @Ignore
     public void setLocaleChinaMainland() {
         settableInit();
         /*
