@@ -1006,6 +1006,7 @@ def test_main():
         JavaMROTest,
         JavaWrapperCustomizationTest,
         PyReservedNamesTest,
+        SecurityManagerTest,
         SerializationTest,
         SysIntegrationTest,
         TreePathTest,
