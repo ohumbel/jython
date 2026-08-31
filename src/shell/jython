@@ -141,11 +141,11 @@ while [ $# -gt 0 ] ; do
         JAVA_STACK=$val
       elif [ "${val}" = "" ]; then
           $JAVA_CMD -help
-          echo "(Prepend -J in front of these options when using 'jython' command)" 
+          echo "(Prepend -J in front of these options when using 'jython' command)"
           exit
       elif [ "${val}" = "-X" ]; then
           $JAVA_CMD -X
-          echo "(Prepend -J in front of these options when using 'jython' command)" 
+          echo "(Prepend -J in front of these options when using 'jython' command)"
           exit
         elif [ "${val}" = "-classpath" ]; then
             EXTRA_CP="$EXTRA_CP$CP_DELIMITER$2"
@@ -319,7 +319,7 @@ if [ -z "$help_requested" ]; then
   fi
 fi
 
-JAVA_OPTS="$JAVA_OPTS $JAVA_MEM $JAVA_STACK"
+JAVA_OPTS="$JAVA_OPTS $JAVA_MEM $JAVA_METASPACE $JAVA_STACK"
 
 if [ -n "$profile_requested" ]; then
   java_major=`java_major_version`
@@ -334,7 +334,7 @@ setup_jdb_path_alias
 if $cygwin; then
   JAVA_HOME=`cygpath --mixed "$JAVA_HOME"`
   JYTHON_HOME=`cygpath --mixed "$JYTHON_HOME"`
-  
+
   if [[ ( "${1:0:1}" = "/" ) && ( ( -f "$1" ) || ( -d "$1" )) ]]; then
     win_arg=`cygpath -w "$1"`
     shift
