@@ -114,10 +114,10 @@ public class PyString extends PyBaseString implements BufferProtocol {
      * 2<sup>width</sup>-1. We use this to test for "byte-like" or ASCII.
      *
      * @param s string to test
-     * @param width number of bits within which each character must fit (<16)
+     * @param width number of bits within which each character must fit (&lt;16)
      * @return true if and only if every character has a code less than 2^width
      */
-    static boolean charsFitWidth(String s, int width) {
+    public static boolean charsFitWidth(String s, int width) {
 
         final int N = s.length();
 
