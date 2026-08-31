@@ -115,7 +115,7 @@ public class VersionMatchingAntTask extends Task {
 
     private static void addAntArtefact(String line, Set<String> artefacts) {
         line = line.trim();
-        if (line.startsWith("<file name=\"") && line.contains(".jar\"/>")) {
+        if (line.startsWith("<file name=\"") && line.contains(".jar\"")) {
             int quoteIndex = line.indexOf('"');
             artefacts.add(line.substring(quoteIndex + 1, line.indexOf('"', quoteIndex + 1)));
         }
