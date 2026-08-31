@@ -17,7 +17,6 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.python.core.Py;
 import org.python.core.PyCode;
@@ -117,7 +116,7 @@ public class _localeTest {
 
     private static int javaMajorVersion() {
         String versionString = System.getProperty("java.runtime.version");
-        String[] javaVersionElements = versionString.split("\\.|_|-b");
+        String[] javaVersionElements = versionString.split("\\.|_|-b|-|\\+");
         int major = Integer.valueOf(javaVersionElements[0]);
         int minor = Integer.valueOf(javaVersionElements[1]);
         if (major == 1) {
@@ -279,13 +278,14 @@ public class _localeTest {
     }
 
     @Test
-    @Ignore
     public void setLocaleChinaMainland() {
         settableInit();
         /*
-         * Java has ¥ \uffe5 rather than 元 \u5143 for zh-CN Java has negative sign preceding, Python
-         * following.
+         * Java has ¥ rather than 元 \u5143 for zh-CN. Java has negative sign preceding, Python
+         * following. JDK 17+ returns the regular yen sign \u00a5, while older JDKs returned the
+         * full-width yen sign \uffe5.
          */
+        String currencySymbol = javaMajorVersion() >= 17 ? "\\xc2\\xa5" : "\\xef\\xbf\\xa5";
         // @formatter:off
         String script =
                   "from _locale import setlocale, localeconv\n"
@@ -297,7 +297,7 @@ public class _localeTest {
                 + "'decimal_point': '.', 'int_curr_symbol': 'CNY', "
                 + "'n_cs_precedes': 1, 'p_sign_posn': 3, "
                 + "'mon_thousands_sep': ',', 'negative_sign': '-', "
-                + "'currency_symbol':  '\\xef\\xbf\\xa5' , "
+                + "'currency_symbol':  '" + currencySymbol + "' , "
                 + "'n_sep_by_space': 0, "
                 + "'p_cs_precedes': 1, 'positive_sign': ''} \n"
                 + "actual = localeconv() \n"

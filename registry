@@ -67,6 +67,10 @@ python.security.respectJavaAccessibility = true
 # behaviour.
 python.options.caseok = false
 
+# Set this to false to enable cost-based Java varargs overload resolution.
+# The default true preserves the legacy behavior where the last matching overload wins.
+#python.options.reflectedArgsLegacyMode = true
+
 # Setting this non-empty will drop the interpreter into an interactive session at the end of
 # execution, like adding the -i flag (roughly) or setting the environment variable PYTHONINSPECT
 # during execution.
