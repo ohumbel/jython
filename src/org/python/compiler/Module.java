@@ -6,27 +6,24 @@ import static org.python.util.CodegenUtils.ci;
 import static org.python.util.CodegenUtils.p;
 import static org.python.util.CodegenUtils.sig;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.File;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
-
-import java.lang.reflect.Method;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.UserPrincipal;
-
+import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.attribute.UserPrincipal;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.HashSet;
-import java.util.Stack;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,10 +42,9 @@ import org.python.core.CodeBootstrap;
 import org.python.core.CodeFlag;
 import org.python.core.CodeLoader;
 import org.python.core.CompilerFlags;
-import org.python.core.imp;
 import org.python.core.Py;
-import org.python.core.PyCode;
 import org.python.core.PyBytecode;
+import org.python.core.PyCode;
 import org.python.core.PyComplex;
 import org.python.core.PyException;
 import org.python.core.PyFile;
@@ -63,6 +59,7 @@ import org.python.core.PyRunnableBootstrap;
 import org.python.core.PyString;
 import org.python.core.PyUnicode;
 import org.python.core.ThreadState;
+import org.python.core.imp;
 import org.python.modules._marshal;
 
 
@@ -750,7 +747,7 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
         if (matcher.find()) {
             String extractedValue = matcher.group(1) != null ? matcher.group(1) : matcher.group(2);
             try { // if they match, activeCommand might stem from env and we better check
-                return extractedValue.equals(activeCommand) || 
+                return extractedValue.equals(activeCommand) ||
                         new File(extractedValue).getCanonicalFile().equals(new File(activeCommand).getCanonicalFile());
             } catch (IOException e) {
                 return true; // illegal filename char (or whatever causes this exception) justifies checking
@@ -800,7 +797,7 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
                     + PYTHON_CPYTHON + " property, e.g.:" //
                     + "\n    jython -D" + PYTHON_CPYTHON + "=python" //
                     + "\nor (e.g. for pip) through the environment variable JYTHON_OPTS:" //
-                    + "\n    export JYTHON_OPTS=\"-D" + PYTHON_CPYTHON 
+                    + "\n    export JYTHON_OPTS=\"-D" + PYTHON_CPYTHON
                     + "=python\"\n";
 
     private static PyBytecode loadPyBytecode(String filename, boolean try_cpython)
@@ -864,7 +861,7 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
                 } else {
                     boolean foundSystemPython = false;
                     // for convenience, some bare standard commands are still permitted in this case:
-                    if (CPython_command.equals("python") || CPython_command.equals("python2") 
+                    if (CPython_command.equals("python") || CPython_command.equals("python2")
                             || CPython_command.equals("python2.7") || CPython_command.equals("python.exe")
                             || CPython_command.equals("python2.exe")) { // we resolve them as follows:
                         if (isWindows) {
@@ -975,7 +972,7 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
                         // check version...
                         ProcessBuilder pbVersion = new ProcessBuilder(CPython_command, "--version");
                         // merge stderr into stdout to prevent stream buffer deadlocks
-                        pbVersion.redirectErrorStream(true); 
+                        pbVersion.redirectErrorStream(true);
                         Process pVersion = pbVersion.start();
                         String cp_version = null;
                         try (BufferedReader br = new BufferedReader(new InputStreamReader(pVersion.getInputStream()))) {
@@ -985,7 +982,7 @@ public class Module implements Opcodes, ClassConstants, CompilationContext {
                         }
                         result = pVersion.waitFor();
                         if (cp_version == null || !cp_version.startsWith("Python 2.7.")) {
-                            reason  = (cp_version == null ? "No version output" : cp_version) 
+                            reason  = (cp_version == null ? "No version output" : cp_version)
                                     + " has been provided, but 2.7.x is required.";
                             throw new RuntimeException(String.format(LARGE_METHOD_MSG, filename)
                                     + String.format(TRIED_CREATE_PYC_MSG,
