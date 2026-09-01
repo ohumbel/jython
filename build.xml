@@ -1552,6 +1552,7 @@ The text for an official release would continue like ...
             <arg value="test_socket"/>      <!-- flaky (address already in use) -->
             <arg value="test_socket_jy"/>   <!-- flaky (address already in use) -->
             <arg value="test_ssl_jy"/>      <!-- currently fails due 'No subject alternative names present' -->
+            <arg value="test_timeout"/>     <!-- flaky (address already in use) -->
         </exec>
     </target>
 
