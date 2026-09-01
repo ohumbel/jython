@@ -101,7 +101,7 @@ import java.text.SimpleDateFormat
 
 // update the version to your needs 
 // generateVersionInfo() will eventually add a '-SNAPSHOT' (but too late for gradle publication)
-version = '2.7.5b1'
+version = '2.7.5b2'
 group = 'org.python'
 
 
