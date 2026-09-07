@@ -1549,6 +1549,7 @@ The text for an official release would continue like ...
             <arg value="network,subprocess"/>
             <!-- Exclude particular tests troublesome on the build bots -->
             <arg value="--exclude"/>
+            <arg value="test_select_new"/>  <!-- flaky (Socket should not be ready for reading) -->
             <arg value="test_socket"/>      <!-- flaky (address already in use) -->
             <arg value="test_socket_jy"/>   <!-- flaky (address already in use) -->
             <arg value="test_ssl_jy"/>      <!-- currently fails due 'No subject alternative names present' -->
