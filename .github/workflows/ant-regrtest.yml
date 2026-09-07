@@ -29,5 +29,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Set up Ant
+        uses: CedX/SetupAnt@v7
+        with:
+          version: '1.10.17'
+
       - name: Build with Ant and run regression tests
         run: ant -noinput -buildfile build.xml regrtest-ci
