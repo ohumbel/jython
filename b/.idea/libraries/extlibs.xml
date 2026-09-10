@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="extlibs">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/extlibs/ant-1.10.17.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/ant-1.10.18.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/antlr-complete-3.5.3.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/asm-9.10.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/asm-commons-9.10.1.jar!/" />

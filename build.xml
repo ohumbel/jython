@@ -217,7 +217,7 @@ An example ant.properties file:
 
             <!-- Other JARs (alphabetical) -->
             <filelist dir="${extlibs.dir}">
-                <file name="ant-1.10.17.jar"/> <!-- Use the same ant library as the gradle build does -->
+                <file name="ant-1.10.18.jar"/> <!-- Use the same ant library as the gradle build does -->
                 <file name="antlr-complete-3.5.3.jar"/> <!-- ANTLR 3 until we upgrade parsing -->
                 <file name="asm-9.10.1.jar"/>
                 <file name="asm-commons-9.10.1.jar"/>
