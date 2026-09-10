@@ -1,5 +1,5 @@
 [versions]
-rev_ant =                 "1.10.17"
+rev_ant =                 "1.10.18"
 rev_antlr =               "3.5.3"
 rev_asm =                 "9.10.1"
 rev_bouncycastle =        "1.85"
