@@ -100,7 +100,6 @@ import java.text.SimpleDateFormat
 
 
 // update the version to your needs 
-// generateVersionInfo() will eventually add a '-SNAPSHOT' (but too late for gradle publication)
 version = '2.7.5b2'
 group = 'org.python'
 
@@ -289,7 +288,7 @@ classes.dependsOn(mergeExposed)
  * Updating project.version will become illegal with Gradle 10, therefore
  * SNAPSHOT publications will have wrong names.
  */
-task generateVersionInfo(type: WriteProperties, description: 'Write the version information as properties') {
+task writeVersionProperties(type: WriteProperties, description: 'Write the version information as properties') {
 
   destinationFile = file("${processResources.destinationDir}/org/python/version.properties")
   comment = ' Jython version information (from build.gradle)'
@@ -415,7 +414,7 @@ task generateVersionInfo(type: WriteProperties, description: 'Write the version 
 }
 
 // Attach this task to processResources
-processResources.dependsOn(generateVersionInfo)
+processResources.dependsOn(writeVersionProperties)
 
 
 
@@ -670,7 +669,7 @@ publishing {
 
       from components.java
 
-      // version evaluation takes place in the configuration phase - way before generateVersionInfo runs
+      // version evaluation takes place in the configuration phase - way before writeVersionProperties runs
 
       pom {
         // Same description as in ~/maven/pom-template
@@ -742,7 +741,7 @@ publishing {
 }
 
 // Ensure version computation/branding precedes any publication we use.
-publish.dependsOn(generateVersionInfo)
+publish.dependsOn(writeVersionProperties)
 
 
 
