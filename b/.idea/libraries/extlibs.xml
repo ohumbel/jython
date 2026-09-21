@@ -15,7 +15,7 @@
       <root url="jar://$PROJECT_DIR$/extlibs/jarjar-1.7.2.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/java-sizeof-0.0.5.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jdbc-15.0.1.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/jffi-1.4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/jffi-1.4.3.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jffi-aarch64-Linux.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jffi-arm-Linux.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jffi-Darwin.jar!/" />
@@ -37,10 +37,10 @@
       <root url="jar://$PROJECT_DIR$/extlibs/jffi-x86_64-SunOS.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jffi-x86_64-Windows.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jline-2.14.6.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/jnr-constants-0.11.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/jnr-ffi-2.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/jnr-constants-0.11.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/jnr-ffi-2.3.3.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jnr-netdb-1.2.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/jnr-posix-3.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/jnr-posix-3.2.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/junit-4.13.2.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/mysql-connector-j-9.7.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/netty-buffer-4.2.18.Final.jar!/" />
