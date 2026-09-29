@@ -99,9 +99,36 @@ java {
 import java.text.SimpleDateFormat
 
 
-// update the version to your needs 
-// generateVersionInfo() will eventually add a '-SNAPSHOT' (but too late for gradle publication)
-version = '2.7.5b2'
+// Helper to determine the published version based on Git tags and workspace cleanliness
+def computeVersion(String baseVersion) {
+  // versions ending with '+' result in a snapshot
+  if (!baseVersion.endsWith("+")) {
+    try {
+      def statusOutput = providers.exec {
+        commandLine 'git', 'status', '--porcelain'
+        ignoreExitValue = true
+      }.standardOutput.asText.get().trim()
+      // a dirty workspace results in a snapshot
+      if (statusOutput.isEmpty()) {
+        def tagOutput = providers.exec {
+          commandLine 'git', 'tag', '--points-at', 'HEAD'
+          ignoreExitValue = true
+        }.standardOutput.asText.get()
+        def tags = tagOutput.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
+        // a matching tag on the HEAD commit results in a plain version
+        if (tags.contains('v' + baseVersion)) {
+          return baseVersion
+        }
+      }
+    } catch (Exception ignored) {
+    }
+  }
+  return baseVersion.endsWith('-SNAPSHOT') ? baseVersion : "${baseVersion}-SNAPSHOT"
+}
+
+// update the baseVersion to your needs
+def baseVersion = '2.7.5b2'
+version = computeVersion(baseVersion)
 group = 'org.python'
 
 
@@ -277,17 +304,11 @@ classes.dependsOn(mergeExposed)
 // ---------------- Version-related file generation ----------------------------
 
 /*
- * Write the information that org.python.Version reads from
- * org/python/version.properties in the class file structure. The inputs to
- * this are: information from Git (git command required); project.version;
- * and project.ext.buildDate. The task works quite hard to decode
- * project.version, which must have the correct form, to deduce whether you
- * really intend this to be a release. If anything comes after the release
- * number, typically it's a '+' sign, the version becomes a snapshot.
- *
- * ! ATTN:
- * Updating project.version will become illegal with Gradle 10, therefore
- * SNAPSHOT publications will have wrong names.
+ * Write the information that org.python.Version reads from org/python/version.properties
+ * in the class file structure. The inputs to this are: 
+ *  - information from Git (git command required)
+ *  - project.version
+ *  - project.ext.buildDate 
  */
 task generateVersionInfo(type: WriteProperties, description: 'Write the version information as properties') {
 
@@ -356,12 +377,6 @@ task generateVersionInfo(type: WriteProperties, description: 'Write the version 
       level = 0xf
     }
 
-    // Convert optional +|-<word> to -DEV or -SNAPSHOT suffix or empty string
-    String snapshotSuffix = versionResult[8];
-    if (snapshotSuffix == '+') {
-      snapshotSuffix = "-SNAPSHOT"
-    }
-
     /*
      * Work out if it looks like a release, or adjust project.version. This logic prevents us
      * releasing from a polluted repo (similar to logic in the Ant build.xml).
@@ -369,35 +384,30 @@ task generateVersionInfo(type: WriteProperties, description: 'Write the version 
     def L = [0:'', 10:'a', 11:'b', 12:'rc', 15:'']
     String release = "$major.$minor.$micro${L[level]}${serial?:''}"
 
-    if (snapshotSuffix == null) {
-      // The version is named correctly for a release. Make safety checks on the repo.
-      String expectTag = "tags/v$release"
-      String message = null;
-      if (tag.endsWith('-dirty')) {
-        message = 'Version-controlled files have been edited since the last commit'
-      } else if (tag != expectTag) {
-        message = "Change set $ident is not tagged $expectTag."
-      } else {
-        // Query Git for status: non-empty if uncontrolled (unignored) files.
-        String gitStatus = 'git status --porcelain'.execute().text
-        if (gitStatus.trim().length() > 0) {
-          message = 'Workspace contains uncontrolled files'
-        }
-      }
-      // If a message was set for any reason, fall back to a snapshot.
-      if (message == null) {
-        // Repository state is good for a full build.
-        snapshotSuffix = ''
-      } else {
-        // Some reason found not to build the release.
-        println "$message - build is a snapshot."
-        snapshotSuffix = '-SNAPSHOT'
+    // Issue a message in case the current workspace is not ready for a release.
+    String expectTag = "tags/v$release"
+    String message = null;
+    if (tag.endsWith('-dirty')) {
+      message = 'Version-controlled files have been edited since the last commit'
+    } else if (tag != expectTag) {
+      message = "Change set $ident is not tagged $expectTag."
+    } else {
+      // Query Git for status: non-empty if uncontrolled (unignored) files.
+      String gitStatus = 'git status --porcelain'.execute().text
+      if (gitStatus.trim().length() > 0) {
+        message = 'Workspace contains uncontrolled files'
       }
     }
+    if (message != null) {
+      // Some reason found not to build the release.
+      println "$message - build is a snapshot."
+    }
+
+
 
     // Rebuild the version with the snapshot suffix, even if not given originally.
-    def actualProjectVersion = release + snapshotSuffix
-    println "This build is for v${actualProjectVersion}."
+    def actualProjectVersion = "v${projectVersion}"
+    println "This build is for ${actualProjectVersion}."
 
     property('jython.version', actualProjectVersion)
     property('jython.major_version', major)
