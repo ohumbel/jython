@@ -99,8 +99,31 @@ java {
 import java.text.SimpleDateFormat
 
 
-// update the version to your needs
-version = '2.7.5b2'
+// Helper to determine the published version based on Git tags and workspace cleanliness
+def computeVersion(String baseVersion) {
+  try {
+    def statusOutput = providers.exec {
+      commandLine 'git', 'status', '--porcelain'
+      ignoreExitValue = true
+    }.standardOutput.asText.get().trim()
+    if (statusOutput.isEmpty()) {
+      def tagOutput = providers.exec {
+        commandLine 'git', 'tag', '--points-at', 'HEAD'
+        ignoreExitValue = true
+      }.standardOutput.asText.get()
+      def tags = tagOutput.readLines().collect { it.trim() }.findAll { !it.isEmpty() }
+      if (tags.contains('v' + baseVersion)) {
+        return baseVersion
+      }
+    }
+  } catch (Exception ignored) {
+  }
+  return baseVersion.endsWith('-SNAPSHOT') ? baseVersion : "${baseVersion}-SNAPSHOT"
+}
+
+// update the baseVersion to your needs
+def baseVersion = '2.7.5b2'
+version = computeVersion(baseVersion)
 group = 'org.python'
 
 
