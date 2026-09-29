@@ -222,27 +222,27 @@ An example ant.properties file:
                 <file name="asm-9.10.1.jar"/>
                 <file name="asm-commons-9.10.1.jar"/>
                 <file name="asm-util-9.10.1.jar"/>
-                <file name="bcpkix-jdk18on-1.85.jar"/>
-                <file name="bcprov-jdk18on-1.85.jar"/>
+                <file name="bcpkix-jdk18on-1.86.jar"/>
+                <file name="bcprov-jdk18on-1.86.jar"/>
                 <file name="commons-compress-1.28.0.jar"/>
                 <file name="commons-io-2.22.0.jar"/>
                 <file name="failureaccess-1.0.3.jar"/>
                 <file name="guava-33.7.1-jre.jar"/>
                 <file name="icu4j-78.3.jar"/>
-                <file name="jffi-1.4.0.jar"/>
+                <file name="jffi-1.4.3.jar"/>
                 <file name="java-sizeof-0.0.5.jar"/>
-                <file name="jnr-constants-0.11.0.jar"/>
-                <file name="jnr-ffi-2.3.1.jar"/>
+                <file name="jnr-constants-0.11.2.jar"/>
+                <file name="jnr-ffi-2.3.3.jar"/>
                 <file name="jnr-netdb-1.2.0.jar"/>
-                <file name="jnr-posix-3.2.2.jar"/>
+                <file name="jnr-posix-3.2.4.jar"/>
                 <file name="jline-2.14.6.jar"/>
-                <file name="netty-buffer-4.2.17.Final.jar"/>
-                <file name="netty-codec-base-4.2.17.Final.jar"/>
-                <file name="netty-common-4.2.17.Final.jar"/>
-                <file name="netty-handler-4.2.17.Final.jar"/>
-                <file name="netty-resolver-4.2.17.Final.jar"/>
-                <file name="netty-transport-4.2.17.Final.jar"/>
-                <file name="netty-transport-native-unix-common-4.2.17.Final.jar"/>
+                <file name="netty-buffer-4.2.18.Final.jar"/>
+                <file name="netty-codec-base-4.2.18.Final.jar"/>
+                <file name="netty-common-4.2.18.Final.jar"/>
+                <file name="netty-handler-4.2.18.Final.jar"/>
+                <file name="netty-resolver-4.2.18.Final.jar"/>
+                <file name="netty-transport-4.2.18.Final.jar"/>
+                <file name="netty-transport-native-unix-common-4.2.18.Final.jar"/>
             </filelist>
         </path>
 
@@ -833,8 +833,8 @@ The text for an official release would continue like ...
             <zipfileset src="extlibs/asm-commons-9.10.1.jar" excludes="module-info.class"/>
             <zipfileset src="extlibs/asm-util-9.10.1.jar" excludes="module-info.class"/>
             <rule pattern="org.objectweb.asm.**" result="org.python.objectweb.asm.@1"/>
-            <zipfileset src="extlibs/bcpkix-jdk18on-1.85.jar" excludes="META-INF/**"/>
-            <zipfileset src="extlibs/bcprov-jdk18on-1.85.jar" excludes="META-INF/**"/>
+            <zipfileset src="extlibs/bcpkix-jdk18on-1.86.jar" excludes="META-INF/**"/>
+            <zipfileset src="extlibs/bcprov-jdk18on-1.86.jar" excludes="META-INF/**"/>
             <rule pattern="org.bouncycastle.**" result="org.python.bouncycastle.@1"/>
             <zipfileset src="extlibs/commons-compress-1.28.0.jar" excludes="META-INF/versions/9/module-info.class"/>
             <rule pattern="org.apache.commons.compress.**" result="org.python.apache.commons.compress.@1"/>
@@ -845,19 +845,19 @@ The text for an official release would continue like ...
             <rule pattern="com.google.**" result="org.python.google.@1"/>
             <zipfileset src="extlibs/icu4j-78.3.jar"/>
             <rule pattern="com.ibm.icu.**" result="org.python.icu.@1"/>
-            <zipfileset src="extlibs/netty-buffer-4.2.17.Final.jar" excludes="META-INF/**"/>
+            <zipfileset src="extlibs/netty-buffer-4.2.18.Final.jar" excludes="META-INF/**"/>
             <rule pattern="io.netty.**" result="org.python.netty.@1"/>
-            <zipfileset src="extlibs/netty-codec-base-4.2.17.Final.jar" excludes="META-INF/**"/>
+            <zipfileset src="extlibs/netty-codec-base-4.2.18.Final.jar" excludes="META-INF/**"/>
             <rule pattern="io.netty.**" result="org.python.netty.@1"/>
-            <zipfileset src="extlibs/netty-common-4.2.17.Final.jar" excludes="META-INF/**"/>
+            <zipfileset src="extlibs/netty-common-4.2.18.Final.jar" excludes="META-INF/**"/>
             <rule pattern="io.netty.**" result="org.python.netty.@1"/>
-            <zipfileset src="extlibs/netty-handler-4.2.17.Final.jar" excludes="META-INF/**"/>
+            <zipfileset src="extlibs/netty-handler-4.2.18.Final.jar" excludes="META-INF/**"/>
             <rule pattern="io.netty.**" result="org.python.netty.@1"/>
-            <zipfileset src="extlibs/netty-resolver-4.2.17.Final.jar" excludes="META-INF/**"/>
+            <zipfileset src="extlibs/netty-resolver-4.2.18.Final.jar" excludes="META-INF/**"/>
             <rule pattern="io.netty.**" result="org.python.netty.@1"/>
-            <zipfileset src="extlibs/netty-transport-4.2.17.Final.jar" excludes="META-INF/**"/>
+            <zipfileset src="extlibs/netty-transport-4.2.18.Final.jar" excludes="META-INF/**"/>
             <rule pattern="io.netty.**" result="org.python.netty.@1"/>
-            <zipfileset src="extlibs/netty-transport-native-unix-common-4.2.17.Final.jar" excludes="META-INF/**"/>
+            <zipfileset src="extlibs/netty-transport-native-unix-common-4.2.18.Final.jar" excludes="META-INF/**"/>
             <rule pattern="io.netty.**" result="org.python.netty.@1"/>
             <zipfileset src="${extlibs.dir}/java-sizeof-0.0.5.jar"/>
             <rule pattern="com.carrotsearch.sizeof.**" result="org.python.sizeof.@1"/>
@@ -885,10 +885,10 @@ The text for an official release would continue like ...
             <zipfileset src="extlibs/jffi-x86_64-Windows.jar"/>
             <!-- remainder of JNR, JFFI -->
             <zipfileset src="extlibs/jffi-1.4.0.jar"/>
-            <zipfileset src="${extlibs.dir}/jnr-constants-0.11.0.jar"/>
-            <zipfileset src="${extlibs.dir}/jnr-ffi-2.3.1.jar"/>
+            <zipfileset src="${extlibs.dir}/jnr-constants-0.11.2.jar"/>
+            <zipfileset src="${extlibs.dir}/jnr-ffi-2.3.3.jar"/>
             <zipfileset src="${extlibs.dir}/jnr-netdb-1.2.0.jar"/>
-            <zipfileset src="${extlibs.dir}/jnr-posix-3.2.2.jar"/>
+            <zipfileset src="${extlibs.dir}/jnr-posix-3.2.4.jar"/>
             <zipfileset src="extlibs/xercesImpl-2.12.2.jar"
                 excludes="META-INF/services/*, org/w3c/**"/>
             <rule pattern="org.apache.xml.**" result="org.python.apache.xml.@1"/>
