@@ -195,6 +195,11 @@ public class JLineConsole extends PlainConsole {
                     startup_hook.__call__();
                 }
 
+                // Send the cursor to the start of the line so LineReader redraws the prompt
+                // over the partial line already written to System.out.
+                reader.getTerminal().writer().print("\r");
+                reader.getTerminal().writer().flush();
+
                 // The prompt is whatever was already on the line.
                 return reader.readLine(prompt);
             } catch (EndOfFileException eofe) {
