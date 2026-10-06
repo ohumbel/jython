@@ -1381,17 +1381,22 @@ class JLine2Pager(object):
     def handle_prompt(self):
         can_go_back = self.index - self.visible > 0
         if self.index == len(self.data):
-            if can_go_back:
-                self.reader.resetPromptLine(self.end_prompt_back, "", 0)
-            else:
-                self.reader.resetPromptLine(self.end_prompt, "", 0)
+            prompt = self.end_prompt_back if can_go_back else self.end_prompt
         else:
-            if can_go_back:
-                self.reader.resetPromptLine(self.more_prompt_back, "", 0)
-            else:
-                self.reader.resetPromptLine(self.more_prompt, "", 0)
-        c = chr(self.reader.readCharacter())
-        self.reader.resetPromptLine("", "", 0)
+            prompt = self.more_prompt_back if can_go_back else self.more_prompt
+
+        terminal = self.reader.terminal if hasattr(self.reader, 'terminal') else self.reader.getTerminal()
+        if hasattr(self.reader, 'resetPromptLine'):
+            self.reader.resetPromptLine(prompt, "", 0)
+            c = chr(self.reader.readCharacter())
+            self.reader.resetPromptLine("", "", 0)
+        else:
+            terminal.writer().print(prompt)
+            terminal.writer().flush()
+            c = chr(terminal.reader().read())
+            terminal.writer().print("\r" + " " * len(prompt) + "\r")
+            terminal.writer().flush()
+
         if c == "q":
             return "quit"
         elif c == "b":
@@ -1409,9 +1414,14 @@ class JLine2Pager(object):
         # TODO count wrapped lines with respect to terminal width by
         # taking in account ANSI formatting codes
         row_count = 0
+        terminal = self.reader.terminal if hasattr(self.reader, 'terminal') else self.reader.getTerminal()
         while self.index < len(self.data):
             line = self.data[self.index]
-            self.reader.print(line + "\n")
+            if hasattr(self.reader, 'print'):
+                self.reader.print(line + "\n")
+            else:
+                terminal.writer().println(line)
+                terminal.writer().flush()
             self.index += 1
             row_count += 1
             if row_count == self.visible or self.index == len(self.data):
@@ -1422,7 +1432,8 @@ class JLine2Pager(object):
                     elif action != "reprompt":
                         break
                 row_count = 0
-        self.reader.resetPromptLine("", "", 0)
+        if hasattr(self.reader, 'resetPromptLine'):
+            self.reader.resetPromptLine("", "", 0)
 
 
 def getpager():

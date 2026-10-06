@@ -11,7 +11,7 @@ rev_informix =            "15.0.1.4"
 rev_jakarta_servlet_api = "6.1.0"
 rev_java_sizeof =         "0.0.5"
 rev_jffi =                "1.4.3"
-rev_jline =               "2.14.6"
+rev_jline =               "3.30.4"
 rev_jnr_constants =       "0.11.2"
 rev_jnr_ffi =             "2.3.3"
 rev_jnr_netdb =           "1.2.0"
@@ -36,7 +36,7 @@ informix =                           { module = "com.ibm.informix:jdbc",        
 jakarta_servlet_api =                { module = "jakarta.servlet:jakarta.servlet-api",         version.ref = "rev_jakarta_servlet_api" }
 java_sizeof =                        { module = "com.carrotsearch:java-sizeof",                version.ref = "rev_java_sizeof" }
 jffi =                               { module = "com.github.jnr:jffi",                         version.ref = "rev_jffi" }
-jline =                              { module = "jline:jline",                                 version.ref = "rev_jline" }
+jline =                              { module = "org.jline:jline",                             version.ref = "rev_jline" }
 jnr_constants =                      { module = "com.github.jnr:jnr-constants",                version.ref = "rev_jnr_constants" }
 jnr_ffi =                            { module = "com.github.jnr:jnr-ffi",                      version.ref = "rev_jnr_ffi" }
 jnr_netdb =                          { module = "com.github.jnr:jnr-netdb",                    version.ref = "rev_jnr_netdb" }

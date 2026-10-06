@@ -86,7 +86,7 @@ public class VersionMatchingAntTaskTest {
         assertEquals("jakarta.servlet-api-6.1.0.jar", calculateGradleArtefact("rev_jakarta_servlet_api", "6.1.0"));
         assertEquals("java-sizeof-0.1.2.jar", calculateGradleArtefact("rev_java_sizeof", "0.1.2"));
         assertEquals("jffi-1.3.15.jar", calculateGradleArtefact("rev_jffi", "1.3.15"));
-        assertEquals("jline-2.14.6.jar", calculateGradleArtefact("rev_jline", "2.14.6"));
+        assertEquals("jline-3.30.4.jar", calculateGradleArtefact("rev_jline", "3.30.4"));
         assertEquals("jnr-constants-0.10.4.jar", calculateGradleArtefact("rev_jnr_constants", "0.10.4"));
         assertEquals("jnr-ffi-2.2.19.jar", calculateGradleArtefact("rev_jnr_ffi", "2.2.19"));
         assertEquals("jnr-netdb-1.2.3.jar", calculateGradleArtefact("rev_jnr_netdb", "1.2.3"));
