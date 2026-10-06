@@ -122,7 +122,7 @@ public class JLineConsole extends PlainConsole {
              * PrintStream that keeps the last incomplete line in case it turns out to be a console
              * prompt.
              */
-            outWrapper = new ConsoleOutputStream(System.out, terminal.getWidth());
+            outWrapper = new ConsoleOutputStream(System.out, terminal.getColumns());
             System.setOut(new PrintStream(outWrapper, true, encoding));
 
             // Access and load (if possible) the line history.
