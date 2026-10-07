@@ -3,18 +3,20 @@ package org.python.util;
 
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
 import java.io.FilterInputStream;
+import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
 
-import jline.console.ConsoleReader;
-import jline.WindowsTerminal;
-import jline.console.history.FileHistory;
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.UserInterruptException;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 import jnr.constants.platform.Errno;
 
 import org.python.core.PlainConsole;
@@ -22,18 +24,18 @@ import org.python.core.PyObject;
 import org.python.core.Py;
 
 /**
- * This class uses <a href="http://jline.sourceforge.net/">JLine</a> to provide readline like
+ * This class uses <a href="http://jline.org/">JLine</a> to provide readline like
  * functionality to its console without requiring native readline support.
  */
 public class JLineConsole extends PlainConsole {
 
     /** Main interface to JLine. */
-    public ConsoleReader reader;
+    public LineReader reader;
     /** Callable object set by <code>readline.set_startup_hook</code>. */
     protected PyObject startup_hook;
     /** <b>Not</b> currently set by <code>readline.set_pre_input_hook</code>. Why not? */
     protected PyObject pre_input_hook;
-    /** Whether reader is a WindowsTerminal. */
+    /** Whether reader is on Windows. */
     private boolean windows;
     /** The ctrl-z character String. */
     protected static final String CTRL_Z = "\u001a";
@@ -61,28 +63,27 @@ public class JLineConsole extends PlainConsole {
     public JLineConsole(String encoding) {
         /*
          * Super-class needs the encoding in order to re-encode the characters that
-         * jline.ConsoleReader.readLine() has decoded.
+         * LineReader.readLine() has decoded.
          */
         super(encoding);
         /*
-         * Communicate the specified encoding to JLine. jline.ConsoleReader.readLine() edits a line
-         * of characters, decoded from stdin.
+         * Communicate the specified encoding to JLine.
          */
-        System.setProperty("jline.WindowsTerminal.input.encoding", this.encoding);
         System.setProperty("input.encoding", this.encoding);
-        // ... not "jline.UnixTerminal.input.encoding" as you might think, not even in JLine2
     }
 
     private static class HistoryCloser implements Runnable {
-        FileHistory history;
-        public HistoryCloser(FileHistory history) {
-            this.history = history;
+        LineReader reader;
+        public HistoryCloser(LineReader reader) {
+            this.reader = reader;
         }
 
         @Override
         public void run() {
             try {
-                history.flush();
+                if (reader != null && reader.getHistory() != null) {
+                    reader.getHistory().save();
+                }
             } catch (IOException e) {
                 // could not save console history, but quietly ignore in this case
             }
@@ -100,45 +101,45 @@ public class JLineConsole extends PlainConsole {
     public void install() {
         String userHomeSpec = System.getProperty("user.home", ".");
 
-        // Configure a ConsoleReader (the object that does most of the line editing).
+        // Configure Terminal and LineReader
         try {
-            // Create the reader as unbuffered as possible
-            InputStream in = new FileInputStream(FileDescriptor.in);
-            reader = new ConsoleReader("jython", in, System.out, null, encoding);
-            reader.setKeyMap("jython");
-            reader.setHandleUserInterrupt(true);
-            reader.setCopyPasteDetection(true);
+            TerminalBuilder builder = TerminalBuilder.builder();
+            if (encodingCharset != null) {
+                builder.encoding(encodingCharset);
+            }
+            Terminal terminal = builder.system(true).build();
 
-            // We find the bell too noisy
-            reader.setBellEnabled(false);
+            reader = LineReaderBuilder.builder()
+                    .appName("jython")
+                    .terminal(terminal)
+                    .build();
 
-            // Do not attempt to expand ! in the input
-            reader.setExpandEvents(false);
+            reader.setOpt(LineReader.Option.DISABLE_EVENT_EXPANSION);
+            reader.setVariable(LineReader.BELL_STYLE, "none");
 
             /*
              * Everybody else, using sys.stdout or java.lang.System.out, gets to write on a special
              * PrintStream that keeps the last incomplete line in case it turns out to be a console
              * prompt.
              */
-            outWrapper = new ConsoleOutputStream(System.out, reader.getTerminal().getWidth());
+            outWrapper = new ConsoleOutputStream(System.out, terminal.getColumns());
             System.setOut(new PrintStream(outWrapper, true, encoding));
+
+            // Access and load (if possible) the line history.
+            try {
+                File historyFile = new File(userHomeSpec, ".jline-jython.history");
+                reader.setVariable(LineReader.HISTORY_FILE, historyFile.toPath());
+                Runtime.getRuntime().addShutdownHook(new Thread(new HistoryCloser(reader)));
+            } catch (Exception e) {
+                // oh well, no history from file
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        // Access and load (if possible) the line history.
-        try {
-            File historyFile = new File(userHomeSpec, ".jline-jython.history");
-            FileHistory history = new FileHistory(historyFile);
-            Runtime.getRuntime().addShutdownHook(new Thread(new HistoryCloser(history)));
-            reader.setHistory(history);
-        } catch (IOException e) {
-            // oh well, no history from file
-        }
-
         // Check for OS type
-        windows = reader.getTerminal() instanceof WindowsTerminal;
+        windows = System.getProperty("os.name", "").toLowerCase().contains("win");
 
         // Replace System.in
         FilterInputStream wrapper = new Stream();
@@ -175,8 +176,7 @@ public class JLineConsole extends PlainConsole {
 
     /**
      * Wrapper on reader.readLine(prompt) that deals with retries (on Unix) when the user enters
-     * ctrl-Z to background Jython, then brings it back to the foreground. The inherited
-     * implementation says this is necessary and effective on BSD Unix.
+     * ctrl-Z to background Jython, then brings it back to the foreground.
      *
      * @param prompt to display
      * @return line of text read in
@@ -195,36 +195,26 @@ public class JLineConsole extends PlainConsole {
                     startup_hook.__call__();
                 }
 
-                try {
-                    // Resumption from control-Z suspension may occur without JLine telling us
-                    // Work around by putting the terminal into a well-known state before
-                    // each read line, if possible
-                    reader.getTerminal().init();
-                } catch (Exception exc) {}
-
-                // Send the cursor to the start of the line (no prompt, empty buffer).
-                reader.setPrompt(null);
-                reader.redrawLine();
+                // Send the cursor to the start of the line so LineReader redraws the prompt
+                // over the partial line already written to System.out.
+                reader.getTerminal().writer().print("\r");
+                reader.getTerminal().writer().flush();
 
                 // The prompt is whatever was already on the line.
                 return reader.readLine(prompt);
-            } catch (IOException ioe) {
-                // Something went wrong, or we were interrupted (seems only BSD throws this)
-                if (!fromSuspend(ioe)) {
-                    // The interruption is not the result of (the end of) a ctrl-Z suspension
-                    throw ioe;
-
-                } else {
-                    // The interruption seems to be (return from) a ctrl-Z suspension:
-                    try {
-                        // Must reset JLine and continue (not repeating the prompt)
-                        reader.resetPromptLine (prompt, null, 0);
-                        prompt = "";
-                    } catch (Exception e) {
-                        // Do our best to say what went wrong
-                        throw new IOException("Failed to re-initialize JLine: " + e.getMessage());
-                    }
+            } catch (EndOfFileException eofe) {
+                throw new EOFException();
+            } catch (UserInterruptException uie) {
+                throw uie;
+            } catch (IOError | RuntimeException ioe) {
+                // Something went wrong, or we were interrupted
+                Throwable cause = ioe.getCause();
+                if (cause instanceof IOException && fromSuspend((IOException) cause)) {
+                    // ctrl-Z resume
+                    prompt = "";
+                    continue;
                 }
+                throw ioe;
             }
         }
 
@@ -248,7 +238,7 @@ public class JLineConsole extends PlainConsole {
     /**
      * @return the JLine console reader associated with this interpreter
      */
-    public ConsoleReader getReader() {
+    public LineReader getReader() {
         return reader;
     }
 
