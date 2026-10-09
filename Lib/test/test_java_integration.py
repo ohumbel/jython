@@ -487,8 +487,8 @@ class JavaDelegationTest(unittest.TestCase):
         self.assertNotEquals(x, z)
         self.assertTrue(not (x == z))
 
-@unittest.skipIf(test_support.get_java_version() >= (25,),
-        "Security Manager cannot be enabled on Java 25+")
+@unittest.skipIf(test_support.get_java_version() >= (21,),
+        "Security Manager cannot be enabled on Java 25+, but writeFilePermission() throws an AccessDeniedException on 21.0.12+1")
 class SecurityManagerTest(unittest.TestCase):
 
     def test_nonexistent_import_with_security(self):
