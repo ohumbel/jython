@@ -249,8 +249,8 @@ An example ant.properties file:
         <path id="test.classpath">
             <path refid="main.classpath"/>
             <filelist dir="${extlibs.dir}">
-                <!-- Pin to 4.13.2 until dependency on hamcrest classes resolved. -->
                 <file name="junit-4.13.2.jar"/>
+                <file name="hamcrest-core-1.3.jar"/>
             </filelist>
             <pathelement location="${exposed.dir}" />
             <pathelement location="${compile.dir}" />
@@ -1325,7 +1325,7 @@ The text for an official release would continue like ...
 
     <target name="javatest-basepath-built" depends="init">
         <mkdir dir="${junit.reports}"/>
-        <junit haltonfailure="true" fork="true" printsummary="true">
+        <junit haltonfailure="true" fork="true" printsummary="withOutAndErr">
             <formatter type="xml"/>
             <sysproperty key="python.home" value="${dist.dir}"/>
             <sysproperty key="python.test.source.dir" value="${test.source.dir}"/>

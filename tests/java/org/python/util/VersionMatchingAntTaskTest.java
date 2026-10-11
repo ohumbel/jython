@@ -49,7 +49,7 @@ public class VersionMatchingAntTaskTest {
     public void testParseAntArtefacts() throws IOException {
         Set<String> antArtefacts = task.parseAntArtefacts();
         assertNotNull(antArtefacts);
-        assertEquals(32, antArtefacts.size());
+        assertEquals(33, antArtefacts.size());
     }
 
     @Test
