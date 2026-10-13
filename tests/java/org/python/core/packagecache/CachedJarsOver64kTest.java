@@ -1,20 +1,21 @@
 package org.python.core.packagecache;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.File;
 
 import org.python.core.PyJavaPackage;
 import org.python.core.PyList;
-import org.python.core.packagecache.CachedJarsPackageManager;
 
-import junit.framework.TestCase;
-
-public class CachedJarsOver64kTest extends TestCase {
+public class CachedJarsOver64kTest  {
 
     private TestCachePackageManager packageManager = null;
 
     private File jarFile = null;
 
-    @Override
+    @BeforeEach
     public void setUp() {
         // Find the jar to use
         packageManager = new TestCachePackageManager(new File(System
@@ -24,6 +25,7 @@ public class CachedJarsOver64kTest extends TestCase {
         jarFile = new File(cwd, "vim25-small.jar");
     }
 
+    @Test
     public void testJarOver64k() {
         assertTrue(jarFile.exists());
         packageManager.addJarToPackages(jarFile, true);

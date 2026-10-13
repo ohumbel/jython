@@ -1,8 +1,10 @@
 package org.python.core;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for ReflectedArgs, paying particular attention to the processing of arguments to match Java
@@ -40,7 +42,7 @@ import junit.framework.TestCase;
  * </pre>would be valid as either args being {@code [1,2,3]} or {@code [[1, 2, 3]]}. This ambiguity
  * is also present in Java but behaves as if it was the former.
  */
-public class ReflectedArgsTest extends TestCase {
+public class ReflectedArgsTest  {
 
     /** Example methods for varargs processing. */
     static class Demo {
@@ -105,6 +107,7 @@ public class ReflectedArgsTest extends TestCase {
      * {@code foo(3, 4, strlist)} where {@code strlist} is the representation of Python
      * {@code ["bar"]}.
      */
+    @Test
     public void testVarargsBoxedWithTooManyArgs() {
         // calling foo(Object... args) as foo(3, 4, ["bar"])
         PyList strlist = new PyList(new PyObject[] {Py.newString("bar")});
@@ -118,6 +121,7 @@ public class ReflectedArgsTest extends TestCase {
      * Calling {@code bar(int a, int[] b, int... c)} as Python {@code bar(1, [2, 3])} calls Java
      * {@code bar(1, new int[]{2, 3})}.
      */
+    @Test
     public void testPrimitiveVarargsBoxedWithTooFewArguments() {
         // calling bar(int a, int[] b, int... c) as bar(1, [2, 3])
         PyObject[] ints = {Py.newInteger(2), Py.newInteger(3)};
@@ -131,6 +135,7 @@ public class ReflectedArgsTest extends TestCase {
      * Calling {@code baz(Integer a, Integer[] b, Integer... c)} as Python {@code baz(1, [2, 3])}
      * calls Java {@code baz(1, new Integer[]{2, 3})}.
      */
+    @Test
     public void testVarargsBoxedWithTooFewArguments() {
         // calling baz(Integer a, Integer[] b, Integer... c) as bar(1, [2, 3])
         PyObject[] ints = {Py.newInteger(2), Py.newInteger(3)};
@@ -144,6 +149,7 @@ public class ReflectedArgsTest extends TestCase {
      * Calling {@code foo(Object... args)} as Python {@code foo([1,2,3])} calls Java {@code foo(new
      * Object[]{1,2,3})}.
      */
+    @Test
     public void testVarargsNotBoxedWithCorrectArgs() {
         // calling foo(Object... args) as foo([1,2,3])
         PyObject[] ints = {Py.newInteger(1), Py.newInteger(2), Py.newInteger(3)};
@@ -157,6 +163,7 @@ public class ReflectedArgsTest extends TestCase {
      * Calling {@code foo(Object... args)} as Python {@code foo("foo", "bar")} calls Java
      * {@code foo("foo", "bar")}.
      */
+    @Test
     public void testVarargsBoxedWithNoSequences() {
         // calling foo(Object... args) as foo("foo", "bar")
         PyObject[] pyArgs = {Py.newString("foo"), Py.newString("bar")};

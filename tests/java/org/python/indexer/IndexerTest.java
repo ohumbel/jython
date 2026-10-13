@@ -4,9 +4,17 @@
  */
 package org.python.indexer;
 
-import org.python.indexer.Indexer;
-import org.python.indexer.NBinding;
-import org.python.indexer.Scope;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.jupiter.api.Test;
 import org.python.indexer.ast.NAlias;
 import org.python.indexer.ast.NAssert;
 import org.python.indexer.ast.NAssign;
@@ -44,7 +52,6 @@ import org.python.indexer.ast.NListComp;
 import org.python.indexer.ast.NModule;
 import org.python.indexer.ast.NName;
 import org.python.indexer.ast.NNode;
-import org.python.indexer.ast.NNodeVisitor;
 import org.python.indexer.ast.NNum;
 import org.python.indexer.ast.NPass;
 import org.python.indexer.ast.NPlaceHolder;
@@ -71,66 +78,69 @@ import org.python.indexer.types.NModuleType;
 import org.python.indexer.types.NTupleType;
 import org.python.indexer.types.NType;
 import org.python.indexer.types.NUnionType;
-import org.python.indexer.types.NUnknownType;
-
-import java.io.File;
-import java.util.List;
-import java.util.Set;
 
 public class IndexerTest extends TestBase {
 
+    @Test
     public void testBuiltinModulePresent() throws Exception {
         NType mod = idx.moduleTable.lookupType("__builtin__");
-        assertNotNull("missing __builtin__ module", mod);
-        assertTrue("wrong type: " + mod.getClass(), mod instanceof NModuleType);
+        assertNotNull(mod, "missing __builtin__ module");
+        assertTrue(mod instanceof NModuleType, "wrong type: " + mod.getClass());
     }
 
+    @Test
     public void testLazyModuleLoad() throws Exception {
-        assertNull("'array' module should not yet be loaded",
-                   idx.moduleTable.lookupType("array"));
+        assertNull(idx.moduleTable.lookupType("array"),
+                   "'array' module should not yet be loaded");
         assertNoBinding("array");
 
         assertNotNull(idx.loadModule("array"));  // lazy loads it
 
-        assertNotNull("'array' module should have been loaded",
-                      idx.moduleTable.lookupType("array"));
+        assertNotNull(idx.moduleTable.lookupType("array"),
+                      "'array' module should have been loaded");
         assertModuleBinding("array");
     }
 
+    @Test
     public void testNativeModulesAvailable() throws Exception {
         for (String name : new String[] {
                 "array", "ctypes", "errno",
                 "math", "operator", "os",
                 "signal", "sys", "thread", "time",}) {
             assertNoBinding(name);
-            assertNotNull(name, idx.loadModule(name));
+            assertNotNull(idx.loadModule(name), name);
             assertModuleBinding(name);
         }
     }
 
+    @Test
     public void testBuiltinObject() throws Exception {
         assertClassBinding("__builtin__.object");
         assertClassBinding("__builtin__.object.__class__");
     }
 
+    @Test
     public void testBuiltinTuple() throws Exception {
         assertClassBinding("__builtin__.tuple");
         assertMethodBinding("__builtin__.tuple.__rmul__");
         assertMethodBinding("__builtin__.tuple.__iter__");
     }
 
+    @Test
     public void testBuiltinList() throws Exception {
         assertClassBinding("__builtin__.list");
         assertMethodBinding("__builtin__.list.append");
         assertMethodBinding("__builtin__.list.count");
     }
 
+    @Test
     public void testBuiltinNum() throws Exception {
         assertClassBinding("__builtin__.float");
         NBinding b = assertMethodBinding("__builtin__.float.fromhex");
         assertTrue(b.isBuiltin());
     }
 
+    @Test
     public void testBuiltinStr() throws Exception {
         assertClassBinding("__builtin__.str");
         assertMethodBinding("__builtin__.str.encode");
@@ -139,6 +149,7 @@ public class IndexerTest extends TestBase {
         assertMethodBinding("__builtin__.str.partition");
     }
 
+    @Test
     public void testBuiltinDict() throws Exception {
         assertClassBinding("__builtin__.dict");
         assertMethodBinding("__builtin__.dict.__getitem__");
@@ -146,6 +157,7 @@ public class IndexerTest extends TestBase {
         assertMethodBinding("__builtin__.dict.clear");
     }
 
+    @Test
     public void testBuiltinFile() throws Exception {
         assertClassBinding("__builtin__.file");
         assertMethodBinding("__builtin__.file.__enter__");
@@ -154,6 +166,7 @@ public class IndexerTest extends TestBase {
         assertMethodBinding("__builtin__.file.isatty");
     }
 
+    @Test
     public void testBuiltinFuncs() throws Exception {
         assertFunctionBinding("__builtin__.apply");
         assertFunctionBinding("__builtin__.abs");
@@ -163,6 +176,7 @@ public class IndexerTest extends TestBase {
         assertFunctionBinding("__builtin__.open");
     }
 
+    @Test
     public void testBuiltinTypes() throws Exception {
         assertClassBinding("__builtin__.ArithmeticError");
         assertClassBinding("__builtin__.ZeroDivisionError");
@@ -172,6 +186,7 @@ public class IndexerTest extends TestBase {
         assertAttributeBinding("__builtin__.Ellipsis");
     }
 
+    @Test
     public void testStrConstructor() throws Exception {
         String src = index(
             "newstr.py",
@@ -179,6 +194,7 @@ public class IndexerTest extends TestBase {
         assertStringType("newstr.x");
     }
 
+    @Test
     public void testListSubscript() throws Exception {
         String src = index(
             "test.py",
@@ -187,6 +203,7 @@ public class IndexerTest extends TestBase {
         assertNumType("test.y");
     }
 
+    @Test
     public void testBuiltinSys() throws Exception {
         idx.loadModule("sys");
         assertModuleBinding("sys");
@@ -205,26 +222,29 @@ public class IndexerTest extends TestBase {
         assertBindingType("sys.flags", NDictType.class);
     }
 
+    @Test
     public void testFetchAst() throws Exception {
         NModule ast = idx.getAstForFile(abspath("hello.py"));
-        assertNotNull("failed to load file", ast);
-        assertEquals("module has wrong name", "hello", ast.name);
-        assertNotNull("AST has no body", ast.body);
-        assertNotNull("AST body has no children", ast.body.seq);
-        assertEquals("wrong number of children", 1, ast.body.seq.size());
+        assertNotNull(ast, "failed to load file");
+        assertEquals("hello", ast.name, "module has wrong name");
+        assertNotNull(ast.body, "AST has no body");
+        assertNotNull(ast.body.seq, "AST body has no children");
+        assertEquals(1, ast.body.seq.size(), "wrong number of children");
         NNode e = ast.body.seq.get(0);
-        assertTrue("Incorrect AST: " + e.getClass(), e instanceof NExprStmt);
+        assertTrue(e instanceof NExprStmt, "Incorrect AST: " + e.getClass());
         e = ((NExprStmt)e).value;
-        assertTrue("Incorrect AST: " + e.getClass(), e instanceof NStr);
-        assertEquals("Wrong string content", "Hello", ((NStr)e).n.toString());
+        assertTrue(e instanceof NStr, "Incorrect AST: " + e.getClass());
+        assertEquals("Hello", ((NStr)e).n.toString(), "Wrong string content");
     }
 
+    @Test
     public void testFileLoad() throws Exception {
         idx.loadFile(abspath("testfileload.py"), /*skipParentChain=*/true);
         idx.ready();
-        assertEquals("loaded more than 1 file", 1, idx.numFilesLoaded());
+        assertEquals(1, idx.numFilesLoaded(), "loaded more than 1 file");
     }
 
+    @Test
     public void testAstCacheTmpDir() throws Exception {
         AstCache cache = AstCache.get();
         File f = new File(AstCache.CACHE_DIR);
@@ -234,15 +254,17 @@ public class IndexerTest extends TestBase {
         assertTrue(f.isDirectory());
     }
 
+    @Test
     public void testAstCacheNames() throws Exception {
         AstCache cache = AstCache.get();
         String sourcePath = abspath("hello.py");
         String cachePath = cache.getCachePath(new File(sourcePath));
         String cachedName = new File(cachePath).getName();
-        assertTrue("Invalid cache name: " + cachedName,
-                   cachedName.matches("^hello.py[A-Za-z0-9]{32}.ast$"));
+        assertTrue(cachedName.matches("^hello.py[A-Za-z0-9]{32}.ast$"),
+                   "Invalid cache name: " + cachedName);
     }
 
+    @Test
     public void testAstCache() throws Exception {
         AstCache cache = AstCache.get();
         String sourcePath = abspath("hello.py");
@@ -260,6 +282,7 @@ public class IndexerTest extends TestBase {
         assertEquals(sourcePath, ast.getFile());
     }
 
+    @Test
     public void testAstCacheEmptyFile() throws Exception {
         AstCache cache = AstCache.get();
         NModule mod = cache.getAST(abspath("empty_file.py"));
@@ -272,6 +295,7 @@ public class IndexerTest extends TestBase {
     // Make sure node types all have NType None when constructed,
     // to ensure that no nodes are relying on a particular type when being
     // resolved (since deserialization won't call the constructor).
+    @Test
     public void testConstructedTypes() throws Exception {
         assertNoneType(new NAlias(null, null, null));
         assertNoneType(new NAssert(null, null));
@@ -334,6 +358,7 @@ public class IndexerTest extends TestBase {
         assertEquals(n.getType(), Indexer.idx.builtins.None);
     }
 
+    @Test
     public void testClassTypeBuiltinAttrs() throws Exception {
         String file = "classtype_builtins.py";
         buildIndex(file);
@@ -353,6 +378,7 @@ public class IndexerTest extends TestBase {
         assertEquals(idx.builtins.BaseStr, t.lookupType("__doc__"));
     }
 
+    @Test
     public void testMethodBuiltinAttrs() throws Exception {
         String file = "classtype_builtins.py";
         buildIndex(file);
@@ -369,11 +395,12 @@ public class IndexerTest extends TestBase {
         NBinding c = mtable.lookup("MyClass");
         for (String special : new String[]{"im_class", "__class__", "im_self", "__self__"}) {
             NBinding attr = ftype.getTable().lookup(special);
-            assertNotNull("missing binding for " + special, attr);
+            assertNotNull(attr, "missing binding for " + special);
             assertEquals(c.getType(), attr.getType());
         }
     }
 
+    @Test
     public void testModulePaths() throws Exception {
         idx.loadModule("pkg");
         idx.loadModule("pkg.animal");
@@ -385,12 +412,14 @@ public class IndexerTest extends TestBase {
         assertModuleBinding("pkg.mineral.stone.lapis");
     }
 
+    @Test
     public void testCircularImport() throws Exception {
         idx.loadModule("pkg.animal.mammal.cat");
         idx.ready();
         // XXX:  finish me
     }
 
+    @Test
     public void testBasicDefsAndRefs() throws Exception {
         idx.loadModule("refs");
         idx.ready();
@@ -426,6 +455,7 @@ public class IndexerTest extends TestBase {
         assertReference("refs.foo", nthIndexOf(src, "foo", 16));
     }
 
+    @Test
     public void testAutoClassBindings() throws Exception {
         idx.loadModule("class1");
         idx.ready();
@@ -456,6 +486,7 @@ public class IndexerTest extends TestBase {
         assertTrue(((NDictType)b.getType()).getValueType().isUnknownType());
     }
 
+    @Test
     public void testLocalVarRef() throws Exception {
         idx.loadModule("class2");
         idx.ready();
@@ -465,6 +496,7 @@ public class IndexerTest extends TestBase {
         assertReference("class2.hi@msg", nthIndexOf(src, "msg", 2));
     }
 
+    @Test
     public void testClassMemberBindings() throws Exception {
         idx.loadModule("class1");
         idx.ready();
@@ -492,6 +524,7 @@ public class IndexerTest extends TestBase {
         assertNumType("class1.z");
     }
 
+    @Test
     public void testCallNewRef() throws Exception {
         idx.loadModule("callnewref");
         idx.ready();
@@ -516,6 +549,7 @@ public class IndexerTest extends TestBase {
         assertCall(msig, nthIndexOf(src, "mymethod", 3));
     }
 
+    @Test
     public void testPackageLoad() throws Exception {
         idx.loadModule("pkgload");
         idx.ready();
@@ -524,6 +558,7 @@ public class IndexerTest extends TestBase {
         assertScopeBinding("pkg.myvalue");
     }
 
+    @Test
     public void testUnqualifiedSamePkgImport() throws Exception {
         idx.loadModule("pkg.animal.reptile.snake");
         idx.ready();
@@ -540,6 +575,7 @@ public class IndexerTest extends TestBase {
         assertReference("pkg.animal.reptile.croc.Gavial", snakeSrc.indexOf("Gavial"));
     }
 
+    @Test
     public void testAbsoluteImport() throws Exception {
         idx.loadModule("pkg.mineral.metal.lead");
         idx.ready();
@@ -562,6 +598,7 @@ public class IndexerTest extends TestBase {
         assertReference("pkg.plant.poison.eggplant", nthIndexOf(src, ".eggplant", 2) + 1);
     }
 
+    @Test
     public void testAbsoluteImportAs() throws Exception {
         idx.loadModule("pkg.mineral.metal.iron");
         idx.ready();
@@ -589,6 +626,7 @@ public class IndexerTest extends TestBase {
         assertReference(adjectives, src.indexOf("adjectives"));
     }
 
+    @Test
     public void testImportFrom() throws Exception {
         idx.loadModule("pkg.other.color.white");
         idx.ready();
@@ -605,6 +643,7 @@ public class IndexerTest extends TestBase {
         assertReference("pkg.other.color.blue.b", src.indexOf("= B") + 2, 1);
     }
 
+    @Test
     public void testImportStar() throws Exception {
         idx.loadModule("pkg.other.color.crimson");
         idx.ready();
@@ -614,6 +653,7 @@ public class IndexerTest extends TestBase {
         assertReference("pkg.other.color.red.b", src.indexOf("b"), 1);
     }
 
+    @Test
     public void testImportStarAll() throws Exception {
         idx.loadModule("pkg.misc.moduleB");
         idx.ready();
@@ -626,6 +666,7 @@ public class IndexerTest extends TestBase {
                           "pkg.misc.moduleA.d", src.indexOf("d #"), 1);
     }
 
+    @Test
     public void testImportFromInitPy() throws Exception {
         idx.loadModule("pkg.animal");
         idx.ready();
@@ -656,6 +697,7 @@ public class IndexerTest extends TestBase {
     // }
 
     // test creating temp definition and then re-resolving it
+    @Test
     public void testTempName() throws Exception {
         String src = index(
             "tmpname.py",
@@ -673,6 +715,7 @@ public class IndexerTest extends TestBase {
         assertCall("__builtin__.dict.clear", src.lastIndexOf("clear"));
     }
 
+    @Test
     public void testTempAttr() throws Exception {
         String src = index(
             "tmpattr.py",
@@ -687,6 +730,7 @@ public class IndexerTest extends TestBase {
         assertReference("tmpattr.app.usage", src.indexOf("usage"));
     }
 
+    @Test
     public void testTempAttrOnParam() throws Exception {
         String src = index(
             "tmpattr_param.py",
@@ -707,6 +751,7 @@ public class IndexerTest extends TestBase {
         assertReference("tmpattr_param.bar@y", src.indexOf("y.hello"), 1);
     }
 
+    @Test
     public void testParamDefaultLambdaBinding() throws Exception {
         String src = index(
             "test.py",
@@ -721,6 +766,7 @@ public class IndexerTest extends TestBase {
         assertStringType("test.foo&x");
     }
 
+    @Test
     public void testNestedLambdaParam() throws Exception {
         String src = index(
             "test.py",
@@ -736,6 +782,7 @@ public class IndexerTest extends TestBase {
         // assertStringType("test.y");
     }
 
+    @Test
     public void testReassignAttrOfUnknown() throws Exception {
         // This test has broken surprisingly often, so don't change it.
         String src = index(
@@ -752,6 +799,7 @@ public class IndexerTest extends TestBase {
         assertTrue(types.contains(idx.builtins.BaseNum));
     }
 
+    @Test
     public void testRefToProvisionalBinding() throws Exception {
         String src = index(
             "provisional.py",
@@ -764,6 +812,7 @@ public class IndexerTest extends TestBase {
         assertNoBinding("provisional.a.dump");
     }
 
+    @Test
     public void testRefToProvisionalBindingNewType() throws Exception {
         String src = index(
             "provisional.py",
@@ -777,6 +826,7 @@ public class IndexerTest extends TestBase {
     }
 
     // http://www.python.org/dev/peps/pep-0227
+    @Test
     public void testSkipClassScope() throws Exception {
         String src = index(
             "skipclass.py",
@@ -791,6 +841,7 @@ public class IndexerTest extends TestBase {
         assertReference("skipclass.aa&xx", nthIndexOf(src, "xx", 4));
     }
 
+    @Test
     public void testLambdaArgs() throws Exception {
         String src = index(
             "lambda_args.py",
@@ -810,6 +861,7 @@ public class IndexerTest extends TestBase {
         assertCall("__builtin__.str.lower", src.indexOf("lower"));
     }
 
+    @Test
     public void testFunArgs() throws Exception {
         String src = index(
             "funargs.py",
@@ -831,6 +883,7 @@ public class IndexerTest extends TestBase {
         assertReference("funargs.foo&z", nthIndexOf(src, "z", 2));
     }
 
+    @Test
     public void testDatetime() throws Exception {
         String src = index(
             "date_time.py",
@@ -854,6 +907,7 @@ public class IndexerTest extends TestBase {
         assertBindingType("date_time.tz", "datetime.tzinfo");
     }
 
+    @Test
     public void testUnpackList() throws Exception {
         index("unpacklist.py",
               "a = [1, 2]",
@@ -871,6 +925,7 @@ public class IndexerTest extends TestBase {
         assertStringType("unpacklist.e");
     }
 
+    @Test
     public void testStringSlice() throws Exception {
         String src = index(
             "slicestring.py",
@@ -885,6 +940,7 @@ public class IndexerTest extends TestBase {
         assertCall("__builtin__.str.lower", src.lastIndexOf("lower"));
     }
 
+    @Test
     public void testUnionStringSliceTempAttr() throws Exception {
         String src = index(
             "tmpattr_slice.py",
@@ -894,6 +950,7 @@ public class IndexerTest extends TestBase {
         assertCall("__builtin__.str.lower", src.lastIndexOf("lower"));
     }
 
+    @Test
     public void testSelfBinding() throws Exception {
         String src = index(
             "selfish.py",
@@ -908,6 +965,7 @@ public class IndexerTest extends TestBase {
         assertBindingType("selfish.Foo.hello@self", "selfish.Foo");
     }
 
+    @Test
     public void testInstanceAttrs() throws Exception {
         String src = index(
             "attr.py",
@@ -936,6 +994,7 @@ public class IndexerTest extends TestBase {
         assertReference("attr.Foo.add@item", src.lastIndexOf("item"));
     }
 
+    @Test
     public void testInstanceAttrsWithStdLib() throws Exception {
         includeStandardLibrary();
         String src = index(
@@ -977,6 +1036,7 @@ public class IndexerTest extends TestBase {
         assertReference("dice.Dice.set_seed@seed", src.lastIndexOf("seed"));
     }
 
+    @Test
     public void testOsPath() throws Exception {
         String src = index(
             "test.py",
@@ -992,6 +1052,7 @@ public class IndexerTest extends TestBase {
         assertCall("__builtin__.str.endswith", src.indexOf("endswith"));
     }
 
+    @Test
     public void testImportOsPath() throws Exception {
         String src = index(
             "test.py",
@@ -1004,6 +1065,7 @@ public class IndexerTest extends TestBase {
         assertReference("os.path.devnull", src.indexOf("devnull"));
     }
 
+    @Test
     public void testExceptionsModule() throws Exception {
         String src = index(
             "test.py",
@@ -1014,6 +1076,7 @@ public class IndexerTest extends TestBase {
         assertReference("exceptions.NotImplementedError", src.indexOf("Not"));
     }
 
+    @Test
     public void testDupFunctionDecl() throws Exception {
         String src = index(
             "test.py",
@@ -1027,6 +1090,7 @@ public class IndexerTest extends TestBase {
         assertParamBinding("test.a@args");
     }
 
+    @Test
     public void testResolveExportedNames() throws Exception {
         String src = index(
             "test.py",
@@ -1046,6 +1110,7 @@ public class IndexerTest extends TestBase {
                           "test.bar", src.indexOf("bar"), 3);
     }
 
+    @Test
     public void testImportFromPlusAssign() throws Exception {
         String src = index(
             "test.py",
@@ -1061,6 +1126,7 @@ public class IndexerTest extends TestBase {
         assertReference("test.os", src.lastIndexOf("os"));
     }
 
+    @Test
     public void testCircularTypeFunAndTuple() throws Exception {
         String src = index(
             "test.py",
@@ -1076,6 +1142,7 @@ public class IndexerTest extends TestBase {
         assertEquals("<FuncType=#1:_:<TupleType:[<#1>]>>", ftype.toString());
     }
 
+    @Test
     public void testCircularTypeXInOwnList() throws Exception {
         String src = index(
             "test.py",
@@ -1094,7 +1161,7 @@ public class IndexerTest extends TestBase {
 
         assertTrue(array0List || array1List);
         int other = array0List ? 1 : 0;
-        assertTrue("Expected tuple: " + array[other], array[other].isTupleType());
+        assertTrue(array[other].isTupleType(), "Expected tuple: " + array[other]);
         assertEquals(1, array[other].asTupleType().getElementTypes().size());
         assertEquals(idx.builtins.BaseNum, array[other].asTupleType().getElementTypes().get(0));
 
@@ -1116,6 +1183,7 @@ public class IndexerTest extends TestBase {
         }
     }
 
+    @Test
     public void testFunReturn() throws Exception {
         // This use case used to extend the function return type by one
         // wrapped NUnknownType for each static invocation of the function.
@@ -1131,6 +1199,7 @@ public class IndexerTest extends TestBase {
         assertEquals(ctype.follow(), ftype.asFuncType().getReturnType());
     }
 
+    @Test
     public void testListCompForIn() throws Exception {
         String src = index(
             "listforin.py",
@@ -1138,6 +1207,7 @@ public class IndexerTest extends TestBase {
         assertStringType("listforin.line");
     }
 
+    @Test
     public void testNoAddToBuiltin() throws Exception {
         String src = index(
             "nob.py",
@@ -1148,6 +1218,7 @@ public class IndexerTest extends TestBase {
         assertListType("nob.x", "__builtin__.str");
     }
 
+    @Test
     public void testDecoratorSyntax() throws Exception {
         String deco1 = "@deco1";
         String deco2 = "@deco2 ('yargh')";
@@ -1179,6 +1250,7 @@ public class IndexerTest extends TestBase {
         assertEquals("deco2", ((NName)d2.func).id);
     }
 
+    @Test
     public void testBasicDecoratorSyntax() throws Exception {
         String src = index(
             "deco.py",

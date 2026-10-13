@@ -1,10 +1,12 @@
 package org.python.core;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.util.PythonInterpreter;
 
-public class WrappedBooleanTest extends TestCase {
+public class WrappedBooleanTest  {
 
     // Simulate the use case where you want to expose some (possibly mutable)
     // java boolean field to an interpreter without having to set the value to a
@@ -30,7 +32,7 @@ public class WrappedBooleanTest extends TestCase {
     private PythonInterpreter interp;
     private WrappedBoolean a, b;
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
         interp = new PythonInterpreter(new PyStringMap(), new PySystemState());
         a = new WrappedBoolean();
@@ -41,6 +43,7 @@ public class WrappedBooleanTest extends TestCase {
         interp.set("b", b);
     }
 
+    @Test
     public void testAnd() {
         interp.exec("c = a and b");
         assertEquals(new PyBoolean(false), interp.get("c"));
@@ -49,6 +52,7 @@ public class WrappedBooleanTest extends TestCase {
         assertEquals(new PyBoolean(true), interp.get("c"));
     }
 
+    @Test
     public void testOr() {
         interp.exec("c = a or b");
         assertEquals(new PyBoolean(true), interp.get("c"));

@@ -1,5 +1,8 @@
 package org.python.expose.generate;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.objectweb.asm.Type;
 import org.python.core.BytecodeLoader;
 import org.python.core.Py;
@@ -38,6 +41,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
         return makeDescriptor(setup, "desc");
     }
 
+    @Test
     public void testNoDescriptors() throws Exception {
         DescriptorExposer de = new DescriptorExposer(ASM_TYPE, "desc");
         try {
@@ -48,6 +52,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
         }
     }
 
+    @Test
     public void testMethodGetter() throws Exception {
         PyDataDescr instance = makeDescriptor(new DescSetup() {
 
@@ -60,6 +65,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
         assertFalse(instance.implementsDescrDelete());
     }
 
+    @Test
     public void testFieldGetter() throws Exception {
         PyDataDescr instance = makeDescriptor(new DescSetup() {
 
@@ -73,6 +79,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
         assertFalse(instance.implementsDescrDelete());
     }
     
+    @Test
     public void testNullReturns() throws Exception {
         PyDataDescr instance = makeDescriptor(new DescSetup() {
 
@@ -83,6 +90,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
         assertEquals(Py.None, instance.__get__(se, PY_TYPE));
     }
 
+    @Test
     public void testMethodSetter() throws Exception {
         PyDataDescr instance = makeDescriptor(new DescSetup() {
 
@@ -97,6 +105,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
         assertFalse(instance.implementsDescrDelete());
     }
 
+    @Test
     public void testFieldSetter() throws Exception {
         PyDataDescr instance = makeDescriptor(new DescSetup() {
 
@@ -111,6 +120,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
         assertFalse(instance.implementsDescrDelete());
     }
 
+    @Test
     public void testMethodDel() throws Exception {
         PyDataDescr instance = makeDescriptor(new DescSetup() {
 
@@ -124,6 +134,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
         assertTrue(instance.implementsDescrDelete());
     }
 
+    @Test
     public void testInt() throws Exception {
         PyDataDescr instance = makeDescriptor(new DescSetup() {
 
@@ -137,6 +148,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
         assertEquals(12, instance.__get__(se, PY_TYPE).asInt());
     }
 
+    @Test
     public void testByte() throws Exception {
         PyDataDescr instance = makeDescriptor(new DescSetup() {
 
@@ -150,6 +162,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
         assertEquals(-1, instance.__get__(se, PY_TYPE).asInt());
     }
 
+    @Test
     public void testLong() throws Exception {
         PyDataDescr instance = makeDescriptor(new DescSetup() {
 
@@ -163,6 +176,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
         assertEquals(12, instance.__get__(se, PY_TYPE).asInt());
     }
 
+    @Test
     public void testDouble() throws Exception {
         PyDataDescr instance = makeDescriptor(new DescSetup() {
 
@@ -176,6 +190,7 @@ public class DescriptorExposerTest extends InterpTestCase implements PyTypes {
         assertEquals(12.0, Py.py2double(instance.__get__(se, PY_TYPE)));
     }
 
+    @Test
     public void testBool() throws Exception {
         PyDataDescr instance = makeDescriptor(new DescSetup() {
 

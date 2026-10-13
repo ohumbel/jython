@@ -1,10 +1,15 @@
 package org.python.core;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.util.PythonInterpreter;
 
 /**
@@ -20,9 +25,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      *
      * @param name
      */
-    public PyByteArrayTest(String name) {
-        super(name);
-    }
+    public PyByteArrayTest() {}
 
     /**
      * Generate character codes for in a pattern matching an intended deletion or slice to be
@@ -143,7 +146,7 @@ public class PyByteArrayTest extends BaseBytesTest {
     public static void
             checkSlice(int na, int nd, int nb, int ne, int[] x, int[] y, BaseBytes result) {
         // Check the size is right
-        assertEquals("size", na + ne + nb, result.size());
+        assertEquals(na + ne + nb, result.size(), "size");
         // Check that A is preserved
         checkInts(x, 0, result, 0, na);
         // Check that E is inserted
@@ -167,31 +170,31 @@ public class PyByteArrayTest extends BaseBytesTest {
      */
     public static void checkSlice(int start, int step, int n, int[] x, int[] y, BaseBytes u) {
         // Check the size is right
-        assertEquals("size", x.length, u.size());
+        assertEquals(x.length, u.size(), "size");
 
         if (step > 0) {
 
             // Check before start of slice
             int px = 0, py = 0;
             for (; px < start; px++) {
-                assertEquals("before slice", x[px], u.intAt(px));
+                assertEquals(x[px], u.intAt(px), "before slice");
             }
 
             // Check slice-affected region at n assignments and n-1 gaps of length step-1.
             if (n > 0) {
-                assertEquals("first affected", y[py++], u.intAt(px++));
+                assertEquals(y[py++], u.intAt(px++), "first affected");
             }
 
             for (int i = 1; i < n; i++) {
                 for (int j = 1; j < step; j++, px++) {
-                    assertEquals("in gap", x[px], u.intAt(px));
+                    assertEquals(x[px], u.intAt(px), "in gap");
                 }
-                assertEquals("next affected", y[py++], u.intAt(px++));
+                assertEquals(y[py++], u.intAt(px++), "next affected");
             }
 
             // Check after slice-affected region
             for (; px < x.length; px++) {
-                assertEquals("after slice", x[px], u.intAt(px));
+                assertEquals(x[px], u.intAt(px), "after slice");
             }
 
         } else {
@@ -201,24 +204,24 @@ public class PyByteArrayTest extends BaseBytesTest {
             // Check after start of slice
             int px = x.length - 1, py = 0;
             for (; px > start; --px) {
-                assertEquals("after slice", x[px], u.intAt(px));
+                assertEquals(x[px], u.intAt(px), "after slice");
             }
 
             // Check slice-affected region at n assignments and n-1 gaps of length step-1.
             if (n > 0) {
-                assertEquals("first affected", y[py++], u.intAt(px--));
+                assertEquals(y[py++], u.intAt(px--), "first affected");
             }
 
             for (int i = 1; i < n; i++) {
                 for (int j = 1; j < step; j++, px--) {
-                    assertEquals("in gap", x[px], u.intAt(px));
+                    assertEquals(x[px], u.intAt(px), "in gap");
                 }
-                assertEquals("next affected", y[py++], u.intAt(px--));
+                assertEquals(y[py++], u.intAt(px--), "next affected");
             }
 
             // Check before slice-affected region
             for (; px >= 0; px--) {
-                assertEquals("before slice", x[px], u.intAt(px));
+                assertEquals(x[px], u.intAt(px), "before slice");
             }
         }
     }
@@ -237,14 +240,14 @@ public class PyByteArrayTest extends BaseBytesTest {
      */
     public static void checkDelSlice(int start, int step, int n, int[] x, BaseBytes u) {
         // Check the size is right
-        assertEquals("size", x.length - n, u.size());
+        assertEquals(x.length - n, u.size(), "size");
 
         if (step > 0) {
 
             // Check before start of slice
             int px = 0, pu = 0;
             for (; px < start; px++) {
-                assertEquals("before slice", x[px], u.intAt(pu++));
+                assertEquals(x[px], u.intAt(pu++), "before slice");
             }
 
             // Check slice-affected region at n deletions and n-1 gaps of length step-1.
@@ -252,7 +255,7 @@ public class PyByteArrayTest extends BaseBytesTest {
             px++;
             for (int i = 1; i < n; i++) {
                 for (int j = 1; j < step; j++, px++) {
-                    assertEquals("in gap", x[px], u.intAt(pu++));
+                    assertEquals(x[px], u.intAt(pu++), "in gap");
                 }
                 // px now points to the i.th element that should be missing from u
                 px++;
@@ -260,7 +263,7 @@ public class PyByteArrayTest extends BaseBytesTest {
 
             // Check after slice-affected region
             for (; px < x.length; px++) {
-                assertEquals("after slice", x[px], u.intAt(pu++));
+                assertEquals(x[px], u.intAt(pu++), "after slice");
             }
 
         } else {
@@ -271,7 +274,7 @@ public class PyByteArrayTest extends BaseBytesTest {
             // Check after start of slice
             int px = x.length - 1, pu = u.size - 1;
             for (; px > start; --px) {
-                assertEquals("after slice", x[px], u.intAt(pu--));
+                assertEquals(x[px], u.intAt(pu--), "after slice");
             }
 
             // Check slice-affected region at n assignments and n-1 gaps of length step-1.
@@ -279,7 +282,7 @@ public class PyByteArrayTest extends BaseBytesTest {
             px--;
             for (int i = 1; i < n; i++) {
                 for (int j = 1; j < step; j++, px--) {
-                    assertEquals("in gap", x[px], u.intAt(pu--));
+                    assertEquals(x[px], u.intAt(pu--), "in gap");
                 }
                 // px now points to the i.th element that should be missing from u
                 px--;
@@ -287,7 +290,7 @@ public class PyByteArrayTest extends BaseBytesTest {
 
             // Check before slice-affected region
             for (; px >= 0; px--) {
-                assertEquals("before slice", x[px], u.intAt(pu--));
+                assertEquals(x[px], u.intAt(pu--), "before slice");
             }
         }
     }
@@ -297,6 +300,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      *
      * @see org.python.core.BaseBytesTest#setUp()
      */
+    @BeforeEach
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -307,6 +311,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      *
      * @see BaseBytes#getslice(int, int)
      */
+    @Test
     public void test__getslice__2() {
         int verbose = 0;
         // __getslice__() deals with start, stop values also relative to the end.
@@ -392,6 +397,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      *
      * @see BaseBytes#getslice(int, int, int)
      */
+    @Test
     public void test__getslice__3() {
         int verbose = 0;
         // __getslice__() deals with start, stop values also relative to the end.
@@ -538,6 +544,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      * {@link PyByteArray#pyset(int,PyObject)}.
      */
     @Override
+    @Test
     public void testPyset() {
         int verbose = 0;
 
@@ -593,6 +600,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      * Test method for {@link org.python.core.PyByteArray#setslice(int,int,int,PyObject)}, when the
      * slice to replace is simple (a contiguous 2-argument slice).
      */
+    @Test
     public void testSetslice2() {
         int verbose = 0;
 
@@ -684,6 +692,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      * Test method for {@link PyByteArray#__setslice__(PyObject, PyObject, PyObject)}, when the
      * slice to replace is simple (a contiguous 2-argument slice).
      */
+    @Test
     public void test__setslice__2() {
         int verbose = 0;
         // __setslice__() deals with start, stop values also relative to the end.
@@ -782,6 +791,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      * converts arguments first, so we need only test with valid combinations of indices.
      */
     @Override
+    @Test
     public void testSetslice3() {
         int verbose = 0;
 
@@ -870,6 +880,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      * slice to replace is extended (3-argument slice and step!=0). Note that PySequence checks and
      * converts arguments first, so we need only test with valid combinations of indices.
      */
+    @Test
     public void test__setslice__3() {
         int verbose = 0;
 
@@ -965,6 +976,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      * Performance for {@link org.python.core.PyByteArray#setslice(int,int,int,PyObject)}, when the
      * slice to replace is simple and contiguous (2-argument slice).
      */
+    @Test
     public void testSetsliceTime() {
         if (SHOW_OPERATION_TIMES) {
             int verbose = 1;
@@ -1141,6 +1153,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      * Test method for {@link org.python.core.PyByteArray#delslice(int,int,int)}, when the slice to
      * delete is simple (a contiguous 2-argument slice).
      */
+    @Test
     public void testDelslice2() {
         int verbose = 0;
 
@@ -1221,6 +1234,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      * Test method for {@link PyByteArray#__delslice__(PyObject, PyObject, PyObject)}, when the
      * slice to delete is simple (a contiguous 2-argument slice).
      */
+    @Test
     public void test__delslice__2() {
         int verbose = 0;
         // __delslice__() deals with start, stop values also relative to the end.
@@ -1304,6 +1318,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      * delete is extended (3-argument slice and step!=0). Note that PySequence checks and converts
      * arguments first, so we need only test with valid combinations of indices.
      */
+    @Test
     public void test__delslice__3() {
         int verbose = 0;
 
@@ -1392,6 +1407,7 @@ public class PyByteArrayTest extends BaseBytesTest {
      * Performance for {@link org.python.core.PyByteArray#delslice(int,int,int,PyObject)}, when the
      * slice to replace is extended (3-argument slice).
      */
+    @Test
     public void testDelsliceTime3() {
         if (SHOW_OPERATION_TIMES) {
             int verbose = 1;

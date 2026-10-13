@@ -1,5 +1,8 @@
 package com.ziclix.python.sql;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -12,17 +15,17 @@ import java.sql.Types;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.core.PyObject;
 import org.python.core.PySystemState;
 
-import junit.framework.TestCase;
-
-public class DataHandlerTest extends TestCase {
+public class DataHandlerTest {
 
     private DataHandler _handler;
 
-    @Override
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         PySystemState.initialize();
         _handler = new DataHandler();
     }
@@ -32,6 +35,7 @@ public class DataHandlerTest extends TestCase {
      * 
      * @throws Exception
      */
+    @Test
     public void testGetPyObjectResultSetIntInt() throws Exception {
         ResultSet rs = (ResultSet)Proxy.newProxyInstance(getClass().getClassLoader(),
                                                          new Class<?>[] {ResultSet.class},
@@ -60,7 +64,7 @@ public class DataHandlerTest extends TestCase {
             } else {
                 try {
                     PyObject pyobj = _handler.getPyObject(rs, 1, type);
-                    assertNotNull(typeName + " should return None", pyobj);
+                    assertNotNull(pyobj, typeName + " should return None");
                 } catch (SQLException sqle) {
                     // unexpected! but useful for future proofing changes in SQL support
                     fail("unexpected SQLException: " + typeName);

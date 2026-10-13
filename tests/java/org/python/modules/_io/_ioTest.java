@@ -1,11 +1,11 @@
 /* Copyright (c)2013 Jython Developers */
 package org.python.modules._io;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyFile;
@@ -47,7 +47,7 @@ public class _ioTest {
      *
      * @throws java.lang.Exception
      */
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Initialise a Jython interpreter
         systemState = Py.getSystemState();
@@ -62,7 +62,7 @@ public class _ioTest {
     public void moduleImport() {
         interp.exec("import _io");
         PyObject _io = interp.get("_io");
-        org.junit.Assert.assertNotNull(_io);
+        assertNotNull(_io);
     }
 
     /**
@@ -78,15 +78,15 @@ public class _ioTest {
         PyException pye = _jyio.UnsupportedOperation("Message from _ioTest");
         PyObject type = pye.type;
         String repr = type.toString();
-        assertEquals("Class name", "<class '_io.UnsupportedOperation'>", repr);
+        assertEquals("<class '_io.UnsupportedOperation'>", repr, "Class name");
 
         // Raise from Java into Python and catch it in a variable: _IOBase.fileno() raises it
         interp.exec("try :\n    io.IOBase().fileno()\n" + "except Exception as e:\n    pass");
         PyObject e = interp.get("e");
 
         String m = e.toString();
-        assertTrue("Exception '" + m + "' should both contain 'UnsupportedOperation' and 'fileno'",
-                        m.contains("UnsupportedOperation") && m.contains("fileno"));
+        assertTrue(m.contains("UnsupportedOperation") && m.contains("fileno"),
+                "Exception '" + m + "' should both contain 'UnsupportedOperation' and 'fileno'");
     }
 
     /**
@@ -307,9 +307,9 @@ public class _ioTest {
 
         // Check as expected
         String msg = "Bytes read from " + name;
-        assertEquals(msg, expBytes.length, n);
+        assertEquals(expBytes.length, n, msg);
         byte[] resBytes = Arrays.copyOf(r, n);
-        assertArrayEquals(msg, expBytes, resBytes);
+        assertArrayEquals(expBytes, resBytes, msg);
 
         // Delete the file
         if (delete) {

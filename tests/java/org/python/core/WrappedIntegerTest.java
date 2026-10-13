@@ -1,10 +1,12 @@
 package org.python.core;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.util.PythonInterpreter;
 
-public class WrappedIntegerTest extends TestCase {
+public class WrappedIntegerTest  {
 
     // Simulate the use case where you want to expose some (possibly mutable)
     // java int field to an interpreter without having to set the value to a new
@@ -30,7 +32,7 @@ public class WrappedIntegerTest extends TestCase {
     private PythonInterpreter interp;
     private WrappedInteger a, b;
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
         interp = new PythonInterpreter(new PyStringMap(), new PySystemState());
         a = new WrappedInteger();
@@ -41,6 +43,7 @@ public class WrappedIntegerTest extends TestCase {
         interp.set("b", b);
     }
 
+    @Test
     public void testAdd() {
         interp.exec("c = a + b");
         assertEquals(new PyInteger(30), interp.get("c"));
@@ -49,11 +52,13 @@ public class WrappedIntegerTest extends TestCase {
         assertEquals(new PyInteger(31), interp.get("c"));
     }
 
+    @Test
     public void testDiv() {
         interp.exec("c = a / float(b)");
         assertEquals(new PyFloat(13 / 17.), interp.get("c"));
     }
 
+    @Test
     public void testMod() {
         interp.exec("c = b % a");
         assertEquals(new PyInteger(4), interp.get("c"));

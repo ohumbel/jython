@@ -10,30 +10,32 @@
 
 package org.apache.commons.cli;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class BugsTest extends TestCase
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class BugsTest 
 {
 
-    public static Test suite() { 
-        return new TestSuite( BugsTest.class );
-    }
+    
 
-    public BugsTest( String name )
-    {
-        super( name );
-    }
+    
 
+    @BeforeEach
     public void setUp()
     {
     }
 
+    @AfterEach
     public void tearDown()
     {
     }
 
+    @Test
     public void test11457() {
         Options options = new Options();
         OptionBuilder.withLongOpt( "verbose" );
@@ -52,6 +54,7 @@ public class BugsTest extends TestCase
         }
     }
 
+    @Test
     public void test11458()
     {
         Options options = new Options();
@@ -104,6 +107,7 @@ public class BugsTest extends TestCase
         }
     }
 
+    @Test
     public void test11680()
     {
         Options options = new Options();
@@ -129,6 +133,7 @@ public class BugsTest extends TestCase
         }
     }
 
+    @Test
     public void test11456()
     {
         // Posix 
@@ -169,6 +174,7 @@ public class BugsTest extends TestCase
 
     }
 
+    @Test
     public void test12210() {
         // create the main options object which will handle the first parameter
         Options mainOptions = new Options();
@@ -227,6 +233,7 @@ public class BugsTest extends TestCase
         }
     }
 
+    @Test
     public void test13425() {
         Options options = new Options();
         OptionBuilder.withLongOpt( "old-password" );
@@ -261,6 +268,7 @@ public class BugsTest extends TestCase
         fail( "MissingArgumentException not caught." + line);
     }
 
+    @Test
     public void test13666() {
         Options options = new Options();
         OptionBuilder.withDescription( "dir" );
@@ -276,6 +284,7 @@ public class BugsTest extends TestCase
         }
     }
 
+    @Test
     public void test13935() {
         OptionGroup directions = new OptionGroup();
 

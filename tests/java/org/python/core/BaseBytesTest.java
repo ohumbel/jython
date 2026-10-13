@@ -1,12 +1,14 @@
 package org.python.core;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import junit.framework.TestCase;
-
-import org.python.core.BaseBytes.Builder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.core.buffer.SimpleBuffer;
 import org.python.util.PythonInterpreter;
 
@@ -29,7 +31,7 @@ import org.python.util.PythonInterpreter;
  * test class can be extended to test subclasses of BaseBytes, and all the tests defined here will
  * run for the subclass.
  */
-public class BaseBytesTest extends TestCase {
+public class BaseBytesTest  {
 
     // Constants for array sizes
     public static final int SMALL = 7; // Less than minimum storage size
@@ -37,11 +39,7 @@ public class BaseBytesTest extends TestCase {
     public static final int LARGE = 2000; // Large enough for performance measurement
     public static final int HUGE = 100000; // Serious performance challenge
 
-    /**
-     * @param name
-     */
-    public BaseBytesTest(String name) {
-        super(name);
+    public BaseBytesTest() {
     }
 
     /** Sometimes we need the interpreter to be initialised **/
@@ -119,7 +117,7 @@ public class BaseBytesTest extends TestCase {
                 end = expected.length;
             }
             for (int i = first, j = start; i < end; i++, j++) {
-                assertEquals("element value", expected[i], result.intAt(j));
+                assertEquals(expected[i], result.intAt(j), "element value");
             }
         }
     }
@@ -132,10 +130,10 @@ public class BaseBytesTest extends TestCase {
      */
     static void checkInts(int[] expected, BaseBytes result) {
         // Size must be the same
-        assertEquals("size", expected.length, result.size());
+        assertEquals(expected.length, result.size(), "size");
         // And each element
         for (int i = 0; i < expected.length; i++) {
-            assertEquals("element value", expected[i], result.intAt(i));
+            assertEquals(expected[i], result.intAt(i), "element value");
         }
     }
 
@@ -147,14 +145,14 @@ public class BaseBytesTest extends TestCase {
      */
     static void checkInts(List<PyInteger> expected, BaseBytes result) {
         // Size must be the same
-        assertEquals("size", expected.size(), result.size());
+        assertEquals(expected.size(), result.size(), "size");
         // And each element
         for (int i = 0; i < result.size; i++) {
             PyInteger res = result.pyget(i);
             PyInteger exp = expected.get(i);
             // System.out.printf("    expected[%2d]=%3d  b[%2d]=%3d\n",
             // i, exp.asInt(), i, res.asInt());
-            assertEquals("element value", exp, res);
+            assertEquals(exp, res, "element value");
         }
     }
 
@@ -204,9 +202,8 @@ public class BaseBytesTest extends TestCase {
      *
      * @see junit.framework.TestCase#setUp()
      */
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
-        super.setUp();
         random = new Random(20120310L);
     }
 
@@ -214,6 +211,7 @@ public class BaseBytesTest extends TestCase {
      * Test method for {@link org.python.core.BaseBytes#init(int)} via MyBytes constructor, and for
      * {@link org.python.core.BaseBytes#size()}.
      */
+    @Test
     public void testSize() {
         // Local constructor from byte[]
         int[] aRef = toInts("Chaque coquillage incrusté");
@@ -225,14 +223,15 @@ public class BaseBytesTest extends TestCase {
         for (int n : new int[] {0, 1, 2, 7, 8, 9, MEDIUM, LARGE, HUGE}) {
             a = getInstance(n);
             // System.out.println(toString(a));
-            assertEquals("size()", n, a.size());
-            assertEquals("__len__()", n, a.__len__());
+            assertEquals(n, a.size(), "size()");
+            assertEquals(n, a.__len__(), "__len__()");
         }
     }
 
     /**
      * Test method for {@link org.python.core.BaseBytes#init(BaseBytes)} via constructor on MyBytes.
      */
+    @Test
     public void testInit_intArray() {
         int[] aRef = toInts("Dans la grotte où nous nous aimâmes");
         BaseBytes a = getInstance(aRef);
@@ -250,6 +249,7 @@ public class BaseBytesTest extends TestCase {
     /**
      * Test method for {@link org.python.core.BaseBytes#init(BaseBytes)} via constructor on MyBytes.
      */
+    @Test
     public void testInit_Iterable() {
         int[] aRef = toInts("A sa particularité.");
         // Make an Iterable<? extends PyObject> of that
@@ -275,6 +275,7 @@ public class BaseBytesTest extends TestCase {
     /**
      * Test method for {@link org.python.core.BaseBytes#init(PyObject)} via constructor on MyBytes.
      */
+    @Test
     public void testInit_PyObject() {
         // A scary set of objects
         final PyObject[] brantub =
@@ -299,6 +300,7 @@ public class BaseBytesTest extends TestCase {
      * Test method for {@link org.python.core.BaseBytes#init(PyObject)} via constructor on MyBytes,
      * but where every example produced some kind of exception.
      */
+    @Test
     public void testInit_Exceptions() {
         // Need interpreter for exceptions to be formed properly
         interp = new PythonInterpreter();
@@ -333,6 +335,7 @@ public class BaseBytesTest extends TestCase {
     /**
      * Test method for {@link org.python.core.BaseBytes#pyget(int)}.
      */
+    @Test
     public void testPyget() {
         // Need interpreter
         interp = new PythonInterpreter();
@@ -361,6 +364,7 @@ public class BaseBytesTest extends TestCase {
      *
      * @see PySequence#__getslice__(PyObject, PyObject)
      */
+    @Test
     public void testGetslice() {
         // getslice() deals with start, stop, step already 'interpreted' by SequenceIndexDelegate.
         String ver = "L'un a la pourpre de nos âmes";
@@ -418,6 +422,7 @@ public class BaseBytesTest extends TestCase {
     /**
      * Test method for {@link org.python.core.BaseBytes#repeat(int)}.
      */
+    @Test
     public void testRepeatInt() {
         String spam = "Spam, "; // Could it be anything else?
         final int maxCount = 10;
@@ -444,6 +449,7 @@ public class BaseBytesTest extends TestCase {
      * Test method for {@link org.python.core.BaseBytes#pyset(int,PyObject)}, that it throws an
      * exception by default. Override in tests of mutable subclasses.
      */
+    @Test
     public void testPyset() {
         PyObject bRef = Py.TypeError;
         int[] aRef = toInts("This immutable type seems to allow modifications.");
@@ -466,6 +472,7 @@ public class BaseBytesTest extends TestCase {
      * Test method for {@link org.python.core.BaseBytes#setslice(int,int,int,PyObject)}, that it
      * throws an exception by default. Override in tests of mutable subclasses.
      */
+    @Test
     public void testSetslice3() {
         PyObject bRef = Py.TypeError;
         int[] aRef = toInts("This immutable type seems to allow modifications.");

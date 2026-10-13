@@ -1,8 +1,8 @@
 package org.python.util;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.python.core.Console;
 import org.python.core.PlainConsole;
 import org.python.core.Py;

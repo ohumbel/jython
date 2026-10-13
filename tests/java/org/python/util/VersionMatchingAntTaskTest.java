@@ -1,9 +1,9 @@
 package org.python.util;
 
 import static java.nio.file.Files.exists;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.python.util.VersionMatchingAntTask.calculateGradleArtefact;
 import static org.python.util.VersionMatchingAntTask.checkAntArtefact;
 import static org.python.util.VersionMatchingAntTask.unquote;
@@ -18,14 +18,14 @@ import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Location;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class VersionMatchingAntTaskTest {
 
     private VersionMatchingAntTask task;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         task = new VersionMatchingAntTask();
         setLocationToBuildXml();
@@ -49,7 +49,7 @@ public class VersionMatchingAntTaskTest {
     public void testParseAntArtefacts() throws IOException {
         Set<String> antArtefacts = task.parseAntArtefacts();
         assertNotNull(antArtefacts);
-        assertEquals(33, antArtefacts.size());
+        assertEquals(39, antArtefacts.size());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class VersionMatchingAntTaskTest {
         assertEquals("jnr-ffi-2.2.19.jar", calculateGradleArtefact("rev_jnr_ffi", "2.2.19"));
         assertEquals("jnr-netdb-1.2.3.jar", calculateGradleArtefact("rev_jnr_netdb", "1.2.3"));
         assertEquals("jnr-posix-3.1.22.jar", calculateGradleArtefact("rev_jnr_posix", "3.1.22"));
-        assertEquals("junit-4.13.2.jar", calculateGradleArtefact("rev_junit", "4.13.2"));
+        assertEquals("junit-jupiter-6.1.3.jar", calculateGradleArtefact("rev_junit", "6.1.3"));
         assertEquals("netty-buffer-5.4.3.Final.jar", calculateGradleArtefact("rev_netty", "5.4.3.Final"));
         assertEquals("ojdbc8-23.26.1.2.3.jar", calculateGradleArtefact("rev_oracle", "23.26.1.2.3"));
     }
@@ -99,11 +99,11 @@ public class VersionMatchingAntTaskTest {
     @Test
     public void testCheckAntArtefact() {
         Set<String> antArtefacts = new HashSet<>();
-        antArtefacts.add("junit-4.jar");
+        antArtefacts.add("junit-jupiter-6.1.3.jar");
         antArtefacts.add("additiona.jar");
         antArtefacts.add("asm-9.8.7.jar");
 
-        checkAntArtefact("junit-4.jar", antArtefacts);
+        checkAntArtefact("junit-jupiter-6.1.3.jar", antArtefacts);
         checkAntArtefact("asm-9.8.7.jar", antArtefacts);
         try {
             checkAntArtefact("icu4j-78.1.jar", antArtefacts);

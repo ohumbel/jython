@@ -36,7 +36,7 @@ public class VersionMatchingAntTask extends Task {
         ARTEFACT_NAME_FORMATS.put("rev_jnr_ffi", "jnr-ffi-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_jnr_netdb", "jnr-netdb-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_jnr_posix", "jnr-posix-%s.jar");
-        ARTEFACT_NAME_FORMATS.put("rev_junit", "junit-%s.jar");
+        ARTEFACT_NAME_FORMATS.put("rev_junit", "junit-jupiter-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_netty", "netty-buffer-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_oracle", "ojdbc8-%s.jar");
     }

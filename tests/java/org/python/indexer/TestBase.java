@@ -4,6 +4,12 @@
  */
 package org.python.indexer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,15 +20,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import junit.framework.TestCase;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.indexer.types.NType;
 import org.python.indexer.types.NUnknownType;
 
 /**
  * Test utilities for {@link IndexerTest}.
  */
-public class TestBase extends TestCase {
+public class TestBase {
 
     // Set this to control logging to the console from the Indexer (mostly at FINER level).
     static protected final Level LOGGING_LEVEL = Level.OFF;
@@ -62,7 +68,7 @@ public class TestBase extends TestCase {
     public TestBase() {
     }
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
         idx = new Indexer();
         idx.getLogger().setLevel(LOGGING_LEVEL);
@@ -148,6 +154,7 @@ public class TestBase extends TestCase {
 
     // meta-tests
 
+    @Test
     public void testHandleExceptionLoggingNulls() throws Exception {
         try {
             idx.enableAggressiveAssertions(false);
@@ -159,22 +166,26 @@ public class TestBase extends TestCase {
         }
     }
 
+    @Test
     public void testDataFileFindable() throws Exception {
-        assertTrue("Test file not found", new java.io.File(TEST_DATA_DIR).exists());
+        assertTrue(new java.io.File(TEST_DATA_DIR).exists(), "Test file not found");
     }
 
+    @Test
     public void testLoadDataFile() throws Exception {
         String path = abspath("test-load.txt");
         BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
-        assertEquals(in.readLine().trim(), "hello");
+        assertEquals("hello", in.readLine().trim());
         in.close();
     }
 
+    @Test
     public void testGetSource() throws Exception {
         String src = getSource("testsrc.txt");
         assertEquals("one\ntwo\n\nthree\n", src);
     }
 
+    @Test
     public void testStringModule() throws Exception {
         idx.loadString("test-string-module.py", makeModule(
             "def foo():",
@@ -183,6 +194,7 @@ public class TestBase extends TestCase {
         assertFunctionBinding("test-string-module.foo");
     }
 
+    @Test
     public void testNthIndexOf() throws Exception {
         String s = "ab a b ab a\nb aab";
         assertEquals(0, nthIndexOf(s, "ab", 1));
@@ -202,10 +214,11 @@ public class TestBase extends TestCase {
         }
     }
 
+    @Test
     public void testIndexerDefaults() throws Exception {
         includeStandardLibrary();
-        assertEquals("wrong project dir", TEST_DATA_DIR, idx.projDir);
-        assertEquals("unexpected load path entries", 1, idx.path.size());
+        assertEquals(TEST_DATA_DIR, idx.projDir, "wrong project dir");
+        assertEquals(1, idx.path.size(), "unexpected load path entries");
         assertEquals(TEST_LIB_DIR, idx.path.get(0));
     }
 
@@ -221,7 +234,7 @@ public class TestBase extends TestCase {
 
     public NBinding getBinding(String qname) throws Exception {
         NBinding b = idx.lookupQname(qname);
-        assertNotNull("no binding found for " + qname, b);
+        assertNotNull(b, "no binding found for " + qname);
         return b;
     }
 
@@ -233,7 +246,7 @@ public class TestBase extends TestCase {
 
     public void assertNoBinding(String qname) throws Exception {
         NBinding b = idx.lookupQname(qname);
-        assertNull("Should not have found binding for " + qname, b);
+        assertNull(b, "Should not have found binding for " + qname);
     }
 
     public NBinding assertAttributeBinding(String qname) throws Exception {
@@ -303,7 +316,7 @@ public class TestBase extends TestCase {
 
     public void assertNoDefinition(String msg, String qname, int pos, int len) throws Exception {
         Def def = getDefinition(qname, pos, len);
-        assertNull(msg, def);
+        assertNull(def, msg);
     }
 
     public void assertDefinition(String qname, int offset) throws Exception {
@@ -317,7 +330,7 @@ public class TestBase extends TestCase {
 
     public Ref getRefOrNull(String qname, int offset, int length) throws Exception {
         NBinding b = getBinding(qname);
-        assertNotNull("Null refs list for " + qname, b.getRefs());
+        assertNotNull(b.getRefs(), "Null refs list for " + qname);
         for (Ref ref : b.getRefs()) {
             if (offset == ref.start() && length == ref.length()) {
                 return ref;
@@ -328,8 +341,7 @@ public class TestBase extends TestCase {
 
     public Ref getRefOrFail(String qname, int offset, int length) throws Exception {
         Ref ref = getRefOrNull(qname, offset, length);
-        assertNotNull("No reference to " + qname + " at offset " + offset + " of length " + length,
-                      ref);
+        assertNotNull(ref, "No reference to " + qname + " at offset " + offset + " of length " + length);
         return ref;
     }
 
@@ -348,7 +360,7 @@ public class TestBase extends TestCase {
     }
 
     public void assertNoReference(String msg, String qname, int pos, int len) throws Exception {
-        assertNull(msg, getRefOrNull(qname, pos, len));
+        assertNull(getRefOrNull(qname, pos, len), msg);
     }
 
     public void assertCall(String qname, int offset, int length) throws Exception {
@@ -381,7 +393,7 @@ public class TestBase extends TestCase {
 
     public NType getTypeBinding(String typeQname) throws Exception {
         NType type = idx.lookupQnameType(typeQname);
-        assertNotNull("No recorded type for " + typeQname, type);
+        assertNotNull(type, "No recorded type for " + typeQname);
         return type;
     }
 
@@ -390,15 +402,14 @@ public class TestBase extends TestCase {
     public NBinding assertBindingType(String bindingQname, String typeQname) throws Exception {
         NBinding b = getBinding(bindingQname);
         NType expected = getTypeBinding(typeQname);
-        assertEquals("Wrong binding type", expected, NUnknownType.follow(b.getType()));
+        assertEquals(expected, NUnknownType.follow(b.getType()), "Wrong binding type");
         return b;
     }
 
-    public NBinding assertBindingType(String bindingQname, Class type) throws Exception {
+    public NBinding assertBindingType(String bindingQname, Class<?> type) throws Exception {
         NBinding b = getBinding(bindingQname);
         NType btype = NUnknownType.follow(b.getType());
-        assertTrue("Wrong type: expected " + type + " but was " + btype,
-                   type.isInstance(btype));
+        assertTrue(type.isInstance(btype), "Wrong type: expected " + type + " but was " + btype);
         return b;
     }
 
@@ -435,12 +446,5 @@ public class TestBase extends TestCase {
             assertBindingType(bindingQname, classQname);
             return;
         }
-
-        // XXX:  we've disabled support for NInstanceType for now
-        NBinding b = getBinding(bindingQname);
-        NType btype = b.followType();
-        assertTrue(btype.isInstanceType());
-        NType ctype = getTypeBinding(classQname);
-        assertEquals(btype.asInstanceType().getClassType(), ctype);
     }
 }

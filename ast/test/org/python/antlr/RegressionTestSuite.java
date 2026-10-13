@@ -9,9 +9,12 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.DynamicContainer;
+import org.junit.jupiter.api.DynamicNode;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A regression test suite traversing all *.py files, parsing and walking them
@@ -26,33 +29,27 @@ import junit.framework.TestSuite;
  * -Dbase.dir=/your/dir/containing/py/files
  * </pre>
  */
-public class RegressionTestSuite extends TestSuite {
+public class RegressionTestSuite {
 	private static final String BASEDIR_PROPERTY = "base.dir";
 
-	/**
-	 * Method called by a JUnit test runner
-	 * 
-	 * @return the test suite containing all the tests
-	 * 
-	 * @throws Exception
-	 */
-	public static Test suite() throws Exception {
+	@TestFactory
+	public List<DynamicNode> testSuite() throws Exception {
 		String baseDirName = System.getProperty(BASEDIR_PROPERTY, System.getProperty("user.dir", null));
-		Assert.assertNotNull("unable to determine root directory. Try specifying property " + BASEDIR_PROPERTY,
-				baseDirName);
+		assertNotNull(baseDirName, "unable to determine root directory. Try specifying property " + BASEDIR_PROPERTY);
 		File baseDir = new File(baseDirName);
-		Assert.assertTrue(baseDirName + " does not exist", baseDir.exists());
-		Assert.assertTrue(baseDirName + " is not a directory", baseDir.isDirectory());
-		TestSuite suite = new TestSuite("Regression test " + baseDirName + " recursive.");
-		buildSuite(baseDir, new PyFileFilter(), suite);
-		return suite;
+		assertTrue(baseDir.exists(), baseDirName + " does not exist");
+		assertTrue(baseDir.isDirectory(), baseDirName + " is not a directory");
+		List<DynamicNode> nodes = new ArrayList<>();
+		buildSuite(baseDir, new PyFileFilter(), nodes);
+		return nodes;
 	}
 
-	private static void buildSuite(File currentDir, FilenameFilter filter, TestSuite currentSuite) throws Exception {
-		List<File> potentialDirectories = Arrays.asList(currentDir.listFiles(filter));
-		if (potentialDirectories.size() == 0) {
+	private static void buildSuite(File currentDir, FilenameFilter filter, List<DynamicNode> currentNodes) throws Exception {
+		File[] list = currentDir.listFiles(filter);
+		if (list == null || list.length == 0) {
 			return;
 		}
+		List<File> potentialDirectories = Arrays.asList(list);
 
 		List<File> pyFiles = new ArrayList<File>(potentialDirectories.size());
 		Collections.sort(potentialDirectories, new FileComparator());
@@ -60,11 +57,10 @@ public class RegressionTestSuite extends TestSuite {
 		while (directoryIterator.hasNext()) {
 			File potentialDirectory = directoryIterator.next();
 			if (potentialDirectory.isDirectory()) {
-				TestSuite subTestSuite = new TestSuite(potentialDirectory.getName());
-				buildSuite(potentialDirectory, filter, subTestSuite);
-				// only if suite contains tests
-				if (subTestSuite.countTestCases() > 0) {
-					currentSuite.addTest(subTestSuite);
+				List<DynamicNode> subNodes = new ArrayList<>();
+				buildSuite(potentialDirectory, filter, subNodes);
+				if (!subNodes.isEmpty()) {
+					currentNodes.add(DynamicContainer.dynamicContainer(potentialDirectory.getName(), subNodes));
 				}
 			} else {
 				pyFiles.add(potentialDirectory);
@@ -72,7 +68,10 @@ public class RegressionTestSuite extends TestSuite {
 		}
 		Iterator<File> fileIterator = pyFiles.iterator();
 		while (fileIterator.hasNext()) {
-			currentSuite.addTest(new PythonTreeWalkerTestCase(fileIterator.next()));
+			File f = fileIterator.next();
+			currentNodes.add(DynamicTest.dynamicTest(f.getName(), () -> {
+				new PythonTreeWalkerTestCase(f).runTest();
+			}));
 		}
 	}
 

@@ -17,14 +17,16 @@
     </target>
 
     <target name="test">
-        <junit printsummary="withOutAndErr" showoutput="true"
-            fork="true" forkmode="once" failureproperty="testfailure">
-            <formatter type="plain" />
+        <junitlauncher haltOnFailure="true" printSummary="true">
             <classpath refid="main.classpath"/>
-            <batchtest todir="test">
-                <fileset dir="test"/>
-            </batchtest>
-        </junit>
+            <testclasses outputdir="test">
+                <fileset dir="test">
+                    <include name="**/*Test*.class"/>
+                    <exclude name="**/*$*.class"/>
+                </fileset>
+                <listener type="legacy-plain" sendSysOut="true" sendSysErr="true"/>
+            </testclasses>
+        </junitlauncher>
     </target>
 
     <target name="all" depends="asdl_gen"/>

@@ -3,18 +3,18 @@ package org.python.compiler.custom_proxymaker;
 /*
  * Test support for Python class annotations
  */
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.util.ProxyCompiler;
 
 public class ClassAnnotationTest {
 
     Class<?> proxy;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ProxyCompiler.compile("tests/python/custom_proxymaker/annotated_class.py",
                 "build/testclasses");

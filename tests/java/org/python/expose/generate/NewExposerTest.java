@@ -1,5 +1,8 @@
 package org.python.expose.generate;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.python.core.BytecodeLoader;
@@ -11,6 +14,7 @@ import org.python.expose.ExposedType;
 
 public class NewExposerTest extends InterpTestCase implements Opcodes {
 
+    @Test
     public void testSimple() throws Exception {
         NewExposer ne = new NewExposer(Type.getType(Instantiable.class),
                                        ACC_STATIC | ACC_PUBLIC,

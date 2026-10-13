@@ -1,21 +1,25 @@
 package org.python.util.install.driver;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.File;
 
 import org.python.util.install.InstallerCommandLine;
 
-import junit.framework.TestCase;
-
-public class AutotestTest extends TestCase {
+public class AutotestTest  {
 
     private Autotest _autotest;
 
+    @BeforeEach
     protected void setUp() throws Exception {
         InstallerCommandLine commandLine = new InstallerCommandLine();
         commandLine.setArgs(new String[0]);
         _autotest = new SilentAutotest(commandLine);
     }
 
+    @Test
     public void testCreateDirectories() {
         File rootDir = Autotest.getRootDir();
         File targetDir = _autotest.getTargetDir();
@@ -26,6 +30,7 @@ public class AutotestTest extends TestCase {
         assertEquals(rootDir, targetDir.getParentFile());
     }
 
+    @Test
     public void testCommandLineArgs() {
         String[] args = new String[] { "-x", "-y", "-z" };
         _autotest.setCommandLineArgs(args);
@@ -36,6 +41,7 @@ public class AutotestTest extends TestCase {
         }
     }
 
+    @Test
     public void testAddArgument() {
         String[] args = new String[] { "-x", "-y", "-z" };
         _autotest.setCommandLineArgs(args);
@@ -47,6 +53,7 @@ public class AutotestTest extends TestCase {
         assertEquals("-u", _autotest.getCommandLineArgs()[args.length]);
     }
 
+    @Test
     public void testVerify() throws Exception {
         TestVerifier testVerifier = new TestVerifier();
         _autotest.setVerifier(testVerifier);

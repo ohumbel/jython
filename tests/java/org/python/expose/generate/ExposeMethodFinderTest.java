@@ -1,13 +1,16 @@
 package org.python.expose.generate;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+import org.junit.jupiter.api.Test;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-public class ExposeMethodFinderTest extends TestCase implements Opcodes, PyTypes {
+public class ExposeMethodFinderTest extends InterpTestCase implements Opcodes, PyTypes {
 
     private ExposedMethodFinder makeFinder(int access, String descriptor, String methodName) {
         return new ExposedMethodFinder("simpleexposed",
@@ -58,12 +61,13 @@ public class ExposeMethodFinderTest extends TestCase implements Opcodes, PyTypes
 
     private void checkSet(String type, String typeThatShouldBeSet, Object actualValue) {
         if(type.equals(typeThatShouldBeSet)) {
-            assertNotNull(type + " should've been set after these operations", actualValue);
+            assertNotNull(actualValue, type + " should've been set after these operations");
         } else {
-            assertNull(type + " shouldn't have been set by these operations", actualValue);
+            assertNull(actualValue, type + " shouldn't have been set by these operations");
         }
     }
 
+    @Test
     public void testExposedNew() {
         ExposedMethodFinder visitor = makeFinder(Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC,
                                                  NewExposer.NEW_DESCRIPTOR, "new_");
@@ -72,6 +76,7 @@ public class ExposeMethodFinderTest extends TestCase implements Opcodes, PyTypes
         checkSet(NEW);
     }
 
+    @Test
     public void testSimpleExposedMethod() {
         makeAndVisit(EXPOSED_METHOD, METHOD, null);
         assertEquals(1, resultantMethExp.getNames().length);
@@ -97,6 +102,7 @@ public class ExposeMethodFinderTest extends TestCase implements Opcodes, PyTypes
         checkSet(typeThatShouldBeSet);
     }
 
+    @Test
     public void testNamesExposedMethod() {
         makeAndVisit(EXPOSED_METHOD, METHOD, "names", "first", "second");
         assertEquals(0, resultantMethExp.defaults.length);
@@ -105,37 +111,44 @@ public class ExposeMethodFinderTest extends TestCase implements Opcodes, PyTypes
         assertEquals("second", resultantMethExp.getNames()[1]);
     }
 
+    @Test
     public void testDefaultsExposedMethod() {
         makeAndVisit(EXPOSED_METHOD, METHOD, "defaults", "Py.None");
         assertEquals(1, resultantMethExp.defaults.length);
         assertEquals("Py.None", resultantMethExp.defaults[0]);
     }
 
+    @Test
     public void testDelDescriptor() {
         makeAndVisitDescr("simpleMethod", EXPOSED_DELETE, DELETE);
         assertEquals("simpleMethod", deleteName);
     }
 
+    @Test
     public void testSetDescriptor() {
         makeAndVisitDescr("simpleMethod", EXPOSED_SET, SET);
         assertEquals("simpleMethod", setName);
     }
 
+    @Test
     public void testGetDescriptor() {
         makeAndVisitDescr("getVal", EXPOSED_GET, GET);
         assertEquals("getVal", getName);
     }
 
+    @Test
     public void testNamedGetDescriptor() {
         makeAndVisitDescr("getVal", EXPOSED_GET, GET, "val");
         assertEquals("val", getName);
     }
 
+    @Test
     public void testNamedSetDescriptor() {
         makeAndVisitDescr("setVal", EXPOSED_SET, SET, "val");
         assertEquals("val", setName);
     }
 
+    @Test
     public void testNamedDelDescriptor() {
         makeAndVisitDescr("delVal", EXPOSED_DELETE, DELETE, "val");
         assertEquals("val", deleteName);

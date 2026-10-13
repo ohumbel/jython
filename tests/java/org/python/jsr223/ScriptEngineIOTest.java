@@ -1,40 +1,47 @@
 package org.python.jsr223;
 
-import javax.script.Bindings;
-import javax.script.Invocable;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.ScriptEngineFactory;
-import javax.script.SimpleBindings;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import junit.framework.TestCase;
-
-import java.io.FileReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-public class ScriptEngineIOTest extends TestCase
+import javax.script.Bindings;
+import javax.script.Invocable;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings ;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class ScriptEngineIOTest 
 {
     ScriptEngineFactory pythonEngineFactory;
     ScriptEngine pythonEngine;
 
+    @BeforeEach
     public void setUp() throws ScriptException
     {
         pythonEngineFactory = new PyScriptEngineFactory();
         pythonEngine = new PyScriptEngine(pythonEngineFactory);
     }
 
+    @Test
     public void testEvalString() throws ScriptException
     {
         assertNull(pythonEngine.eval("x = 5"));
         assertEquals(Integer.valueOf(5), pythonEngine.eval("x"));
     }
 
+    @Test
     public void testReadline() throws ScriptException
     {
         final String testString = "Shazaam Batman!\n";
@@ -45,6 +52,7 @@ public class ScriptEngineIOTest extends TestCase
         assertEquals(testString, pythonEngine.eval("sys.stdin.readline()"));
     }
 
+    @Test
     public void testReadlines() throws ScriptException
     {
         final String testString = "Holy Smokes Batman!\nBIF!\r\n\nKAPOW!!!\rTHE END.";
@@ -57,6 +65,7 @@ public class ScriptEngineIOTest extends TestCase
         assertEquals("Holy Smokes Batman!\nBIF!\n\nKAPOW!!!\nTHE END.\n", o);
     }
 
+    @Test
     public void testWriter() throws ScriptException
     {
         final StringWriter sw = new StringWriter();
@@ -69,6 +78,7 @@ public class ScriptEngineIOTest extends TestCase
         assertEquals(testString, sw.toString());
     }
 
+    @Test
     public void testErrorWriter() throws ScriptException
     {
         final StringWriter stdout = new StringWriter();
@@ -88,6 +98,7 @@ public class ScriptEngineIOTest extends TestCase
         assertEquals(testString2, stderr.toString());
     }
 
+    @Test
     public void testEvalWithReader() throws ScriptException, FileNotFoundException
     {
         //Check that multiple evals don't cause an NPE.

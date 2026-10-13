@@ -1,7 +1,12 @@
 package org.python.expose.generate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.IOException;
 
+import org.junit.jupiter.api.Test;
 import org.python.core.Py;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
@@ -9,10 +14,11 @@ import org.python.core.PyType;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
-import org.python.expose.TypeBuilder;
+import org.python.expose.TypeBuilder ;
 
 public class TypeExposerTest extends InterpTestCase {
 
+    @Test
     public void testMakeBuilder() throws Exception {
         ExposedTypeProcessor etp = new ExposedTypeProcessor(getClass().getClassLoader()
                 .getResourceAsStream("org/python/expose/generate/SimpleExposed.class"));
@@ -31,6 +37,7 @@ public class TypeExposerTest extends InterpTestCase {
         dict.__finditem__("tostring").__get__(new SimpleExposed(), type);
     }
 
+    @Test
     public void testGoodNew() throws IOException {
         ExposedTypeProcessor etp = new ExposedTypeProcessor(getClass().getClassLoader()
                 .getResourceAsStream("org/python/expose/generate/TypeExposerTest$SimplestNew.class"));
@@ -41,6 +48,7 @@ public class TypeExposerTest extends InterpTestCase {
         assertEquals(Py.One, new_.new_impl(false, null, null, null));
     }
 
+    @Test
     public void testCatchingDupes() throws IOException {
         try {
             new ExposedTypeProcessor(getClass().getClassLoader()

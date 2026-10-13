@@ -1,21 +1,26 @@
 package org.python.core;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.math.BigInteger;
 
-import junit.framework.TestCase;
-
+import org.junit.jupiter.api.Test;
 import org.python.core.stringlib.FieldNameIterator;
 import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.stringlib.InternalFormat;
+import org.python.core.stringlib.InternalFormat.Spec;
 import org.python.core.stringlib.MarkupIterator;
 import org.python.core.stringlib.TextFormatter;
-import org.python.core.stringlib.InternalFormat.Spec;
 import org.python.util.PythonInterpreter;
 
 /**
  * Tests for internal bits and pieces of string.format implementation.
  */
-public class StringFormatTest extends TestCase {
+public class StringFormatTest {
 
     /** Exception-raising seems to need the interpreter to be initialised **/
     PythonInterpreter interp = new PythonInterpreter();
@@ -23,6 +28,7 @@ public class StringFormatTest extends TestCase {
     /** Switches mode in tests that have a shared implementation for bytes and Unicode modes. */
     private boolean useBytes = true;
 
+    @Test
     public void testInternalFormatSpec() {
         InternalFormat.Spec spec;
         spec = InternalFormat.fromText("x");
@@ -83,6 +89,7 @@ public class StringFormatTest extends TestCase {
      * original <code>testFormatIntOrLong</code> which tested <code>PyInteger.formatIntOrLong</code>
      * .
      */
+    @Test
     public void testPrepareFormatter() {
         int v = 123;
         IntegerFormatter f;
@@ -145,6 +152,7 @@ public class StringFormatTest extends TestCase {
      * original <code>testFormatIntOrLong</code> which tested <code>PyInteger.formatIntOrLong</code>
      * .
      */
+    @Test
     public void testPrepareFormatterLong() {
         BigInteger v = BigInteger.valueOf(123);
         IntegerFormatter f;
@@ -229,6 +237,7 @@ public class StringFormatTest extends TestCase {
         }
     }
 
+    @Test
     public void testFormatString() {
         String v = "abc";
         TextFormatter f;
@@ -281,11 +290,13 @@ public class StringFormatTest extends TestCase {
         assertMarkupError("}", "Single '}' encountered in format string");
     }
 
+    @Test
     public void testMarkupIteratorBytes() {
         useBytes = true;
         implTestMarkupIterator();
     }
 
+    @Test
     public void testMarkupIteratorUnicode() {
         useBytes = false;
         implTestMarkupIterator();
@@ -331,11 +342,13 @@ public class StringFormatTest extends TestCase {
         assertNull(it.nextChunk());
     }
 
+    @Test
     public void testFieldNameIteratorBytes() {
         useBytes = true;
         implTestFieldNameIterator();
     }
 
+    @Test
     public void testFieldNameIteratorUnicode() {
         useBytes = false;
         implTestFieldNameIterator();

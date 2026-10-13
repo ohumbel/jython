@@ -1,5 +1,12 @@
 package org.python.util.install;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -8,12 +15,11 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
-import junit.framework.TestCase;
-import junit.runner.TestSuiteLoader;
-
+import org.junit.jupiter.api.Test;
+import org.python.core.PySystemState;
 import org.python.util.install.driver.Autotest;
 
-public class FileHelperTest extends TestCase {
+public class FileHelperTest  {
 
     private static final String JYTHON_TEST_TEMPLATE = "jython_test.template";
 
@@ -21,6 +27,7 @@ public class FileHelperTest extends TestCase {
 
     private static final String JYTHON_SMALL_C_PNG = "jython_small_c.png";
 
+    @Test
     public void testCreateTempDirectory_WasFile() throws IOException {
         File file = File.createTempFile("some_prefix", "");
         assertTrue(file.exists());
@@ -30,6 +37,7 @@ public class FileHelperTest extends TestCase {
         assertTrue(file.isDirectory());
     }
 
+    @Test
     public void testCreateTempDirectory_AlreadyPresent() throws IOException {
         File dir = new File(System.getProperty("user.dir"));
         assertTrue(dir.exists());
@@ -39,6 +47,7 @@ public class FileHelperTest extends TestCase {
         assertTrue(dir.isDirectory());
     }
 
+    @Test
     public void testCreateTempDirectory() throws IOException {
         File dir = new File(System.getProperty("user.dir"));
         assertTrue(dir.exists());
@@ -56,6 +65,7 @@ public class FileHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testCreateTempDirectory_Failure() throws Exception {
         File dir = new File(System.getProperty("user.dir"));
         assertTrue(dir.exists());
@@ -89,6 +99,7 @@ public class FileHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testRmdir() throws IOException {
         File dir = new File(System.getProperty("java.io.tmpdir"), "StartScriptGeneratorTest");
         if (!dir.exists()) {
@@ -109,6 +120,7 @@ public class FileHelperTest extends TestCase {
         assertTrue(FileHelper.rmdir(dir));
     }
 
+    @Test
     public void testRmdir_Failure() throws Exception {
         File dir = new File(System.getProperty("java.io.tmpdir"), "StartScriptGeneratorTest");
         if (!dir.exists()) {
@@ -145,6 +157,7 @@ public class FileHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testReadAll() throws Exception {
         File file = File.createTempFile("testReadAll", "");
         final String contents = new String("line1 \n line2 \n");
@@ -153,6 +166,7 @@ public class FileHelperTest extends TestCase {
         assertEquals(contents, readContents);
     }
 
+    @Test
     public void testReadAll_InputStream() throws Exception {
         URL url = FileHelper.getRelativeURL(Autotest.class, JYTHON_TEST_TEMPLATE);
         assertNotNull(url);
@@ -166,7 +180,7 @@ public class FileHelperTest extends TestCase {
         String contents = FileHelper.readAll(is);
         assertEquals(expectedContents, contents);
         // now from a .jar
-        is = FileHelper.getRelativeURLAsStream(TestSuiteLoader.class, LOGO_GIF);
+        is = FileHelper.getRelativeURLAsStream(PySystemState.class, LOGO_GIF);
         assertNotNull(is);
         contents = FileHelper.readAll(is);
         assertNotNull(contents);
@@ -174,6 +188,7 @@ public class FileHelperTest extends TestCase {
         assertTrue(contents.startsWith("GIF89a&"));
     }
 
+    @Test
     public void testReadAll_NonExisting() {
         String readContents = null;
         try {
@@ -184,16 +199,18 @@ public class FileHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetRelativeURL() {
         URL url = FileHelper.getRelativeURL(Installation.class, JYTHON_SMALL_C_PNG);
         assertNotNull(url);
         assertTrue(url.getPath().endsWith("org/python/util/install/".concat(JYTHON_SMALL_C_PNG)));
         // now from a .jar
-        url = FileHelper.getRelativeURL(TestSuiteLoader.class, LOGO_GIF);
+        url = FileHelper.getRelativeURL(PySystemState.class, LOGO_GIF);
         assertNotNull(url);
         assertTrue(url.getPath().endsWith("!/junit/runner/".concat(LOGO_GIF)));
     }
 
+    @Test
     public void testGetRelativeURLAsStream() throws IOException {
         InputStream is = FileHelper.getRelativeURLAsStream(Installation.class, JYTHON_SMALL_C_PNG);
         assertNotNull(is);
@@ -203,7 +220,7 @@ public class FileHelperTest extends TestCase {
             is.close();
         }
         // now from a .jar
-        is = FileHelper.getRelativeURLAsStream(TestSuiteLoader.class, LOGO_GIF);
+        is = FileHelper.getRelativeURLAsStream(PySystemState.class, LOGO_GIF);
         assertNotNull(is);
         try {
             assertTrue(is.read() >= 0);
@@ -212,6 +229,7 @@ public class FileHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testWrite() throws IOException {
         File file = new File("testWrite");
         assertFalse(file.exists());
@@ -228,6 +246,7 @@ public class FileHelperTest extends TestCase {
         }
     }
 
+    @Test
     public void testWrite_Existing() throws IOException {
         File file = File.createTempFile("testWrite", "");
         assertTrue(file.exists());
