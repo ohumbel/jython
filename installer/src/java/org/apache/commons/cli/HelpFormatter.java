@@ -222,19 +222,22 @@ public class HelpFormatter
     * @param options The command line Options
     *
     */
-   public void printUsage( PrintWriter pw, int width, String app, Options options ) 
+   @SuppressWarnings("unchecked")
+   public void printUsage(PrintWriter pw, int width, String app, Options options)
    {
        // initialise the string buffer
        StringBuffer buff = new StringBuffer( defaultSyntaxPrefix ).append( app ).append( " " );
        
        // create a list for processed option groups
+       @SuppressWarnings("rawtypes")
        ArrayList list = new ArrayList();
 
        // temp variable
        Option option;
 
        // iterate over the options
-       for ( Iterator i = options.getOptions().iterator(); i.hasNext(); )
+       for (@SuppressWarnings("rawtypes")
+       Iterator i = options.getOptions().iterator(); i.hasNext();)
        {
            // get the next Option
            option = (Option) i.next();
@@ -251,12 +254,14 @@ public class HelpFormatter
                    list.add( group );
     
                    // get the names of the options from the OptionGroup
+                   @SuppressWarnings("rawtypes")
                    Collection names = group.getNames();
     
                    buff.append( "[" ); 
     
                    // for each option in the OptionGroup
-                   for( Iterator iter = names.iterator(); iter.hasNext(); ) {
+                   for (@SuppressWarnings("rawtypes")
+                   Iterator iter = names.iterator(); iter.hasNext();) {
                        buff.append( iter.next() );
                        if( iter.hasNext() ) {
                            buff.append( " | " );
@@ -327,7 +332,8 @@ public class HelpFormatter
 
    // --------------------------------------------------------------- Protected
 
-   protected StringBuffer renderOptions( StringBuffer sb,
+   @SuppressWarnings("unchecked")
+   protected StringBuffer renderOptions(StringBuffer sb,
                                          int width,
                                          Options options,
                                          int leftPad,
@@ -341,13 +347,16 @@ public class HelpFormatter
       //this list will be then used to sort options ascending
       int max = 0;
       StringBuffer optBuf;
+      @SuppressWarnings("rawtypes")
       List prefixList = new ArrayList();
       Option option;
+      @SuppressWarnings("rawtypes")
       List optList = options.helpOptions();
       if (!options.isSortAsAdded()) {
          Collections.sort(optList, new StringBufferComparator());
       }
-      for ( Iterator i = optList.iterator(); i.hasNext(); )
+      for (@SuppressWarnings("rawtypes")
+      Iterator i = optList.iterator(); i.hasNext();)
       {
          option = (Option) i.next();
          optBuf = new StringBuffer(8);
@@ -379,7 +388,8 @@ public class HelpFormatter
          max = optBuf.length() > max ? optBuf.length() : max;
       }
       int x = 0;
-      for ( Iterator i = optList.iterator(); i.hasNext(); )
+      for (@SuppressWarnings("rawtypes")
+      Iterator i = optList.iterator(); i.hasNext();)
       {
          option = (Option) i.next();
          optBuf = new StringBuffer( prefixList.get( x++ ).toString() );
@@ -517,6 +527,7 @@ public class HelpFormatter
    
    // ----------------------------------------------------------- Inner classes
 
+   @SuppressWarnings("rawtypes")
     private static class StringBufferComparator
     implements Comparator
     {

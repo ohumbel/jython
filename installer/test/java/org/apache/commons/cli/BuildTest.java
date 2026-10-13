@@ -10,87 +10,47 @@
 
 package org.apache.commons.cli;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BuildTest extends TestCase
-{
+import org.junit.jupiter.api.Test;
 
-    public static Test suite() { 
-        return new TestSuite(BuildTest.class); 
-    }
+class BuildTest {
 
-    public BuildTest(String name)
-    {
-        super(name);
-    }
-
-    public void setUp()
-    {
-
-    }
-
-    public void tearDown()
-    {
-
-    }
-
-    public void testSimple()
-    {
+    @Test
+    void testSimple() {
         Options opts = new Options();
-        
-        opts.addOption("a",
-                       false,
-                       "toggle -a");
 
-        opts.addOption("b",
-                       true,
-                       "toggle -b");
+        opts.addOption("a", false, "toggle -a");
+
+        opts.addOption("b", true, "toggle -b");
     }
 
-    public void testDuplicateSimple()
-    {
+    @Test
+    void testDuplicateSimple() {
         Options opts = new Options();
-        opts.addOption("a",
-                       false,
-                       "toggle -a");
+        opts.addOption("a", false, "toggle -a");
 
-        opts.addOption("a",
-                       true,
-                       "toggle -a*");
-        
-        assertEquals( "last one in wins", "toggle -a*", opts.getOption("a").getDescription() );
+        opts.addOption("a", true, "toggle -a*");
+
+        assertEquals("toggle -a*", opts.getOption("a").getDescription(), "last one in wins");
     }
 
-    public void testLong()
-    {
+    @Test
+    void testLong() {
         Options opts = new Options();
-        
-        opts.addOption("a",
-                       "--a",
-                       false,
-                       "toggle -a");
 
-        opts.addOption("b",
-                       "--b",
-                       true,
-                       "set -b");
+        opts.addOption("a", "--a", false, "toggle -a");
+
+        opts.addOption("b", "--b", true, "set -b");
 
     }
 
-    public void testDuplicateLong()
-    {
+    @Test
+    void testDuplicateLong() {
         Options opts = new Options();
-        opts.addOption("a",
-                       "--a",
-                       false,
-                       "toggle -a");
+        opts.addOption("a", "--a", false, "toggle -a");
 
-        opts.addOption("a",
-                       "--a",
-                       false,
-                       "toggle -a*");
-        assertEquals( "last one in wins", "toggle -a*", opts.getOption("a").getDescription() );
+        opts.addOption("a", "--a", false, "toggle -a*");
+        assertEquals("toggle -a*", opts.getOption("a").getDescription(), "last one in wins");
     }
 }

@@ -1,10 +1,8 @@
 package org.python.util.install.driver;
 
-import java.awt.AWTException;
 import java.awt.Robot;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.python.util.install.InstallerCommandLine;
@@ -14,12 +12,12 @@ public class GuiAutotest extends Autotest {
     private static final int _DEFAULT_DELAY = 500; // ms
 
     private Robot _robot;
-    private List _keyActions;
+    private List<KeyAction> _keyActions;
     private boolean _waiting = false;
 
     protected GuiAutotest(InstallerCommandLine commandLine) throws IOException, DriverException {
         super(commandLine);
-        _keyActions = new ArrayList();
+        _keyActions = new ArrayList<>();
         // pass in the target directory, verbositiy
         String[] args = new String[] { "-d", getTargetDir().getAbsolutePath() };
         setCommandLineArgs(args);
@@ -170,6 +168,7 @@ public class GuiAutotest extends Autotest {
     // private stuff
     //
 
+    @SuppressWarnings("unused")
     private boolean isWaiting() {
         return _waiting;
     }
@@ -178,6 +177,7 @@ public class GuiAutotest extends Autotest {
         _keyActions.add(keyAction);
     }
 
+    @SuppressWarnings("unused")
     private void executeKeyAction(KeyAction keyAction) {
         _robot.delay(keyAction.getDelay());
         _robot.keyPress(keyAction.getKeyCode());

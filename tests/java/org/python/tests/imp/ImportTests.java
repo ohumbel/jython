@@ -1,19 +1,15 @@
 package org.python.tests.imp;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
-import org.python.core.Py;
 import org.python.core.PyObject;
-import org.python.core.PyList;
-import org.python.core.PyString;
 import org.python.core.PySystemState;
 import org.python.core.imp;
 
-import java.io.File;
+class ImportTests  {
 
-public class ImportTests extends TestCase {
-
-    public void testImportFromJava() {
+    @Test
+    void testImportFromJava() {
         PySystemState.initialize();
         PyObject submodule = imp.load("testpkg.submodule");
         PyObject module = imp.load("testpkg");

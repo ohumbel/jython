@@ -1,7 +1,6 @@
 package org.python.util.install;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public abstract class AbstractWizardValidator implements TextKeys {
 
@@ -22,7 +21,7 @@ public abstract class AbstractWizardValidator implements TextKeys {
         }
     }
 
-    private ArrayList _listeners;
+    private ArrayList<ValidationListener> _listeners;
     private AbstractWizardPage _page;
     private Thread _validatorThread;
 
@@ -30,7 +29,7 @@ public abstract class AbstractWizardValidator implements TextKeys {
         if (listener == null)
             return;
         if (_listeners == null)
-            _listeners = new ArrayList(5);
+            _listeners = new ArrayList<>(5);
         if (_listeners.contains(listener))
             return;
         _listeners.add(listener);
@@ -42,8 +41,7 @@ public abstract class AbstractWizardValidator implements TextKeys {
         if (_listeners == null || _listeners.isEmpty())
             return;
         ValidationEvent event = new ValidationEvent(_page);
-        for (Iterator it = _listeners.iterator(); it.hasNext();) {
-            ValidationListener listener = (ValidationListener) it.next();
+        for (ValidationListener listener : _listeners) {
             listener.validationFailed(event, exception);
         }
     }
@@ -54,8 +52,7 @@ public abstract class AbstractWizardValidator implements TextKeys {
         if (_listeners == null || _listeners.isEmpty())
             return;
         ValidationEvent event = new ValidationEvent(_page);
-        for (Iterator it = _listeners.iterator(); it.hasNext();) {
-            ValidationListener listener = (ValidationListener) it.next();
+        for (ValidationListener listener : _listeners) {
             listener.validationInformationRequired(event, exception);
         }
     }
@@ -66,8 +63,7 @@ public abstract class AbstractWizardValidator implements TextKeys {
         if (_listeners == null || _listeners.isEmpty())
             return;
         ValidationEvent event = new ValidationEvent(_page);
-        for (Iterator it = _listeners.iterator(); it.hasNext();) {
-            ValidationListener listener = (ValidationListener) it.next();
+        for (ValidationListener listener : _listeners) {
             listener.validationStarted(event);
         }
     }
@@ -80,8 +76,7 @@ public abstract class AbstractWizardValidator implements TextKeys {
         if (_listeners == null || _listeners.isEmpty())
             return;
         ValidationEvent event = new ValidationEvent(_page);
-        for (Iterator it = _listeners.iterator(); it.hasNext();) {
-            ValidationListener listener = (ValidationListener) it.next();
+        for (ValidationListener listener : _listeners) {
             listener.validationSucceeded(event);
         }
     }

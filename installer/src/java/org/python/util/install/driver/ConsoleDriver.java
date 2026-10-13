@@ -3,8 +3,7 @@ package org.python.util.install.driver;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 /**
  * A class driving another class, while the other class is performing console I/O.
@@ -16,21 +15,19 @@ import java.util.Iterator;
  */
 public class ConsoleDriver extends Thread {
 
-    private Tunnel _tunnel;
-    private Collection _answers;
+    private Tunnel tunnel;
+    private List<String> answers;
 
-    public ConsoleDriver(Tunnel tunnel, Collection answers) {
-        _tunnel = tunnel;
-        _answers = answers;
+    public ConsoleDriver(Tunnel tunnel, List<String> answers) {
+        this.tunnel = tunnel;
+        this.answers = answers;
     }
 
     /**
      * Send answers in the correct sequence, as soon as the question is asked.
      */
     public void run() {
-        Iterator answersIterator = _answers.iterator();
-        while (answersIterator.hasNext()) {
-            String answer = (String) answersIterator.next();
+        for (String answer : answers) {
             try {
                 readLine();
                 sendAnswer(answer);
@@ -46,12 +43,12 @@ public class ConsoleDriver extends Thread {
         Thread.sleep(100); // wait to be sure the question is really issued on the other end of the tunnel
         System.out.println(" -> driving: '" + answer + "'");
         answer += Tunnel.NEW_LINE;
-        _tunnel.getAnswerSenderStream().write(answer.getBytes());
-        _tunnel.getAnswerSenderStream().flush();
+        tunnel.getAnswerSenderStream().write(answer.getBytes());
+        tunnel.getAnswerSenderStream().flush();
     }
 
     private void readLine() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(_tunnel.getQuestionReceiverStream()));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(tunnel.getQuestionReceiverStream()));
         reader.readLine();
     }
 

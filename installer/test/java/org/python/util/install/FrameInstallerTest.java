@@ -1,12 +1,17 @@
 package org.python.util.install;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 import org.python.util.install.Installation.JavaVersionInfo;
 
-import junit.framework.TestCase;
+class FrameInstallerTest  {
 
-public class FrameInstallerTest extends TestCase {
-
-    public void testInitDefaultJava() {
+    @Test
+    void testInitDefaultJava() {
         FrameInstaller.initDefaultJava();
         JavaVersionInfo vInfo = FrameInstaller.getJavaVersionInfo();
         assertNotNull(vInfo);
@@ -21,7 +26,8 @@ public class FrameInstallerTest extends TestCase {
         assertTrue(vendor.length() > 0);
     }
     
-    public void testJavaVersionInfo() {
+    @Test
+    void testJavaVersionInfo() {
         String version = "1;2;3";
         String vendor = "jython [macrosystems]";
         String specificationVersion = "@spec 1,4";
@@ -40,7 +46,8 @@ public class FrameInstallerTest extends TestCase {
         assertEquals(specificationVersion, returnedInfo.getSpecificationVersion());
     }
 
-    public void testInstallationType() {
+    @Test
+    void testInstallationType() {
         InstallationType installationType = new InstallationType();
         installationType.addLibraryModules();
         installationType.removeDemosAndExamples();
@@ -57,7 +64,8 @@ public class FrameInstallerTest extends TestCase {
         assertTrue(returnedType.installSources());
     }
 
-    public void testStandalone() {
+    @Test
+    void testStandalone() {
         InstallationType installationType = new InstallationType();
         installationType.setStandalone();
         assertTrue(installationType.installLibraryModules());
@@ -76,7 +84,8 @@ public class FrameInstallerTest extends TestCase {
         assertFalse(returnedType.installSources());
     }
     
-    public void testSetGetJavaHomeHandler() {
+    @Test
+    void testSetGetJavaHomeHandler() {
         assertNotNull(FrameInstaller.getJavaHomeHandler());
         JavaHomeHandler handler1 = new JavaHomeHandler();
         JavaHomeHandler handler2 = new JavaHomeHandler("some/dir");

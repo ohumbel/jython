@@ -1,14 +1,16 @@
 package org.python.expose.generate;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.objectweb.asm.Type;
 import org.python.core.PyObject;
-import org.python.expose.generate.ExposedTypeVisitor;
 
-public class ExposedTypeVisitorTest extends TestCase {
+class ExposedTypeVisitorTest extends InterpTestCase {
 
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         etv = new ExposedTypeVisitor(Type.getType("Lsimpletype;"), null) {
 
             @Override
@@ -21,13 +23,15 @@ public class ExposedTypeVisitorTest extends TestCase {
         };
     }
 
-    public void testSimpleType() {
+    @Test
+    void testSimpleType() {
         etv.visitEnd();
         assertEquals("simpletype", result);
         assertEquals(Type.getType(Object.class), baseResult);
     }
 
-    public void testNamedType() {
+    @Test
+    void testNamedType() {
         etv.visit("name", "different");
         etv.visit("base", Type.getType(PyObject.class));
         etv.visit("isBaseType", false);

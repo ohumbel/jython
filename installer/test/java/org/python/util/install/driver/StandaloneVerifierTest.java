@@ -1,18 +1,24 @@
 package org.python.util.install.driver;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.util.install.Installation;
 import org.python.util.install.JarInstaller;
 
-import junit.framework.TestCase;
-
-public class StandaloneVerifierTest extends TestCase {
+class StandaloneVerifierTest  {
 
     private StandaloneVerifier _verifier;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @BeforeEach
+    void setUp() throws Exception {
         _verifier = new StandaloneVerifier();
         File targetDir = null;
         // have to install jython first in order to activate this test
@@ -21,8 +27,8 @@ public class StandaloneVerifierTest extends TestCase {
         _verifier.setTargetDir(targetDir);
     }
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @AfterEach
+    void tearDown() throws Exception {
         if (_verifier.getTargetDir() != null) {
             File autotestFile = new File(_verifier.getTargetDir().getCanonicalPath(),
                                          StandaloneVerifier.AUTOTEST_PY);
@@ -32,13 +38,15 @@ public class StandaloneVerifierTest extends TestCase {
         }
     }
 
-    public void testVerify() throws Exception {
+    @Test
+    void testVerify() throws Exception {
         if (_verifier.getTargetDir() != null) {
             _verifier.verify();
         }
     }
 
-    public void testGetSimpleCommand() throws Exception {
+    @Test
+    void testGetSimpleCommand() throws Exception {
         File javaHome = new File(System.getProperty("java.home"));
         assertNotNull(javaHome);
         assertTrue(javaHome.exists());
@@ -65,7 +73,8 @@ public class StandaloneVerifierTest extends TestCase {
         assertEquals(expectedArgument, command[3]);
     }
 
-    public void testDoShellScriptTests() {
+    @Test
+    void testDoShellScriptTests() {
         // we cannot do shell script tests in standalone mode
         assertFalse(_verifier.doShellScriptTests());
     }

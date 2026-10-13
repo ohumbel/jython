@@ -60,10 +60,7 @@
  */
 package org.apache.commons.cli;
 
-import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * The class GnuParser provides an implementation of the 
@@ -76,6 +73,7 @@ import java.util.Iterator;
 public class GnuParser extends Parser {
 
     /** holder for flattened tokens */
+    @SuppressWarnings("rawtypes")
     private ArrayList tokens = new ArrayList();
 
     /**
@@ -99,6 +97,7 @@ public class GnuParser extends Parser {
      * </ol>
      * </p>
      */
+    @SuppressWarnings({ "unchecked", "unused" })
     protected String[] flatten( Options options, 
                                 String[] arguments, 
                                 boolean stopAtNonOption )

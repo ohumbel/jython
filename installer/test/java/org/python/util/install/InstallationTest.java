@@ -1,14 +1,20 @@
 package org.python.util.install;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 
+import org.junit.jupiter.api.Test;
 import org.python.util.install.Installation.JavaVersionInfo;
 
-import junit.framework.TestCase;
+class InstallationTest  {
 
-public class InstallationTest extends TestCase {
-
-    public void testGetExternalJavaVersion() {
+    @Test
+    void testGetExternalJavaVersion() {
         JavaHomeHandler javaHomeHandler = new JavaHomeHandler();
         JavaVersionInfo versionInfo = Installation.getExternalJavaVersion(javaHomeHandler);
         assertEquals(Installation.NORMAL_RETURN, versionInfo.getErrorCode());
@@ -20,7 +26,8 @@ public class InstallationTest extends TestCase {
         assertNotSame("", versionInfo.getVendor());
     }
 
-    public void testGetExternalJavaVersionWithError() {
+    @Test
+    void testGetExternalJavaVersionWithError() {
         JavaHomeHandler javaHomeHandler = new JavaHomeHandler("non_existing/home");
         JavaVersionInfo versionInfo = Installation.getExternalJavaVersion(javaHomeHandler);
         assertEquals(Installation.ERROR_RETURN, versionInfo.getErrorCode());
@@ -28,7 +35,8 @@ public class InstallationTest extends TestCase {
         assertTrue(reason.indexOf("invalid") >= 0);
     }
 
-    public void testGetExternalJavaVersionNoBinDirectory() {
+    @Test
+    void testGetExternalJavaVersionNoBinDirectory() {
         File wrongHome = new File(System.getProperty("user.home"));
         JavaHomeHandler javaHomeHandler = new JavaHomeHandler(wrongHome.getAbsolutePath());
         JavaVersionInfo versionInfo = Installation.getExternalJavaVersion(javaHomeHandler);
@@ -37,7 +45,8 @@ public class InstallationTest extends TestCase {
         assertTrue(reason.indexOf("invalid") >= 0);
     }
 
-    public void testGetExternalJavaVersionNoJavaInBinDirectory() {
+    @Test
+    void testGetExternalJavaVersionNoJavaInBinDirectory() {
         File wrongHome = new File(System.getProperty("user.home"));
         File binDir = new File(wrongHome, "bin");
         assertFalse(binDir.exists());
@@ -54,7 +63,8 @@ public class InstallationTest extends TestCase {
         }
     }
 
-    public void testIsValidJavaVersion() {
+    @Test
+    void testIsValidJavaVersion() {
         JavaVersionInfo javaVersionInfo = new JavaVersionInfo();
 
         javaVersionInfo.setSpecificationVersion("1.1.9");
@@ -73,7 +83,8 @@ public class InstallationTest extends TestCase {
         assertTrue(Installation.isValidJava(javaVersionInfo));
     }
 
-    public void testGetJavaSpecificationVersion() {
+    @Test
+    void testGetJavaSpecificationVersion() {
         String specificationVersion = "1.4.2";
         assertEquals(14, Installation.getJavaSpecificationVersion(specificationVersion));
         specificationVersion = "1.5.0";
@@ -82,7 +93,8 @@ public class InstallationTest extends TestCase {
         assertEquals(16, Installation.getJavaSpecificationVersion(specificationVersion));
     }
 
-    public void testIsGNUJava() {
+    @Test
+    void testIsGNUJava() {
         assertFalse(Installation.isGNUJava());
         String originalVmName = System.getProperty(Installation.JAVA_VM_NAME);
         try {
@@ -93,15 +105,6 @@ public class InstallationTest extends TestCase {
             System.setProperty(Installation.JAVA_VM_NAME, originalVmName);
             assertFalse(Installation.isGNUJava());
         }
-    }
-    
-    public void testGetDefaultJavaVersion() {
-        JavaVersionInfo info = Installation.getDefaultJavaVersion();
-        assertNotNull(info);
-        assertEquals(Installation.NORMAL_RETURN, info.getErrorCode());
-        String specVersion = info.getSpecificationVersion();
-        assertNotNull(specVersion);
-        assertTrue(specVersion.length() >= 3);
     }
 
 }

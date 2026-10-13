@@ -1,7 +1,7 @@
 // Copyright (c)2013 Jython Developers
 package javatests;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,8 +16,8 @@ import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Pattern;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests investigating issues with readline() first raised in Jython Issue #1972. These involve
@@ -39,7 +39,7 @@ import org.junit.Test;
  * This was developed on Windows. It tries to abstract away the particular choice of line separator,
  * so it will run on other platforms, but it hasn't been tested that this was successful.
  */
-public class Issue1972 {
+class Issue1972 {
 
     /** Set to non-zero port number to enable subprocess debugging in selected tests. */
     static int DEBUG_PORT = 0; // 8000 or 0
@@ -72,8 +72,8 @@ public class Issue1972 {
     /** A queue handling the <code>stderr</code> of the subprocess. */
     private LineQueue errFromProc;
 
-    @After
-    public void afterEachTest() {
+    @AfterEach
+    void afterEachTest() {
         if (proc != null) {
             proc.destroy();
         }
@@ -90,7 +90,7 @@ public class Issue1972 {
      * @throws IOException
      */
     @Test
-    public void readStderr() throws Exception {
+    void readStderr() throws Exception {
         announceTest(VERBOSE, "readStderr");
 
         // Run java -version, which outputs on System.err
@@ -100,10 +100,10 @@ public class Issue1972 {
         // Dump to console
         outputAsHexDump(VERBOSE, inFromProc, errFromProc);
 
-        assertEquals("Unexpected text in stdout", 0, inFromProc.size());
-        assertTrue("No text output to stderr", errFromProc.size() > 0);
+        assertEquals(0, inFromProc.size(), "Unexpected text in stdout");
+        assertTrue(errFromProc.size() > 0, "No text output to stderr");
         String res = errFromProc.asStrings().get(0);
-        assertTrue("stderr should mention version", res.contains("version"));
+        assertTrue(res.contains("version"), "stderr should mention version");
     }
 
     /**
@@ -112,7 +112,7 @@ public class Issue1972 {
      * @throws IOException
      */
     @Test
-    public void readStdout() throws Exception {
+    void readStdout() throws Exception {
         announceTest(VERBOSE, "readStdout");
 
         // Run the main of this class
@@ -131,7 +131,7 @@ public class Issue1972 {
      * @throws IOException
      */
     @Test
-    public void echoStdin() throws Exception {
+    void echoStdin() throws Exception {
         announceTest(VERBOSE, "echoStdin");
 
         // Run the main of this class as an echo programme
@@ -161,7 +161,7 @@ public class Issue1972 {
      * @throws IOException
      */
     @Test
-    public void echoStdinAsHex() throws Exception {
+    void echoStdinAsHex() throws Exception {
         announceTest(VERBOSE, "echoStdinAsHex");
 
         // Run the main of this class as an echo programme
@@ -185,7 +185,7 @@ public class Issue1972 {
      * @throws Exception
      */
     @Test
-    public void jythonSubprocess() throws Exception {
+    void jythonSubprocess() throws Exception {
         announceTest(VERBOSE, "jythonSubprocess");
 
         // Run Jython hello programme
@@ -204,7 +204,7 @@ public class Issue1972 {
      * @throws Exception
      */
     @Test
-    public void jythonNonInteractive() throws Exception {
+    void jythonNonInteractive() throws Exception {
         announceTest(VERBOSE, "jythonNonInteractiveConsole");
 
         // Run Jython enquiry about console as -c program
@@ -225,7 +225,7 @@ public class Issue1972 {
      * @throws Exception
      */
     @Test
-    public void jythonInteractive() throws Exception {
+    void jythonInteractive() throws Exception {
         announceTest(VERBOSE, "jythonInteractiveConsole");
 
         // Run Jython with simple actions at the command prompt
@@ -253,7 +253,7 @@ public class Issue1972 {
      * @throws Exception
      */
     @Test
-    public void jythonJLineConsole() throws Exception {
+    void jythonJLineConsole() throws Exception {
         announceTest(VERBOSE, "jythonJLineConsole");
 
         // Run Jython with simple actions at the command prompt
@@ -283,7 +283,7 @@ public class Issue1972 {
      * @throws Exception
      */
     @Test
-    public void jythonReadline() throws Exception {
+    void jythonReadline() throws Exception {
         announceTest(VERBOSE, "jythonReadline");
 
         // Run Jython simple readline programme
@@ -327,7 +327,7 @@ public class Issue1972 {
         proc.waitFor();
         outputAsHexDump(VERBOSE, inFromProc, errFromProc);
 
-        assertTrue("Subprocess did not respond promptly to first line", count == 0);
+        assertTrue(count == 0, "Subprocess did not respond promptly to first line");
         checkInFromProc("spam");
     }
 
@@ -480,7 +480,7 @@ public class Issue1972 {
             if (!beginsWithAnyOf(r, toIgnore)) {
                 if (count < expected.length) {
                     // Check the line against the expected text
-                    assertEquals(message, expected[count++], r);
+                    assertEquals(expected[count++], r, message);
                 } else {
                     // Extra line will be a failure but continue to count
                     count++;
@@ -488,7 +488,7 @@ public class Issue1972 {
             }
         }
         // Check number of lines we can't ignore against the number expected
-        assertEquals(message, expected.length, count);
+        assertEquals(expected.length, count, message);
     }
 
     /** Compiled regular expressions for the lines to ignore (on stdout). */
@@ -707,7 +707,7 @@ public class Issue1972 {
      * @param b
      * @return
      */
-    public static String escape(byte[] b) {
+    static String escape(byte[] b) {
         StringBuilder sb = new StringBuilder(100);
         ByteBuffer bb = ByteBuffer.wrap(b);
         stringDump(sb, bb);
@@ -814,7 +814,7 @@ public class Issue1972 {
          *
          * @return contents as strings
          */
-        public List<String> asStrings() {
+        List<String> asStrings() {
 
             // Make strings here:
             StringBuilder sb = new StringBuilder(100);
@@ -834,7 +834,7 @@ public class Issue1972 {
          *
          * @return dump as strings
          */
-        public List<String> asHexDump() {
+        List<String> asHexDump() {
             final int LEN = 16;
             StringBuilder sb = new StringBuilder(4 * LEN + 20);
             // Build a list of dumped buffer rows

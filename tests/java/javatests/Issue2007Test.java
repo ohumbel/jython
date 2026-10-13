@@ -1,24 +1,25 @@
 package javatests;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.io.StringWriter;
+
+import org.junit.jupiter.api.Test;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.util.InteractiveInterpreter;
 
-import java.io.StringWriter;
-
-import static org.junit.Assert.*;
-
-public class Issue2007Test {
+class Issue2007Test {
 
     /**
      * Verify that {@code print_function} works in scripts. This was always the case.
      */
     @Test
-    public void testPrintFunctionInScript() {
-        CapturingInterpreter interp = new CapturingInterpreter();
-        interp.exec("from __future__ import print_function\n" + "print(1, 2, 3)\n");
-        assertEquals("1 2 3\n", interp.getOutput());
+    void testPrintFunctionInScript() {
+        try (CapturingInterpreter interp = new CapturingInterpreter()) {
+            interp.exec("from __future__ import print_function\n" + "print(1, 2, 3)\n");
+            assertEquals("1 2 3\n", interp.getOutput());
+        }
     }
 
     /**
@@ -27,11 +28,12 @@ public class Issue2007Test {
      * {@code '(1, 2, 3)'} instead of {@code '1 2 3'}.
      */
     @Test
-    public void testPrintFunctionInInteractive() {
-        CapturingInterpreter interp = new CapturingInterpreter();
-        interp.runsource("from __future__ import print_function");
-        interp.runsource("print(1, 2, 3)");
-        assertEquals("1 2 3\n", interp.getOutput());
+    void testPrintFunctionInInteractive() {
+        try (CapturingInterpreter interp = new CapturingInterpreter()) {
+            interp.runsource("from __future__ import print_function");
+            interp.runsource("print(1, 2, 3)");
+            assertEquals("1 2 3\n", interp.getOutput());
+        }
     }
 
     private static class CapturingInterpreter extends InteractiveInterpreter {

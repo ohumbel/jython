@@ -9,74 +9,64 @@
  */
 package org.apache.commons.cli;
 
-import java.math.BigDecimal;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.math.BigDecimal;
+import java.net.URISyntaxException;
+
+import org.junit.jupiter.api.Test;
 
 /** 
  * Test case for the PatternOptionBuilder class 
  *
  * @author Henri Yandell
  **/
-public class PatternOptionBuilderTest
-extends TestCase
-{
-    public static void main( String[] args )
-   {
-      String[] testName = { PatternOptionBuilderTest.class.getName() };
-      junit.textui.TestRunner.main(testName);
-   }
+class PatternOptionBuilderTest {
 
-   public static TestSuite suite()
-   {
-      return new TestSuite(PatternOptionBuilderTest.class);
-   }
+    @SuppressWarnings("rawtypes")
+    @Test
+    void testSimplePattern() {
+        try {
+            Options options = PatternOptionBuilder.parsePattern("a:b@cde>f+n%t/");
+            String[] args = new String[] { "-c", "-a", "foo", "-b", "java.util.Vector", "-e", "build.xml", "-f",
+                    "java.util.Calendar", "-n", "4.5", "-t", "http://jakarta.apache.org/" };
 
-   public PatternOptionBuilderTest( String s )
-   {
-      super( s );
-   }
+            CommandLineParser parser = new PosixParser();
+            CommandLine line = parser.parse(options, args);
 
-   public void testSimplePattern()
-   {
-       try {
-           Options options = PatternOptionBuilder.parsePattern("a:b@cde>f+n%t/");
-           String[] args = new String[] { "-c", "-a", "foo", "-b", "java.util.Vector", "-e", "build.xml", "-f", "java.util.Calendar", "-n", "4.5", "-t", "http://jakarta.apache.org/" };
-      
-           CommandLineParser parser = new PosixParser();
-           CommandLine line = parser.parse(options,args);
-
-           // tests the char methods of CommandLine that delegate to
-           // the String methods
-           assertEquals("flag a", "foo", line.getOptionValue("a"));
-           assertEquals("flag a", "foo", line.getOptionValue('a'));
-           assertEquals("string flag a", "foo", line.getOptionObject("a"));
-           assertEquals("string flag a", "foo", line.getOptionObject('a'));
-           assertEquals("object flag b", new java.util.Vector(), line.getOptionObject("b"));
-           assertEquals("object flag b", new java.util.Vector(), line.getOptionObject('b'));
-           assertEquals("boolean true flag c", true, line.hasOption("c"));
-           assertEquals("boolean true flag c", true, line.hasOption('c'));
-           assertEquals("boolean false flag d", false, line.hasOption("d"));
-           assertEquals("boolean false flag d", false, line.hasOption('d'));
-           assertEquals("file flag e", new java.io.File("build.xml"), line.getOptionObject("e"));
-           assertEquals("file flag e", new java.io.File("build.xml"), line.getOptionObject('e'));
-           assertEquals("class flag f", java.util.Calendar.class, line.getOptionObject("f"));
-           assertEquals("class flag f", java.util.Calendar.class, line.getOptionObject('f'));
-           assertEquals("number flag n", new BigDecimal("4.5"), line.getOptionObject("n"));
-           assertEquals("number flag n", new BigDecimal("4.5"), line.getOptionObject('n'));
-           assertEquals("url flag t", new java.net.URL("http://jakarta.apache.org/"), line.getOptionObject("t"));
-           assertEquals("url flag t", new java.net.URL("http://jakarta.apache.org/"), line.getOptionObject('t'));
-           /// DATES NOT SUPPORTED YET.
-           //      assertEquals("number flag t", new java.util.Date(1023400137276L), line.getOptionObject('z'));
-           //     input is:  "Thu Jun 06 17:48:57 EDT 2002"
-       }
-       catch( ParseException exp ) {
-           fail( exp.getMessage() );
-       }
-       catch( java.net.MalformedURLException exp ) {
-           fail( exp.getMessage() );
-       }
-   }
+            // tests the char methods of CommandLine that delegate to
+            // the String methods
+            assertEquals("foo", line.getOptionValue("a"), "flag a");
+            assertEquals("foo", line.getOptionValue('a'), "flag a");
+            assertEquals("foo", line.getOptionObject("a"), "string flag a");
+            assertEquals("foo", line.getOptionObject('a'), "string flag a");
+            assertEquals(new java.util.Vector(), line.getOptionObject("b"), "object flag b");
+            assertEquals(new java.util.Vector(), line.getOptionObject('b'), "object flag b");
+            assertEquals(true, line.hasOption("c"), "boolean true flag c");
+            assertEquals(true, line.hasOption('c'), "boolean true flag c");
+            assertEquals(false, line.hasOption("d"), "boolean false flag d");
+            assertEquals(false, line.hasOption('d'), "boolean false flag d");
+            assertEquals(new java.io.File("build.xml"), line.getOptionObject("e"), "file flag e");
+            assertEquals(new java.io.File("build.xml"), line.getOptionObject('e'), "file flag e");
+            assertEquals(java.util.Calendar.class, line.getOptionObject("f"), "class flag f");
+            assertEquals(java.util.Calendar.class, line.getOptionObject('f'), "class flag f");
+            assertEquals(new BigDecimal("4.5"), line.getOptionObject("n"), "number flag n");
+            assertEquals(new BigDecimal("4.5"), line.getOptionObject('n'), "number flag n");
+            assertEquals(java.net.URL.of(new java.net.URI("http://jakarta.apache.org/"), null),
+                            line.getOptionObject("t"), "url flag t");
+            assertEquals(java.net.URL.of(new java.net.URI("http://jakarta.apache.org/"), null),
+                            line.getOptionObject('t'), "url flag t");
+            /// DATES NOT SUPPORTED YET.
+            // assertEquals("number flag t", new java.util.Date(1023400137276L), line.getOptionObject('z'));
+            // input is: "Thu Jun 06 17:48:57 EDT 2002"
+        } catch (ParseException exp) {
+            fail(exp.getMessage());
+        } catch (java.net.MalformedURLException exp) {
+            fail(exp.getMessage());
+        } catch (URISyntaxException exp) {
+            fail(exp.getMessage());
+        }
+    }
 
 }

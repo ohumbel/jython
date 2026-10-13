@@ -10,32 +10,24 @@
 
 package org.apache.commons.cli;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author John Keyes (john at integralsource.com)
  * @version $Revision: 3134 $
  */
-public class OptionGroupTest extends TestCase
-{
+class OptionGroupTest {
 
     private Options _options = null;
     private CommandLineParser parser = new PosixParser();
 
 
-    public static Test suite() 
-    { 
-        return new TestSuite ( OptionGroupTest.class ); 
-    }
-
-    public OptionGroupTest( String name )
-    {
-        super( name );
-    }
-
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         Option file = new Option( "f", "file", false, "file to process" );
         Option dir = new Option( "d", "directory", false, "directory to process" );
@@ -54,11 +46,8 @@ public class OptionGroupTest extends TestCase
         _options.addOption( "r", "revision", false, "revision number" );
     }
 
-    public void tearDown()
-    {
-    }
-
-    public void testSingleOptionFromGroup()
+    @Test
+    void testSingleOptionFromGroup()
     {
         String[] args = new String[] { "-f" };
 
@@ -66,12 +55,12 @@ public class OptionGroupTest extends TestCase
         {
             CommandLine cl = parser.parse( _options, args);
 
-            assertTrue( "Confirm -r is NOT set", !cl.hasOption("r") );
-            assertTrue( "Confirm -f is set", cl.hasOption("f") );
-            assertTrue( "Confirm -d is NOT set", !cl.hasOption("d") );
-            assertTrue( "Confirm -s is NOT set", !cl.hasOption("s") );
-            assertTrue( "Confirm -c is NOT set", !cl.hasOption("c") );
-            assertTrue( "Confirm no extra args", cl.getArgList().size() == 0);
+            assertTrue(!cl.hasOption("r"), "Confirm -r is NOT set");
+            assertTrue(cl.hasOption("f"), "Confirm -f is set");
+            assertTrue(!cl.hasOption("d"), "Confirm -d is NOT set");
+            assertTrue(!cl.hasOption("s"), "Confirm -s is NOT set");
+            assertTrue(!cl.hasOption("c"), "Confirm -c is NOT set");
+            assertTrue(cl.getArgList().size() == 0, "Confirm no extra args");
         }
         catch (ParseException e)
         {
@@ -79,7 +68,8 @@ public class OptionGroupTest extends TestCase
         }
     }
 
-    public void testSingleOption()
+    @Test
+    void testSingleOption()
     {
         String[] args = new String[] { "-r" };
 
@@ -87,12 +77,12 @@ public class OptionGroupTest extends TestCase
         {
             CommandLine cl = parser.parse( _options, args);
 
-            assertTrue( "Confirm -r is set", cl.hasOption("r") );
-            assertTrue( "Confirm -f is NOT set", !cl.hasOption("f") );
-            assertTrue( "Confirm -d is NOT set", !cl.hasOption("d") );
-            assertTrue( "Confirm -s is NOT set", !cl.hasOption("s") );
-            assertTrue( "Confirm -c is NOT set", !cl.hasOption("c") );
-            assertTrue( "Confirm no extra args", cl.getArgList().size() == 0);
+            assertTrue(cl.hasOption("r"), "Confirm -r is set");
+            assertTrue(!cl.hasOption("f"), "Confirm -f is NOT set");
+            assertTrue(!cl.hasOption("d"), "Confirm -d is NOT set");
+            assertTrue(!cl.hasOption("s"), "Confirm -s is NOT set");
+            assertTrue(!cl.hasOption("c"), "Confirm -c is NOT set");
+            assertTrue(cl.getArgList().size() == 0, "Confirm no extra args");
         }
         catch (ParseException e)
         {
@@ -100,7 +90,8 @@ public class OptionGroupTest extends TestCase
         }
     }
 
-    public void testTwoValidOptions()
+    @Test
+    void testTwoValidOptions()
     {
         String[] args = new String[] { "-r", "-f" };
 
@@ -108,12 +99,12 @@ public class OptionGroupTest extends TestCase
         {
             CommandLine cl = parser.parse( _options, args);
 
-            assertTrue( "Confirm -r is set", cl.hasOption("r") );
-            assertTrue( "Confirm -f is set", cl.hasOption("f") );
-            assertTrue( "Confirm -d is NOT set", !cl.hasOption("d") );
-            assertTrue( "Confirm -s is NOT set", !cl.hasOption("s") );
-            assertTrue( "Confirm -c is NOT set", !cl.hasOption("c") );
-            assertTrue( "Confirm no extra args", cl.getArgList().size() == 0);
+            assertTrue(cl.hasOption("r"), "Confirm -r is set");
+            assertTrue(cl.hasOption("f"), "Confirm -f is set");
+            assertTrue(!cl.hasOption("d"), "Confirm -d is NOT set");
+            assertTrue(!cl.hasOption("s"), "Confirm -s is NOT set");
+            assertTrue(!cl.hasOption("c"), "Confirm -c is NOT set");
+            assertTrue(cl.getArgList().size() == 0, "Confirm no extra args");
         }
         catch (ParseException e)
         {
@@ -121,7 +112,8 @@ public class OptionGroupTest extends TestCase
         }
     }
 
-    public void testSingleLongOption()
+    @Test
+    void testSingleLongOption()
     {
         String[] args = new String[] { "--file" };
 
@@ -129,12 +121,12 @@ public class OptionGroupTest extends TestCase
         {
             CommandLine cl = parser.parse( _options, args);
 
-            assertTrue( "Confirm -r is NOT set", !cl.hasOption("r") );
-            assertTrue( "Confirm -f is set", cl.hasOption("f") );
-            assertTrue( "Confirm -d is NOT set", !cl.hasOption("d") );
-            assertTrue( "Confirm -s is NOT set", !cl.hasOption("s") );
-            assertTrue( "Confirm -c is NOT set", !cl.hasOption("c") );
-            assertTrue( "Confirm no extra args", cl.getArgList().size() == 0);
+            assertTrue(!cl.hasOption("r"), "Confirm -r is NOT set");
+            assertTrue(cl.hasOption("f"), "Confirm -f is set");
+            assertTrue(!cl.hasOption("d"), "Confirm -d is NOT set");
+            assertTrue(!cl.hasOption("s"), "Confirm -s is NOT set");
+            assertTrue(!cl.hasOption("c"), "Confirm -c is NOT set");
+            assertTrue(cl.getArgList().size() == 0, "Confirm no extra args");
         }
         catch (ParseException e)
         {
@@ -142,7 +134,8 @@ public class OptionGroupTest extends TestCase
         }
     }
 
-    public void testTwoValidLongOptions()
+    @Test
+    void testTwoValidLongOptions()
     {
         String[] args = new String[] { "--revision", "--file" };
 
@@ -150,12 +143,12 @@ public class OptionGroupTest extends TestCase
         {
             CommandLine cl = parser.parse( _options, args);
 
-            assertTrue( "Confirm -r is set", cl.hasOption("r") );
-            assertTrue( "Confirm -f is set", cl.hasOption("f") );
-            assertTrue( "Confirm -d is NOT set", !cl.hasOption("d") );
-            assertTrue( "Confirm -s is NOT set", !cl.hasOption("s") );
-            assertTrue( "Confirm -c is NOT set", !cl.hasOption("c") );
-            assertTrue( "Confirm no extra args", cl.getArgList().size() == 0);
+            assertTrue(cl.hasOption("r"), "Confirm -r is set");
+            assertTrue(cl.hasOption("f"), "Confirm -f is set");
+            assertTrue(!cl.hasOption("d"), "Confirm -d is NOT set");
+            assertTrue(!cl.hasOption("s"), "Confirm -s is NOT set");
+            assertTrue(!cl.hasOption("c"), "Confirm -c is NOT set");
+            assertTrue(cl.getArgList().size() == 0, "Confirm no extra args");
         }
         catch (ParseException e)
         {
@@ -163,7 +156,8 @@ public class OptionGroupTest extends TestCase
         }
     }
 
-    public void testNoOptionsExtraArgs()
+    @Test
+    void testNoOptionsExtraArgs()
     {
         String[] args = new String[] { "arg1", "arg2" };
 
@@ -171,12 +165,12 @@ public class OptionGroupTest extends TestCase
         {
             CommandLine cl = parser.parse( _options, args);
 
-            assertTrue( "Confirm -r is NOT set", !cl.hasOption("r") );
-            assertTrue( "Confirm -f is NOT set", !cl.hasOption("f") );
-            assertTrue( "Confirm -d is NOT set", !cl.hasOption("d") );
-            assertTrue( "Confirm -s is NOT set", !cl.hasOption("s") );
-            assertTrue( "Confirm -c is NOT set", !cl.hasOption("c") );
-            assertTrue( "Confirm TWO extra args", cl.getArgList().size() == 2);
+            assertTrue(!cl.hasOption("r"), "Confirm -r is NOT set");
+            assertTrue(!cl.hasOption("f"), "Confirm -f is NOT set");
+            assertTrue(!cl.hasOption("d"), "Confirm -d is NOT set");
+            assertTrue(!cl.hasOption("s"), "Confirm -s is NOT set");
+            assertTrue(!cl.hasOption("c"), "Confirm -c is NOT set");
+            assertTrue(cl.getArgList().size() == 2, "Confirm TWO extra args");
         }
         catch (ParseException e)
         {
@@ -184,7 +178,8 @@ public class OptionGroupTest extends TestCase
         }
     }
 
-    public void testTwoOptionsFromGroup()
+    @Test
+    void testTwoOptionsFromGroup()
     {
         String[] args = new String[] { "-f", "-d" };
 
@@ -203,7 +198,8 @@ public class OptionGroupTest extends TestCase
         }
     }
 
-    public void testTwoLongOptionsFromGroup()
+    @Test
+    void testTwoLongOptionsFromGroup()
     {
         String[] args = new String[] { "--file", "--directory" };
 
@@ -222,19 +218,20 @@ public class OptionGroupTest extends TestCase
         }
     }
 
-    public void testTwoOptionsFromDifferentGroup()
+    @Test
+    void testTwoOptionsFromDifferentGroup()
     {
         String[] args = new String[] { "-f", "-s" };
 
         try
         {
             CommandLine cl = parser.parse( _options, args);
-            assertTrue( "Confirm -r is NOT set", !cl.hasOption("r") );
-            assertTrue( "Confirm -f is set", cl.hasOption("f") );
-            assertTrue( "Confirm -d is NOT set", !cl.hasOption("d") );
-            assertTrue( "Confirm -s is set", cl.hasOption("s") );
-            assertTrue( "Confirm -c is NOT set", !cl.hasOption("c") );
-            assertTrue( "Confirm NO extra args", cl.getArgList().size() == 0);
+            assertTrue(!cl.hasOption("r"), "Confirm -r is NOT set");
+            assertTrue(cl.hasOption("f"), "Confirm -f is set");
+            assertTrue(!cl.hasOption("d"), "Confirm -d is NOT set");
+            assertTrue(cl.hasOption("s"), "Confirm -s is set");
+            assertTrue(!cl.hasOption("c"), "Confirm -c is NOT set");
+            assertTrue(cl.getArgList().size() == 0, "Confirm NO extra args");
         }
         catch (ParseException e)
         {

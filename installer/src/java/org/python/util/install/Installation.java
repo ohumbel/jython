@@ -147,15 +147,6 @@ public class Installation {
         return isGNUJava;
     }
 
-    protected static boolean isJDK141() {
-        boolean isJDK141 = false;
-        String javaVersion = System.getProperty(JavaVersionTester.JAVA_VERSION, "");
-        if (javaVersion.toLowerCase().startsWith("1.4.1")) {
-            isJDK141 = true;
-        }
-        return isJDK141;
-    }
-
     /**
      * Get the version info of an external (maybe other) jvm.
      * 
@@ -206,46 +197,6 @@ public class Installation {
             versionInfo.setReason(getText(TextKeys.C_NO_VALID_JAVA, javaHomeHandler.toString()));
         }
 
-        return versionInfo;
-    }
-    
-    /**
-     * @return The system default java version
-     */
-    public static JavaVersionInfo getDefaultJavaVersion() {
-        JavaVersionInfo versionInfo = new JavaVersionInfo();
-        String executableName = "java";
-        try {
-            // launch the java command - temporary file will be written by the child process
-            File tempFile = File.createTempFile("jython_installation", ".properties");
-            if (tempFile.exists() && tempFile.canWrite()) {
-                String command[] = new String[5];
-                command[0] = executableName;
-                command[1] = "-cp";
-                // our own class path should be ok here
-                command[2] = System.getProperty("java.class.path");
-                command[3] = JavaVersionTester.class.getName();
-                command[4] = tempFile.getAbsolutePath();
-                ChildProcess childProcess = new ChildProcess(command, 10000); // 10 seconds
-                childProcess.setDebug(false);
-                int errorCode = childProcess.run();
-                if (errorCode != NORMAL_RETURN) {
-                    versionInfo.setErrorCode(errorCode);
-                    versionInfo.setReason(getText(TextKeys.C_NO_VALID_JAVA, executableName));
-                } else {
-                    Properties tempProperties = new Properties();
-                    tempProperties.load(new FileInputStream(tempFile));
-                    fillJavaVersionInfo(versionInfo, tempProperties);
-                }
-            } else {
-                versionInfo.setErrorCode(ERROR_RETURN);
-                versionInfo.setReason(getText(TextKeys.C_UNABLE_CREATE_TMPFILE,
-                                              tempFile.getAbsolutePath()));
-            }
-        } catch (IOException e) {
-            versionInfo.setErrorCode(ERROR_RETURN);
-            versionInfo.setReason(getText(TextKeys.C_NO_VALID_JAVA, executableName));
-        }
         return versionInfo;
     }
 

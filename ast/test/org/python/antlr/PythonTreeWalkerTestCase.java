@@ -5,23 +5,26 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Decorates the PythonTreeWalker class as a JUnit test case for a single .py
  * file
  */
-public class PythonTreeWalkerTestCase extends TestCase {
+class PythonTreeWalkerTestCase {
 
 	private String _path;
+
+	PythonTreeWalkerTestCase() {
+	}
 
 	/**
 	 * Constructor called from rerun menu point in eclipse
 	 * 
 	 * @param name The name of the test.
 	 */
-	public PythonTreeWalkerTestCase(String name) {
-		super(name);
+	PythonTreeWalkerTestCase(String name) {
 		setPath(name);
 	}
 
@@ -30,27 +33,29 @@ public class PythonTreeWalkerTestCase extends TestCase {
 	 * 
 	 * @param pyFile The *.py file
 	 */
-	public PythonTreeWalkerTestCase(File pyFile) {
+	PythonTreeWalkerTestCase(File pyFile) {
 		this(pyFile.getAbsolutePath());
 	}
 
-	@Override
-	protected void runTest() throws Throwable {
+	@Test
+	void runTest() throws Throwable {
 		String path = getPath();
+		if (path == null) {
+			return;
+		}
 		File file = new File(path);
-		assertTrue("file " + path + " not found", file.exists());
+		assertTrue(file.exists(), "file " + path + " not found");
 		PythonTreeWalker treeWalker = new PythonTreeWalker();
 		treeWalker.setTolerant(false);
 		treeWalker.setParseOnly(false);
 		PythonTree tree = treeWalker.parse(new String[] { path });
 		if (tree == null) {
 			if (!isEmpty(file)) {
-				assertNotNull("no tree generated for file ".concat(path), tree);
+				assertNotNull(tree, "no tree generated for file ".concat(path));
 			}
 		}
 	}
 
-	@Override
 	public int countTestCases() {
 		return 1;
 	}
@@ -73,7 +78,7 @@ public class PythonTreeWalkerTestCase extends TestCase {
 	 */
 	private boolean isEmpty(File file) throws IOException {
 		boolean isEmpty = true;
-		assertTrue("file " + file.getAbsolutePath() + " is not readable", file.canRead());
+		assertTrue(file.canRead(), "file " + file.getAbsolutePath() + " is not readable");
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		try {
 			String line = reader.readLine();

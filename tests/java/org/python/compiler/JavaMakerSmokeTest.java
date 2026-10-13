@@ -1,28 +1,26 @@
 package org.python.compiler;
 
-import static org.junit.Assert.assertArrayEquals;
-
-/**
- * Some JavaMaker smoke tests
- */
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.lang.reflect.Array;
 import java.util.Properties;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.core.PySystemState;
 import org.python.core.RegistryKey;
 import org.python.util.PythonInterpreter;
 
+/**
+ * Some JavaMaker smoke tests
+ */
+class JavaMakerSmokeTest {
 
-public class JavaMakerSmokeTest {
+    PythonInterpreter interp;
+    Class<?> proxyClass;
 
-    public PythonInterpreter interp;
-    public Class<?> proxyClass;
-
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         Properties props = new Properties(System.getProperties());
         props.setProperty(RegistryKey.PYTHON_CACHEDIR_SKIP, "true");
         PySystemState.initialize(props, null);
@@ -42,25 +40,25 @@ public class JavaMakerSmokeTest {
     }
 
     @Test
-    public void constructors() throws Exception {
+    void constructors() throws Exception {
         proxyClass.getConstructor(Array.newInstance(Byte.TYPE, 0).getClass());
         proxyClass.getConstructor(Array.newInstance(Byte.TYPE, 0).getClass(), Integer.TYPE, Integer.TYPE);
     }
 
     @Test
-    public void methods() throws Exception {
+    void methods() throws Exception {
         proxyClass.getMethod("classDictInit", org.python.core.PyObject.class);
         proxyClass.getMethod("close");
     }
 
     @Test
-    public void annotations() throws Exception {
+    void annotations() throws Exception {
         proxyClass.getAnnotation(org.python.compiler.APIVersion.class);
         proxyClass.getAnnotation(org.python.compiler.MTime.class);
     }
 
     @Test
-    public void interfaces() throws Exception {
+    void interfaces() throws Exception {
         Class<?>[] interfaces = new Class<?>[]{org.python.core.PyProxy.class,
                 org.python.core.ClassDictInit.class};
         assertArrayEquals(interfaces, proxyClass.getInterfaces());

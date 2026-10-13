@@ -1,5 +1,12 @@
 package org.python.util.install;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -8,20 +15,20 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 
-import junit.framework.TestCase;
-import junit.runner.TestSuiteLoader;
-
+import org.antlr.gunit.swingui.WorkSpaceView;
+import org.junit.jupiter.api.Test;
 import org.python.util.install.driver.Autotest;
 
-public class FileHelperTest extends TestCase {
+class FileHelperTest  {
 
     private static final String JYTHON_TEST_TEMPLATE = "jython_test.template";
 
-    private static final String LOGO_GIF = "logo.gif";
+    private static final String ACCEPT_PNG = "images/accept.png";
 
     private static final String JYTHON_SMALL_C_PNG = "jython_small_c.png";
 
-    public void testCreateTempDirectory_WasFile() throws IOException {
+    @Test
+    void testCreateTempDirectory_WasFile() throws IOException {
         File file = File.createTempFile("some_prefix", "");
         assertTrue(file.exists());
         assertTrue(file.isFile());
@@ -30,7 +37,8 @@ public class FileHelperTest extends TestCase {
         assertTrue(file.isDirectory());
     }
 
-    public void testCreateTempDirectory_AlreadyPresent() throws IOException {
+    @Test
+    void testCreateTempDirectory_AlreadyPresent() throws IOException {
         File dir = new File(System.getProperty("user.dir"));
         assertTrue(dir.exists());
         assertTrue(dir.isDirectory());
@@ -39,7 +47,8 @@ public class FileHelperTest extends TestCase {
         assertTrue(dir.isDirectory());
     }
 
-    public void testCreateTempDirectory() throws IOException {
+    @Test
+    void testCreateTempDirectory() throws IOException {
         File dir = new File(System.getProperty("user.dir"));
         assertTrue(dir.exists());
         assertTrue(dir.isDirectory());
@@ -56,7 +65,8 @@ public class FileHelperTest extends TestCase {
         }
     }
 
-    public void testCreateTempDirectory_Failure() throws Exception {
+    @Test
+    void testCreateTempDirectory_Failure() throws Exception {
         File dir = new File(System.getProperty("user.dir"));
         assertTrue(dir.exists());
         assertTrue(dir.isDirectory());
@@ -89,8 +99,9 @@ public class FileHelperTest extends TestCase {
         }
     }
 
-    public void testRmdir() throws IOException {
-        File dir = new File(System.getProperty("java.io.tmpdir"), "StartScriptGeneratorTest");
+    @Test
+    void testRmdir() throws IOException {
+        File dir = new File(System.getProperty("java.io.tmpdir"), "FileHelperTest");
         if (!dir.exists()) {
             assertTrue(dir.mkdirs());
         }
@@ -109,8 +120,9 @@ public class FileHelperTest extends TestCase {
         assertTrue(FileHelper.rmdir(dir));
     }
 
-    public void testRmdir_Failure() throws Exception {
-        File dir = new File(System.getProperty("java.io.tmpdir"), "StartScriptGeneratorTest");
+    @Test
+    void testRmdir_Failure() throws Exception {
+        File dir = new File(System.getProperty("java.io.tmpdir"), "FileHelperTest");
         if (!dir.exists()) {
             assertTrue(dir.mkdirs());
         }
@@ -145,7 +157,8 @@ public class FileHelperTest extends TestCase {
         }
     }
 
-    public void testReadAll() throws Exception {
+    @Test
+    void testReadAll() throws Exception {
         File file = File.createTempFile("testReadAll", "");
         final String contents = new String("line1 \n line2 \n");
         FileHelper.write(file, contents);
@@ -153,7 +166,8 @@ public class FileHelperTest extends TestCase {
         assertEquals(contents, readContents);
     }
 
-    public void testReadAll_InputStream() throws Exception {
+    @Test
+    void testReadAll_InputStream() throws Exception {
         URL url = FileHelper.getRelativeURL(Autotest.class, JYTHON_TEST_TEMPLATE);
         assertNotNull(url);
         URI uri = new URI(url.toString());
@@ -166,15 +180,16 @@ public class FileHelperTest extends TestCase {
         String contents = FileHelper.readAll(is);
         assertEquals(expectedContents, contents);
         // now from a .jar
-        is = FileHelper.getRelativeURLAsStream(TestSuiteLoader.class, LOGO_GIF);
+        is = FileHelper.getRelativeURLAsStream(WorkSpaceView.class, ACCEPT_PNG);
         assertNotNull(is);
         contents = FileHelper.readAll(is);
         assertNotNull(contents);
-        assertEquals(964, contents.length());
-        assertTrue(contents.startsWith("GIF89a&"));
+        assertEquals(1440, contents.length());
+        assertEquals(1, contents.indexOf("PNG"));
     }
 
-    public void testReadAll_NonExisting() {
+    @Test
+    void testReadAll_NonExisting() {
         String readContents = null;
         try {
             readContents = FileHelper.readAll(new File("_non_existing"));
@@ -184,17 +199,20 @@ public class FileHelperTest extends TestCase {
         }
     }
 
-    public void testGetRelativeURL() {
+    @Test
+    void testGetRelativeURL() {
         URL url = FileHelper.getRelativeURL(Installation.class, JYTHON_SMALL_C_PNG);
         assertNotNull(url);
         assertTrue(url.getPath().endsWith("org/python/util/install/".concat(JYTHON_SMALL_C_PNG)));
         // now from a .jar
-        url = FileHelper.getRelativeURL(TestSuiteLoader.class, LOGO_GIF);
+        url = FileHelper.getRelativeURL(WorkSpaceView.class, ACCEPT_PNG);
         assertNotNull(url);
-        assertTrue(url.getPath().endsWith("!/junit/runner/".concat(LOGO_GIF)));
+        // assertEquals("x", url.getPath());
+        assertTrue(url.getPath().endsWith("!/org/antlr/gunit/swingui/".concat(ACCEPT_PNG)));
     }
 
-    public void testGetRelativeURLAsStream() throws IOException {
+    @Test
+    void testGetRelativeURLAsStream() throws IOException {
         InputStream is = FileHelper.getRelativeURLAsStream(Installation.class, JYTHON_SMALL_C_PNG);
         assertNotNull(is);
         try {
@@ -203,7 +221,7 @@ public class FileHelperTest extends TestCase {
             is.close();
         }
         // now from a .jar
-        is = FileHelper.getRelativeURLAsStream(TestSuiteLoader.class, LOGO_GIF);
+        is = FileHelper.getRelativeURLAsStream(WorkSpaceView.class, ACCEPT_PNG);
         assertNotNull(is);
         try {
             assertTrue(is.read() >= 0);
@@ -212,7 +230,8 @@ public class FileHelperTest extends TestCase {
         }
     }
 
-    public void testWrite() throws IOException {
+    @Test
+    void testWrite() throws IOException {
         File file = new File("testWrite");
         assertFalse(file.exists());
         try {
@@ -228,7 +247,8 @@ public class FileHelperTest extends TestCase {
         }
     }
 
-    public void testWrite_Existing() throws IOException {
+    @Test
+    void testWrite_Existing() throws IOException {
         File file = File.createTempFile("testWrite", "");
         assertTrue(file.exists());
         final String firstContents = "first dummy contents";
@@ -242,7 +262,7 @@ public class FileHelperTest extends TestCase {
     /**
      * A poor man's file lock (does work on windows only)
      */
-    public static class Lock {
+    static class Lock {
 
         private final FileOutputStream _fos;
 
@@ -253,7 +273,7 @@ public class FileHelperTest extends TestCase {
          *            The file to be locked
          * @throws FileNotFoundException
          */
-        public Lock(File file) throws FileNotFoundException {
+        Lock(File file) throws FileNotFoundException {
             _fos = new FileOutputStream(file);
         }
 
@@ -262,7 +282,7 @@ public class FileHelperTest extends TestCase {
          * 
          * @throws IOException
          */
-        public void release() throws IOException {
+        void release() throws IOException {
             if (_fos != null) {
                 _fos.close();
             }

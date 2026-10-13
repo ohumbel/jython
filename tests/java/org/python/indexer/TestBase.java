@@ -4,6 +4,12 @@
  */
 package org.python.indexer;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,15 +20,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import junit.framework.TestCase;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.indexer.types.NType;
 import org.python.indexer.types.NUnknownType;
 
 /**
  * Test utilities for {@link IndexerTest}.
  */
-public class TestBase extends TestCase {
+class TestBase {
 
     // Set this to control logging to the console from the Indexer (mostly at FINER level).
     static protected final Level LOGGING_LEVEL = Level.OFF;
@@ -59,10 +65,7 @@ public class TestBase extends TestCase {
 
     protected Indexer idx;
 
-    public TestBase() {
-    }
-
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
         idx = new Indexer();
         idx.getLogger().setLevel(LOGGING_LEVEL);
@@ -148,7 +151,8 @@ public class TestBase extends TestCase {
 
     // meta-tests
 
-    public void testHandleExceptionLoggingNulls() throws Exception {
+    @Test
+    void testHandleExceptionLoggingNulls() throws Exception {
         try {
             idx.enableAggressiveAssertions(false);
             idx.getLogger().setLevel(java.util.logging.Level.OFF);
@@ -159,23 +163,27 @@ public class TestBase extends TestCase {
         }
     }
 
-    public void testDataFileFindable() throws Exception {
-        assertTrue("Test file not found", new java.io.File(TEST_DATA_DIR).exists());
+    @Test
+    void testDataFileFindable() throws Exception {
+        assertTrue(new java.io.File(TEST_DATA_DIR).exists(), "Test file not found");
     }
 
-    public void testLoadDataFile() throws Exception {
+    @Test
+    void testLoadDataFile() throws Exception {
         String path = abspath("test-load.txt");
         BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
-        assertEquals(in.readLine().trim(), "hello");
+        assertEquals("hello", in.readLine().trim());
         in.close();
     }
 
-    public void testGetSource() throws Exception {
+    @Test
+    void testGetSource() throws Exception {
         String src = getSource("testsrc.txt");
         assertEquals("one\ntwo\n\nthree\n", src);
     }
 
-    public void testStringModule() throws Exception {
+    @Test
+    void testStringModule() throws Exception {
         idx.loadString("test-string-module.py", makeModule(
             "def foo():",
             "  pass"));
@@ -183,7 +191,8 @@ public class TestBase extends TestCase {
         assertFunctionBinding("test-string-module.foo");
     }
 
-    public void testNthIndexOf() throws Exception {
+    @Test
+    void testNthIndexOf() throws Exception {
         String s = "ab a b ab a\nb aab";
         assertEquals(0, nthIndexOf(s, "ab", 1));
         assertEquals(7, nthIndexOf(s, "ab", 2));
@@ -202,16 +211,17 @@ public class TestBase extends TestCase {
         }
     }
 
-    public void testIndexerDefaults() throws Exception {
+    @Test
+    void testIndexerDefaults() throws Exception {
         includeStandardLibrary();
-        assertEquals("wrong project dir", TEST_DATA_DIR, idx.projDir);
-        assertEquals("unexpected load path entries", 1, idx.path.size());
+        assertEquals(TEST_DATA_DIR, idx.projDir, "wrong project dir");
+        assertEquals(1, idx.path.size(), "unexpected load path entries");
         assertEquals(TEST_LIB_DIR, idx.path.get(0));
     }
 
     // utilities
 
-    public String buildIndex(String... files) throws Exception {
+    String buildIndex(String... files) throws Exception {
         for (String f : files) {
             idx.loadFile(abspath(f));
         }
@@ -219,71 +229,71 @@ public class TestBase extends TestCase {
         return getSource(files[0]);
     }
 
-    public NBinding getBinding(String qname) throws Exception {
+    NBinding getBinding(String qname) throws Exception {
         NBinding b = idx.lookupQname(qname);
-        assertNotNull("no binding found for " + qname, b);
+        assertNotNull(b, "no binding found for " + qname);
         return b;
     }
 
-    public NBinding assertBinding(String qname, NBinding.Kind kind) throws Exception {
+    NBinding assertBinding(String qname, NBinding.Kind kind) throws Exception {
         NBinding b = getBinding(qname);
         assertEquals(kind, b.getKind());
         return b;
     }
 
-    public void assertNoBinding(String qname) throws Exception {
+    void assertNoBinding(String qname) throws Exception {
         NBinding b = idx.lookupQname(qname);
-        assertNull("Should not have found binding for " + qname, b);
+        assertNull(b, "Should not have found binding for " + qname);
     }
 
-    public NBinding assertAttributeBinding(String qname) throws Exception {
+    NBinding assertAttributeBinding(String qname) throws Exception {
         return assertBinding(qname, NBinding.Kind.ATTRIBUTE);
     }
 
-    public NBinding assertBuiltinBinding(String qname) throws Exception {
+    NBinding assertBuiltinBinding(String qname) throws Exception {
         NBinding b = getBinding(qname);
         assertTrue(b.isBuiltin());
         return b;
     }
 
-    public NBinding assertClassBinding(String qname) throws Exception {
+    NBinding assertClassBinding(String qname) throws Exception {
         return assertBinding(qname, NBinding.Kind.CLASS);
     }
 
-    public NBinding assertConstructorBinding(String qname) throws Exception {
+    NBinding assertConstructorBinding(String qname) throws Exception {
         return assertBinding(qname, NBinding.Kind.CONSTRUCTOR);
     }
 
-    public NBinding assertFunctionBinding(String qname) throws Exception {
+    NBinding assertFunctionBinding(String qname) throws Exception {
         return assertBinding(qname, NBinding.Kind.FUNCTION);
     }
 
-    public NBinding assertMethodBinding(String qname) throws Exception {
+    NBinding assertMethodBinding(String qname) throws Exception {
         return assertBinding(qname, NBinding.Kind.METHOD);
     }
 
-    public NBinding assertModuleBinding(String qname) throws Exception {
+    NBinding assertModuleBinding(String qname) throws Exception {
         return assertBinding(qname, NBinding.Kind.MODULE);
     }
 
-    public NBinding assertScopeBinding(String qname) throws Exception {
+    NBinding assertScopeBinding(String qname) throws Exception {
         return assertBinding(qname, NBinding.Kind.SCOPE);
     }
 
-    public NBinding assertVariableBinding(String qname) throws Exception {
+    NBinding assertVariableBinding(String qname) throws Exception {
         return assertBinding(qname, NBinding.Kind.VARIABLE);
     }
 
-    public NBinding assertParamBinding(String qname) throws Exception {
+    NBinding assertParamBinding(String qname) throws Exception {
         return assertBinding(qname, NBinding.Kind.PARAMETER);
     }
 
-    public void assertStaticSynthetic(NBinding b) {
+    void assertStaticSynthetic(NBinding b) {
         assertTrue(b.isStatic());
         assertTrue(b.isSynthetic());
     }
 
-    public Def getDefinition(String qname, int offset, int length) throws Exception {
+    Def getDefinition(String qname, int offset, int length) throws Exception {
         NBinding b = getBinding(qname);
         assertNotNull(b.getDefs());
         for (Def def : b.getDefs()) {
@@ -294,30 +304,30 @@ public class TestBase extends TestCase {
         return null;
     }
 
-    public void assertDefinition(String qname, int offset, int length) throws Exception {
+    void assertDefinition(String qname, int offset, int length) throws Exception {
         Def def = getDefinition(qname, offset, length);
         if (def == null) {
             fail("No definition for " + qname + " at " + offset + " of len " + length);
         }
     }
 
-    public void assertNoDefinition(String msg, String qname, int pos, int len) throws Exception {
+    void assertNoDefinition(String msg, String qname, int pos, int len) throws Exception {
         Def def = getDefinition(qname, pos, len);
-        assertNull(msg, def);
+        assertNull(def, msg);
     }
 
-    public void assertDefinition(String qname, int offset) throws Exception {
+    void assertDefinition(String qname, int offset) throws Exception {
         String[] names = qname.split("[.&@]");
         assertDefinition(qname, offset, names[names.length-1].length());
     }
 
-    public void assertDefinition(String qname, String name, int offset) throws Exception {
+    void assertDefinition(String qname, String name, int offset) throws Exception {
         assertDefinition(qname, offset, name.length());
     }
 
-    public Ref getRefOrNull(String qname, int offset, int length) throws Exception {
+    Ref getRefOrNull(String qname, int offset, int length) throws Exception {
         NBinding b = getBinding(qname);
-        assertNotNull("Null refs list for " + qname, b.getRefs());
+        assertNotNull(b.getRefs(), "Null refs list for " + qname);
         for (Ref ref : b.getRefs()) {
             if (offset == ref.start() && length == ref.length()) {
                 return ref;
@@ -326,83 +336,81 @@ public class TestBase extends TestCase {
         return null;
     }
 
-    public Ref getRefOrFail(String qname, int offset, int length) throws Exception {
+    Ref getRefOrFail(String qname, int offset, int length) throws Exception {
         Ref ref = getRefOrNull(qname, offset, length);
-        assertNotNull("No reference to " + qname + " at offset " + offset + " of length " + length,
-                      ref);
+        assertNotNull(ref, "No reference to " + qname + " at offset " + offset + " of length " + length);
         return ref;
     }
 
-    public void assertReference(String qname, int offset, int length) throws Exception {
+    void assertReference(String qname, int offset, int length) throws Exception {
         assertTrue(getRefOrFail(qname, offset, length).isRef());
     }
 
-    public void assertReference(String qname, int offset, String refname) throws Exception {
+    void assertReference(String qname, int offset, String refname) throws Exception {
         assertReference(qname, offset, refname.length());
     }
 
     // assume reference to "a.b.c" is called "c" -- the normal case
-    public void assertReference(String qname, int offset) throws Exception {
+    void assertReference(String qname, int offset) throws Exception {
         String[] names = qname.split("[.&@]");
         assertReference(qname, offset, names[names.length-1]);
     }
 
-    public void assertNoReference(String msg, String qname, int pos, int len) throws Exception {
-        assertNull(msg, getRefOrNull(qname, pos, len));
+    void assertNoReference(String msg, String qname, int pos, int len) throws Exception {
+        assertNull(getRefOrNull(qname, pos, len), msg);
     }
 
-    public void assertCall(String qname, int offset, int length) throws Exception {
+    void assertCall(String qname, int offset, int length) throws Exception {
         assertTrue(getRefOrFail(qname, offset, length).isCall());
     }
 
-    public void assertCall(String qname, int offset, String refname) throws Exception {
+    void assertCall(String qname, int offset, String refname) throws Exception {
         assertCall(qname, offset, refname.length());
     }
 
     // "a.b.c()" => look for call reference at "c"
-    public void assertCall(String qname, int offset) throws Exception {
+    void assertCall(String qname, int offset) throws Exception {
         String[] names = qname.split("[.&@]");
         assertCall(qname, offset, names[names.length-1]);
     }
 
-    public void assertConstructed(String qname, int offset, int length) throws Exception {
+    void assertConstructed(String qname, int offset, int length) throws Exception {
         assertTrue(getRefOrFail(qname, offset, length).isNew());
     }
 
-    public void assertConstructed(String qname, int offset, String refname) throws Exception {
+    void assertConstructed(String qname, int offset, String refname) throws Exception {
         assertConstructed(qname, offset, refname.length());
     }
 
     // "a.b.c()" => look for call reference at "c"
-    public void assertConstructed(String qname, int offset) throws Exception {
+    void assertConstructed(String qname, int offset) throws Exception {
         String[] names = qname.split("[.&@]");
         assertConstructed(qname, offset, names[names.length-1]);
     }
 
-    public NType getTypeBinding(String typeQname) throws Exception {
+    NType getTypeBinding(String typeQname) throws Exception {
         NType type = idx.lookupQnameType(typeQname);
-        assertNotNull("No recorded type for " + typeQname, type);
+        assertNotNull(type, "No recorded type for " + typeQname);
         return type;
     }
 
     // Assert that binding for qname has exactly one type (not a union),
     // and that type has a binding with typeQname.
-    public NBinding assertBindingType(String bindingQname, String typeQname) throws Exception {
+    NBinding assertBindingType(String bindingQname, String typeQname) throws Exception {
         NBinding b = getBinding(bindingQname);
         NType expected = getTypeBinding(typeQname);
-        assertEquals("Wrong binding type", expected, NUnknownType.follow(b.getType()));
+        assertEquals(expected, NUnknownType.follow(b.getType()), "Wrong binding type");
         return b;
     }
 
-    public NBinding assertBindingType(String bindingQname, Class type) throws Exception {
+    NBinding assertBindingType(String bindingQname, Class<?> type) throws Exception {
         NBinding b = getBinding(bindingQname);
         NType btype = NUnknownType.follow(b.getType());
-        assertTrue("Wrong type: expected " + type + " but was " + btype,
-                   type.isInstance(btype));
+        assertTrue(type.isInstance(btype), "Wrong type: expected " + type + " but was " + btype);
         return b;
     }
 
-    public void assertListType(String bindingQname) throws Exception {
+    void assertListType(String bindingQname) throws Exception {
         assertListType(bindingQname, null);
     }
 
@@ -412,7 +420,7 @@ public class TestBase extends TestCase {
      * asserts that the List type's element type is an existing binding with
      * {@code eltTypeQname}.
      */
-    public void assertListType(String bindingQname, String eltTypeQname) throws Exception {
+    void assertListType(String bindingQname, String eltTypeQname) throws Exception {
         NBinding b = getBinding(bindingQname);
         NType btype = b.followType();
         assertTrue(btype.isListType());
@@ -422,25 +430,18 @@ public class TestBase extends TestCase {
         }
     }
 
-    public void assertStringType(String bindingQname) throws Exception {
+    void assertStringType(String bindingQname) throws Exception {
         assertBindingType(bindingQname, "__builtin__.str");
     }
 
-    public void assertNumType(String bindingQname) throws Exception {
+    void assertNumType(String bindingQname) throws Exception {
         assertBindingType(bindingQname, "__builtin__.float");
     }
 
-    public void assertInstanceType(String bindingQname, String classQname) throws Exception {
+    void assertInstanceType(String bindingQname, String classQname) throws Exception {
         if (true) {
             assertBindingType(bindingQname, classQname);
             return;
         }
-
-        // XXX:  we've disabled support for NInstanceType for now
-        NBinding b = getBinding(bindingQname);
-        NType btype = b.followType();
-        assertTrue(btype.isInstanceType());
-        NType ctype = getTypeBinding(classQname);
-        assertEquals(btype.asInstanceType().getClassType(), ctype);
     }
 }

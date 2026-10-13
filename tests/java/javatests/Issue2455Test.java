@@ -1,42 +1,47 @@
 package javatests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.python.core.PyJavaPackage;
-import org.python.core.PyModule;
-import org.python.util.PythonInterpreter;
+import java.util.concurrent.TimeUnit;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.io.TempDir;
+import org.python.core.PyJavaPackage;
+import org.python.core.PyModule;
+import org.python.util.PythonInterpreter;
 
 /**
  * Test for the Jython bug 2455.
  * @author jsaiz
  */
-public class Issue2455Test {
+class Issue2455Test {
 
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     private final PythonInterpreter interpreter = new PythonInterpreter();
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    File temporaryFolder;
 
-    @Test(timeout = 60000)
-    public void testJavaModule() throws IOException, InterruptedException {
-        File example1 = temporaryFolder.newFolder("example1");
-        File example2 = temporaryFolder.newFolder("example2");
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    void testJavaModule() throws IOException, InterruptedException {
+        File example1 = new File(temporaryFolder, "example1");
+        example1.mkdirs();
+        File example2 = new File(temporaryFolder, "example2");
+        example2.mkdirs();
 
         // Create Java class in example1 and __init__.py in example2
         createJavaFile(example1, "SomeClass");
@@ -45,7 +50,7 @@ public class Issue2455Test {
         // Create an interpreter and import the example packages
         interpreter.exec("import sys");
         // Note use of r'' to avoid backslash simulating an escape sequence
-        interpreter.exec("sys.path.append(r'" + temporaryFolder.getRoot().toString() + "')");
+        interpreter.exec("sys.path.append(r'" + temporaryFolder.getAbsolutePath() + "')");
         interpreter.exec("import " + example1.getName());
         interpreter.exec("import " + example2.getName());
         assertTrue(interpreter.eval(example1.getName()) instanceof PyJavaPackage);

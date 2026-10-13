@@ -1,22 +1,26 @@
 package org.python.util.install.driver;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.File;
 
 import org.python.util.install.InstallerCommandLine;
 
-import junit.framework.TestCase;
-
-public class AutotestTest extends TestCase {
+class AutotestTest  {
 
     private Autotest _autotest;
 
-    protected void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         InstallerCommandLine commandLine = new InstallerCommandLine();
         commandLine.setArgs(new String[0]);
         _autotest = new SilentAutotest(commandLine);
     }
 
-    public void testCreateDirectories() {
+    @Test
+    void testCreateDirectories() {
         File rootDir = Autotest.getRootDir();
         File targetDir = _autotest.getTargetDir();
         assertNotNull(rootDir);
@@ -26,7 +30,8 @@ public class AutotestTest extends TestCase {
         assertEquals(rootDir, targetDir.getParentFile());
     }
 
-    public void testCommandLineArgs() {
+    @Test
+    void testCommandLineArgs() {
         String[] args = new String[] { "-x", "-y", "-z" };
         _autotest.setCommandLineArgs(args);
         int len = _autotest.getCommandLineArgs().length;
@@ -36,7 +41,8 @@ public class AutotestTest extends TestCase {
         }
     }
 
-    public void testAddArgument() {
+    @Test
+    void testAddArgument() {
         String[] args = new String[] { "-x", "-y", "-z" };
         _autotest.setCommandLineArgs(args);
         _autotest.addArgument("-u");
@@ -47,7 +53,8 @@ public class AutotestTest extends TestCase {
         assertEquals("-u", _autotest.getCommandLineArgs()[args.length]);
     }
 
-    public void testVerify() throws Exception {
+    @Test
+    void testVerify() throws Exception {
         TestVerifier testVerifier = new TestVerifier();
         _autotest.setVerifier(testVerifier);
         assertNotNull(_autotest.getVerifier());

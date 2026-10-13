@@ -1,48 +1,53 @@
 package org.python.util.install;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
-public class ChildProcessTest extends TestCase {
+class ChildProcessTest {
 
     private final static String CLASS_NAME = "org.python.util.install.ChildProcessExample";
 
     /**
      * test a default child process
      */
-    public void testDefault() {
+    @Test
+    void testDefault() {
         ChildProcess childProcess = new ChildProcess();
         String command[] = buildJavaCommand(CLASS_NAME);
         childProcess.setCommand(command);
         childProcess.setDebug(true);
         int exitValue = childProcess.run();
-        assertEquals("Expected child process to end normally instead of " + exitValue, 0, exitValue);
+        assertEquals(0, exitValue, "Expected child process to end normally instead of " + exitValue);
     }
 
     /**
      * test the child process with a timeout
      */
-    public void testTimeout() {
+    @Test
+    void testTimeout() {
         ChildProcess childProcess = new ChildProcess();
         String command[] = buildJavaCommand(CLASS_NAME);
         childProcess.setCommand(command);
         childProcess.setDebug(true);
         childProcess.setTimeout(2000); // timeout to 2 seconds
         int exitValue = childProcess.run();
-        assertEquals("Expected child process to be destroyed instead of " + exitValue,
-                     ChildProcess.DESTROYED_AFTER_TIMEOUT,
-                     exitValue);
+        assertEquals(ChildProcess.DESTROYED_AFTER_TIMEOUT, exitValue,
+                        "Expected child process to be destroyed instead of " + exitValue);
     }
 
     /**
      * test silent mode
      */
-    public void testSilent() throws IOException {
+    @Test
+    void testSilent() throws IOException {
         ChildProcess childProcess = new ChildProcess();
-        String command[] = new String[] {"lwiklsl", "-siwK"};
+        String command[] = new String[] { "lwiklsl", "-siwK" };
         childProcess.setCommand(command);
         childProcess.setDebug(false);
         childProcess.setSilent(true);
@@ -74,7 +79,9 @@ public class ChildProcessTest extends TestCase {
         if (System.getProperty("os.name", "unknown").toLowerCase().indexOf("windows") >= 0) {
             quote = "\"";
         }
+        JavaHomeHandler javaHomeHandler = new JavaHomeHandler();
         String classpath = System.getProperty("java.class.path");
-        return new String[] {"java",  "-classpath",  quote.concat(classpath).concat(quote), classAndArguments};
+        return new String[] { javaHomeHandler.getExecutableName(), "-classpath", quote.concat(classpath).concat(quote),
+                classAndArguments };
     }
 }

@@ -3,9 +3,9 @@ package org.python.util.install;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -13,14 +13,15 @@ import javax.swing.JLabel;
 
 public class LanguagePage extends AbstractWizardPage {
 
-    private static Map _languageIndexes = new HashMap(2);
+    private static final long serialVersionUID = 8048980500023988425L;
+    private static Map<Locale, Integer> _languageIndexes = new HashMap<>(2);
     static {
-        _languageIndexes.put(Locale.ENGLISH, new Integer(0));
-        _languageIndexes.put(Locale.GERMAN, new Integer(1));
+        _languageIndexes.put(Locale.ENGLISH, Integer.valueOf(0));
+        _languageIndexes.put(Locale.GERMAN, Integer.valueOf(1));
     }
 
     private JLabel _label;
-    private JComboBox _languageBox;
+    private JComboBox<String> _languageBox;
     private JarInfo _jarInfo;
     private boolean _activated;
     private boolean _stopListening;
@@ -36,7 +37,7 @@ public class LanguagePage extends AbstractWizardPage {
     private void initComponents() {
         _label = new JLabel();
         add(_label);
-        _languageBox = new JComboBox();
+        _languageBox = new JComboBox<>();
         _languageBox.addActionListener(new LanguageBoxListener());
         add(_languageBox);
     }
@@ -81,6 +82,8 @@ public class LanguagePage extends AbstractWizardPage {
             if (Locale.getDefault().toString().startsWith(Locale.GERMAN.toString())) {
                 _languageBox.setSelectedIndex(getLanguageIndex(Locale.GERMAN));
                 FrameInstaller.setLanguage(Locale.GERMAN);
+            } else {
+                FrameInstaller.setLanguage(Locale.ENGLISH);
             }
         } else {
             _languageBox.setSelectedIndex(getLanguageIndex(FrameInstaller.getLanguage()));
@@ -95,16 +98,14 @@ public class LanguagePage extends AbstractWizardPage {
     }
 
     private int getLanguageIndex(Locale locale) {
-        return ((Integer) _languageIndexes.get(locale)).intValue();
+        return _languageIndexes.get(locale);
     }
 
     private Locale getLanguageFromIndex(int index) {
-        Integer indexInteger = new Integer(index);
-        Iterator languages = _languageIndexes.entrySet().iterator();
-        while (languages.hasNext()) {
-            Map.Entry entry = (Map.Entry) languages.next();
-            if (entry.getValue().equals(indexInteger)) {
-                return (Locale) entry.getKey();
+        Integer indexInteger = Integer.valueOf(index);
+        for (Entry<Locale, Integer> languageIndex : _languageIndexes.entrySet()) {
+            if (languageIndex.getValue().equals(indexInteger)) {
+                return languageIndex.getKey();
             }
         }
         return null;

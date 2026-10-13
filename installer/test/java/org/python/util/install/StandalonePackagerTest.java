@@ -1,5 +1,10 @@
 package org.python.util.install;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,9 +18,11 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach ;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class StandalonePackagerTest extends TestCase {
+class StandalonePackagerTest  {
     private File _sourceJarFile;
     private File _targetJarFile;
 
@@ -28,7 +35,8 @@ public class StandalonePackagerTest extends TestCase {
 
     private File _jarDir;
 
-    protected void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         _jarDir = File.createTempFile("jarDir", "");
         assertTrue(FileHelper.createTempDirectory(_jarDir));
         _targetJarFile = new File(_jarDir, "target.jar");
@@ -43,7 +51,8 @@ public class StandalonePackagerTest extends TestCase {
         createSourceJar();
     }
 
-    protected void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() throws Exception {
         if (_sourceJarFile != null) {
             _sourceJarFile.delete();
         }
@@ -73,7 +82,8 @@ public class StandalonePackagerTest extends TestCase {
     /**
      * test the static method emptyDir()
      */
-    public void testEmptyDir() throws Exception {
+    @Test
+    void testEmptyDir() throws Exception {
         File tempContentFile = new File(_contentDir, "temp");
         tempContentFile.createNewFile();
         assertTrue(tempContentFile.exists());
@@ -90,7 +100,8 @@ public class StandalonePackagerTest extends TestCase {
     /**
      * test adding a jar file, a directory, and another single file
      */
-    public void testAdd_Jar_Directory_File() throws IOException {
+    @Test
+    void testAdd_Jar_Directory_File() throws IOException {
         createAdditionalDirectory();
         _nextContentFile = File.createTempFile("nextContent.file", "");
         _nextContentFile.createNewFile();

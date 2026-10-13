@@ -1,11 +1,18 @@
 package org.python.util.install;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class JavaHomeHandlerTest extends TestCase {
+class JavaHomeHandlerTest  {
 
     private static final String JAVA_HOME = JavaHomeHandler.JAVA_HOME;
 
@@ -15,18 +22,19 @@ public class JavaHomeHandlerTest extends TestCase {
 
     private String _originalJavaHome;
 
-    @Override
-    protected void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         JavaHomeHandler.reset();
         _originalJavaHome = System.getProperty(JAVA_HOME);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @AfterEach
+    void tearDown() throws Exception {
         System.setProperty(JAVA_HOME, _originalJavaHome);
     }
 
-    public void testGetExecutableName() throws IOException {
+    @Test
+    void testGetExecutableName() throws IOException {
         String executable = new JavaHomeHandler().getExecutableName();
         assertNotNull(executable);
         assertTrue(executable.length() > JAVA.length());
@@ -40,7 +48,8 @@ public class JavaHomeHandlerTest extends TestCase {
         assertTrue(executable.indexOf(homePath) >= 0);
     }
 
-    public void testGetExecutableName_NonExisting() {
+    @Test
+    void testGetExecutableName_NonExisting() {
         String executable = new JavaHomeHandler(SOME_WEIRD_HOME).getExecutableName();
         assertEquals(JAVA, executable); // fallback
         System.setProperty(JAVA_HOME, SOME_WEIRD_HOME);
@@ -48,7 +57,8 @@ public class JavaHomeHandlerTest extends TestCase {
         assertEquals(JAVA, executable); // fallback
     }
 
-    public void testCreateJavaHomeHandler() throws IOException {
+    @Test
+    void testCreateJavaHomeHandler() throws IOException {
         JavaHomeHandler handler = new JavaHomeHandler();
         assertNotNull(handler);
         System.setProperty(JAVA_HOME, SOME_WEIRD_HOME);
@@ -59,14 +69,16 @@ public class JavaHomeHandlerTest extends TestCase {
         assertNotNull(handler);
     }
 
-    public void testCreateHandler_Deviation() throws IOException {
+    @Test
+    void testCreateHandler_Deviation() throws IOException {
         JavaHomeHandler handler = new JavaHomeHandler(SOME_WEIRD_HOME);
         assertNotNull(handler);
         handler = new JavaHomeHandler(createTempHome().getAbsolutePath());
         assertNotNull(handler);
     }
 
-    public void testIsDeviation() throws IOException {
+    @Test
+    void testIsDeviation() throws IOException {
         JavaHomeHandler handler = new JavaHomeHandler(createTempHome().getAbsolutePath());
         assertTrue(handler.isDeviation());
         handler = new JavaHomeHandler();
@@ -75,7 +87,8 @@ public class JavaHomeHandlerTest extends TestCase {
         assertFalse(handler.isDeviation());
     }
 
-    public void testGetJavaHome() throws IOException {
+    @Test
+    void testGetJavaHome() throws IOException {
         String tempHome = createTempHome().getAbsolutePath();
         JavaHomeHandler handler = new JavaHomeHandler(tempHome);
         String home = handler.getHome().getAbsolutePath();
@@ -87,7 +100,8 @@ public class JavaHomeHandlerTest extends TestCase {
         }
     }
 
-    public void testIsValidJavaHome() throws IOException {
+    @Test
+    void testIsValidJavaHome() throws IOException {
         JavaHomeHandler handler = new JavaHomeHandler(SOME_WEIRD_HOME);
         assertFalse(handler.isValidHome());
         handler = new JavaHomeHandler();
