@@ -235,7 +235,7 @@ An example ant.properties file:
                 <file name="jnr-ffi-2.3.3.jar"/>
                 <file name="jnr-netdb-1.2.0.jar"/>
                 <file name="jnr-posix-3.2.4.jar"/>
-                <file name="jline-2.14.6.jar"/>
+                <file name="jline-4.4.7.jar"/>
                 <file name="netty-buffer-4.2.18.Final.jar"/>
                 <file name="netty-codec-base-4.2.18.Final.jar"/>
                 <file name="netty-common-4.2.18.Final.jar"/>
@@ -895,8 +895,8 @@ The text for an official release would continue like ...
             <rule pattern="org.apache.xerces.**" result="org.python.apache.xerces.@1"/>
             <rule pattern="org.apache.wml.**" result="org.python.apache.wml.@1"/>
             <rule pattern="org.apache.html.**" result="org.python.apache.html.@1"/>
-            <zipfileset src="extlibs/jline-2.14.6.jar"/>
-            <rule pattern="jline.**" result="org.python.jline.@1"/>
+            <zipfileset src="extlibs/jline-4.4.7.jar"/>
+            <rule pattern="org.jline.**" result="org.python.jline.@1"/>
             <manifest>
                 <attribute name="Main-Class" value="org.python.util.jython" />
                 <attribute name="Built-By" value="${user.name}" />
