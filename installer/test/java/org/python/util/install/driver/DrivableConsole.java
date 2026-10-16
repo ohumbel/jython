@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.python.util.install.driver.Tunnel;
-
 /**
  * A simple class performing console I/O, easy to test.
  */

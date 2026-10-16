@@ -1,7 +1,7 @@
 // Copyright (c)2013 Jython Developers
 package javatests;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,8 +16,8 @@ import java.util.Properties;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Pattern;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests investigating issues with readline() first raised in Jython Issue #1972. These involve
@@ -72,7 +72,7 @@ public class Issue1972 {
     /** A queue handling the <code>stderr</code> of the subprocess. */
     private LineQueue errFromProc;
 
-    @After
+    @AfterEach
     public void afterEachTest() {
         if (proc != null) {
             proc.destroy();
@@ -100,10 +100,10 @@ public class Issue1972 {
         // Dump to console
         outputAsHexDump(VERBOSE, inFromProc, errFromProc);
 
-        assertEquals("Unexpected text in stdout", 0, inFromProc.size());
-        assertTrue("No text output to stderr", errFromProc.size() > 0);
+        assertEquals(0, inFromProc.size(), "Unexpected text in stdout");
+        assertTrue(errFromProc.size() > 0, "No text output to stderr");
         String res = errFromProc.asStrings().get(0);
-        assertTrue("stderr should mention version", res.contains("version"));
+        assertTrue(res.contains("version"), "stderr should mention version");
     }
 
     /**
@@ -327,7 +327,7 @@ public class Issue1972 {
         proc.waitFor();
         outputAsHexDump(VERBOSE, inFromProc, errFromProc);
 
-        assertTrue("Subprocess did not respond promptly to first line", count == 0);
+        assertTrue(count == 0, "Subprocess did not respond promptly to first line");
         checkInFromProc("spam");
     }
 
@@ -480,7 +480,7 @@ public class Issue1972 {
             if (!beginsWithAnyOf(r, toIgnore)) {
                 if (count < expected.length) {
                     // Check the line against the expected text
-                    assertEquals(message, expected[count++], r);
+                    assertEquals(expected[count++], r, message);
                 } else {
                     // Extra line will be a failure but continue to count
                     count++;
@@ -488,7 +488,7 @@ public class Issue1972 {
             }
         }
         // Check number of lines we can't ignore against the number expected
-        assertEquals(message, expected.length, count);
+        assertEquals(expected.length, count, message);
     }
 
     /** Compiled regular expressions for the lines to ignore (on stdout). */

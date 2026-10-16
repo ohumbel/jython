@@ -1,13 +1,10 @@
 package org.python.util.install.driver;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.python.util.install.ChildProcess;
 import org.python.util.install.FileHelper;
@@ -74,15 +71,7 @@ public class NormalVerifier implements Verifier {
         p.setDebug(true);
         p.setCWD(_targetDir.toPath());
         System.err.println("Verify start: command=" + Arrays.toString(command) + ", cwd="  + p.getCWD());
-        int exitValue = p.run();
-//        if (exitValue != 0) {
-//            throw new DriverException("start of jython failed\n"
-//                    + "command: " + Arrays.toString(command)
-//                    + "\ncwd: " + p.getCWD()
-//                    + "\nexit value: " + exitValue
-//                    + "\nstdout: " + p.getStdout()
-//                    + "\nstderr: " + p.getStderr());
-//        }
+        p.run();
         verifyError(p.getStderr());
         verifyOutput(p.getStdout());
     }

@@ -1,14 +1,17 @@
 package org.python.core;
 
-import junit.framework.TestCase;
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 import org.python.util.PythonInterpreter;
 
 /**
  * Tests for PyArray.
  */
-public class PyArrayTest extends TestCase {
+public class PyArrayTest  {
 
+    @Test
     public void testSetSliceNegativeStep() {
         PyArray arrayToModify = new PyArray(PyString.class, new String[] {"a", "b", "c", "d"});
 
@@ -31,6 +34,7 @@ public class PyArrayTest extends TestCase {
 
     }
 
+    @Test
     public void testSetSlicePositiveStep() {
         PyArray arrayToModify = new PyArray(PyString.class, new String[] {"a", "b", "c", "d"});
 
@@ -53,26 +57,26 @@ public class PyArrayTest extends TestCase {
 
     }
 
+    @Test
     public void testCompactArray() {
-        // tests http://bugs.jython.org/issue1745
-        PythonInterpreter interp = new PythonInterpreter();
-        interp.set("arr", new double[3]);
-        interp.exec("arr.append(3.0)\n\n");
-        Object o = interp.get("arr", Object.class);
-        double[] a = (double[])o;
-        assertEquals(4, a.length);
-        assertEquals(0.0, a[0]);
-        assertEquals(3.0, a[3]);
+        try (// tests http://bugs.jython.org/issue1745
+                        PythonInterpreter interp = new PythonInterpreter()) {
+            interp.set("arr", new double[3]);
+            interp.exec("arr.append(3.0)\n\n");
+            Object o = interp.get("arr", Object.class);
+            double[] a = (double[]) o;
+            assertEquals(4, a.length);
+            assertEquals(0.0, a[0]);
+            assertEquals(3.0, a[3]);
+        }
     }
 
+    @Test
     public void testToJava() {
-        PythonInterpreter interp = new PythonInterpreter();
-        PyObject pyobj = interp.eval("[i * 2 for i in xrange(5)]");
-        Assert.assertArrayEquals
-                (new int[] {0, 2, 4, 6, 8},
-                (int[])pyobj.__tojava__(int[].class));
-        Assert.assertArrayEquals(
-                new Integer[] { 0, 2, 4, 6, 8},
-                (Object[])pyobj.__tojava__(Object[].class));
+        try (PythonInterpreter interp = new PythonInterpreter()) {
+            PyObject pyobj = interp.eval("[i * 2 for i in xrange(5)]");
+            assertArrayEquals(new int[] { 0, 2, 4, 6, 8 }, (int[]) pyobj.__tojava__(int[].class));
+            assertArrayEquals(new Integer[] { 0, 2, 4, 6, 8 }, (Object[]) pyobj.__tojava__(Object[].class));
+        }
     }
 }

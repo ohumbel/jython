@@ -1,11 +1,13 @@
 package org.python.tests;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.core.Py;
 import org.python.util.PythonInterpreter;
 
-public class ExceptionTest extends TestCase {
+public class ExceptionTest  {
 
     public static class Checked extends Exception {}
 
@@ -15,6 +17,7 @@ public class ExceptionTest extends TestCase {
         void checkedOrRuntime(boolean checked) throws Checked;
     }
 
+    @BeforeEach
     public void setUp() {
         String raiser =
             "from java.lang import Throwable\n" +
@@ -28,11 +31,13 @@ public class ExceptionTest extends TestCase {
             "         else:\n" +
             "             raise Throwable()\n" +
             "r = Raiser()";
-        PythonInterpreter interp = new PythonInterpreter();
-        interp.exec(raiser);
-        t = Py.tojava(interp.get("r"), Thrower.class);
+        try (PythonInterpreter interp = new PythonInterpreter()) {
+            interp.exec(raiser);
+            t = Py.tojava(interp.get("r"), Thrower.class);
+        }
     }
 
+    @Test
     public void testRaisingCheckedException() {
         try {
             t.checked();
@@ -48,6 +53,7 @@ public class ExceptionTest extends TestCase {
         }
     }
 
+    @Test
     public void testRaisingRuntimeException() {
         try {
             t.checkedOrRuntime(false);

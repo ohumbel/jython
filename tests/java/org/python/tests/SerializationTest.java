@@ -1,25 +1,23 @@
 package org.python.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidClassException;
-import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.io.OutputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.lang.AssertionError;
-import java.lang.Integer;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import junit.framework.TestCase;
-import static org.junit.Assert.*;
-
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.core.Py;
 import org.python.core.PyDictionary;
 import org.python.core.PyFrozenSet;
@@ -29,15 +27,14 @@ import org.python.core.PySet;
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.core.PyTuple;
-import org.python.modules._csv.PyDialect;
 import org.python.util.PythonInterpreter;
 import org.python.util.PythonObjectInputStream;
 
-public class SerializationTest extends TestCase {
+public class SerializationTest  {
 
     private PythonInterpreter interp;
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
         interp = new PythonInterpreter(new PyStringMap(), new PySystemState());
         interp.exec("from java.io import Serializable");
@@ -45,17 +42,20 @@ public class SerializationTest extends TestCase {
         interp.exec("x = Test()");
     }
 
+    @Test
     public void testDirect() throws IOException, ClassNotFoundException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         new ObjectOutputStream(os).writeObject(interp.get("x"));
         new PythonObjectInputStream(new ByteArrayInputStream(os.toByteArray())).readObject();
     }
 
+    @Test
     public void testJython() {
         interp.set("t", this);
         interp.exec("t.testDirect()");
     }
 
+    @Test
     public void testBasicTypes() {
         assertRoundtrip(Py.None);
         assertRoundtrip(Py.True);

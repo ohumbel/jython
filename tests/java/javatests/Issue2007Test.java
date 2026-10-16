@@ -1,13 +1,13 @@
 package javatests;
 
-import org.junit.Test;
-import org.python.core.PyStringMap;
-import org.python.core.PySystemState;
-import org.python.util.InteractiveInterpreter;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.StringWriter;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import org.python.core.PyStringMap;
+import org.python.core.PySystemState;
+import org.python.util.InteractiveInterpreter;
 
 public class Issue2007Test {
 
@@ -16,9 +16,10 @@ public class Issue2007Test {
      */
     @Test
     public void testPrintFunctionInScript() {
-        CapturingInterpreter interp = new CapturingInterpreter();
-        interp.exec("from __future__ import print_function\n" + "print(1, 2, 3)\n");
-        assertEquals("1 2 3\n", interp.getOutput());
+        try (CapturingInterpreter interp = new CapturingInterpreter()) {
+            interp.exec("from __future__ import print_function\n" + "print(1, 2, 3)\n");
+            assertEquals("1 2 3\n", interp.getOutput());
+        }
     }
 
     /**
@@ -28,10 +29,11 @@ public class Issue2007Test {
      */
     @Test
     public void testPrintFunctionInInteractive() {
-        CapturingInterpreter interp = new CapturingInterpreter();
-        interp.runsource("from __future__ import print_function");
-        interp.runsource("print(1, 2, 3)");
-        assertEquals("1 2 3\n", interp.getOutput());
+        try (CapturingInterpreter interp = new CapturingInterpreter()) {
+            interp.runsource("from __future__ import print_function");
+            interp.runsource("print(1, 2, 3)");
+            assertEquals("1 2 3\n", interp.getOutput());
+        }
     }
 
     private static class CapturingInterpreter extends InteractiveInterpreter {

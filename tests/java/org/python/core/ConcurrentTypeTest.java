@@ -2,10 +2,11 @@
 // Licensed to the PSF under a Contributor Agreement
 package org.python.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.python.util.PythonInterpreter;
 
 /**
@@ -98,7 +99,7 @@ public class ConcurrentTypeTest {
         // Check status of every thread
         for (SharedStateRunner r : runners) {
             PyObject e = r.globals.__finditem__("e");
-            assertEquals("Runner " + r.instance, null, e);
+            assertNull(e, "Runner " + r.instance);
         }
     }
 
@@ -157,7 +158,7 @@ public class ConcurrentTypeTest {
         // Check status of every thread
         for (SeparateStateRunner r : runners) {
             PyObject e = r.globals.__finditem__("e");
-            assertEquals("Runner " + r.instance, null, e);
+            assertNull(e, "Runner " + r.instance);
         }
     }
 
@@ -201,7 +202,7 @@ public class ConcurrentTypeTest {
         // Check status of every thread
         for (SeparateStateRunner r : runners) {
             PyObject e = r.globals.__finditem__("e");
-            assertEquals("Runner " + r.instance, null, e);
+            assertNull(e, "Runner " + r.instance);
         }
     }
 
@@ -241,7 +242,7 @@ public class ConcurrentTypeTest {
         // Check result of every thread
         for (SeparateLoaderRunner r : runners) {
             PyObject e = r.globals.__finditem__("e");
-            assertEquals("Runner " + r.instance, null, e);
+            assertNull(e, "Runner " + r.instance);
             PyObject staticConstant = r.globals.__finditem__("staticConstant");
             assertNotNull(staticConstant);
             assertEquals(staticConstant.asInt(), 42);
@@ -307,7 +308,7 @@ public class ConcurrentTypeTest {
 
         for (SeparateLoaderRunner r : runners) {
             PyObject e = r.globals.__finditem__("e");
-            assertEquals("Runner " + r.instance, null, e);
+            assertNull(e, "Runner " + r.instance);
             PyObject m = r.globals.__finditem__("m");
             assertEquals(m.toString(), "forty-two");
             PyObject x = r.globals.__finditem__("x");
@@ -458,7 +459,7 @@ public class ConcurrentTypeTest {
         // Create a task (future) to perform the compilation
         CompilationTask task =
                 COMPILER.getTask(null, fileManager, null, null, null, compilationUnits);
-        assertTrue("Compilation of Java class failed", task.call());
+        assertTrue(task.call(), "Compilation of Java class failed");
 
         return fileManager;
     }
@@ -482,6 +483,6 @@ public class ConcurrentTypeTest {
                 running |= t.isAlive();
             }
         }
-        assertFalse("runners did not finish", running);
+        assertFalse(running, "runners did not finish");
     }
 }

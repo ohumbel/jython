@@ -1,9 +1,9 @@
 package org.python.util;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.python.core.RegistryKey.PYTHON_CONSOLE;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.python.core.Console;
 import org.python.core.PlainConsole;
 import org.python.core.Py;
@@ -52,13 +52,14 @@ public class jythonTestPlain {
         System.out.println("testChangeConsole");
         // In the case where this test is run in isolation, cause initialisation with PlainConsole
         System.getProperties().setProperty(PYTHON_CONSOLE, "org.python.core.PlainConsole");
-        PythonInterpreter interp = new PythonInterpreter();
-        // Now replace it
-        Py.installConsole(new JLineConsole(null));
-        jython.main(commands);
-        Console console = Py.getConsole();
-        assertEquals(JLineConsole.class, console.getClass());
-        interp.cleanup();
+        try (PythonInterpreter interp = new PythonInterpreter()) {
+            // Now replace it
+            Py.installConsole(new JLineConsole(null));
+            jython.main(commands);
+            Console console = Py.getConsole();
+            assertEquals(JLineConsole.class, console.getClass());
+            interp.cleanup();
+        }
     }
 
 }

@@ -164,7 +164,8 @@ dependencies {
   implementation(libs.netty.transport)
   implementation(libs.netty.transport.native.unix.common)
 
-  testImplementation(libs.junit)
+  testImplementation(libs.junit.jupiter)
+  testImplementation(libs.junit.platform.launcher)
 }
 
 
@@ -785,6 +786,8 @@ compileTestJava {
 }
 
 test {
+
+  useJUnitPlatform()
 
   dependsOn copyLib
 

@@ -1,27 +1,17 @@
 package org.apache.commons.cli;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.math.BigDecimal;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
-import junit.textui.TestRunner;
+public class OptionBuilderTest  {
 
-public class OptionBuilderTest extends TestCase {
-
-    public OptionBuilderTest( String name ) {
-        super( name );
-    }
-
-    public static Test suite() { 
-        return new TestSuite( OptionBuilderTest.class ); 
-    }
-
-    public static void main( String args[] ) { 
-        TestRunner.run( suite() );
-    }
-
+    @Test
     public void testCompleteOption( ) {
         OptionBuilder.withLongOpt( "simple option");
         OptionBuilder.hasArg( );
@@ -40,6 +30,7 @@ public class OptionBuilderTest extends TestCase {
         assertTrue( simple.hasArgs() );
     }
 
+    @Test
     public void testTwoCompleteOptions( ) {
         OptionBuilder.withLongOpt( "simple option");
         OptionBuilder.hasArg( );
@@ -71,6 +62,7 @@ public class OptionBuilderTest extends TestCase {
         assertTrue( !simple.hasArgs() );
     }
 
+    @Test
     public void testBaseOptionCharOpt() {
         OptionBuilder.withDescription( "option description");
         Option base = OptionBuilder.create( 'o' );
@@ -80,6 +72,7 @@ public class OptionBuilderTest extends TestCase {
         assertTrue( !base.hasArg() );
     }
 
+    @Test
     public void testBaseOptionStringOpt() {
         OptionBuilder.withDescription( "option description");
         Option base = OptionBuilder.create( "o" );
@@ -89,6 +82,7 @@ public class OptionBuilderTest extends TestCase {
         assertTrue( !base.hasArg() );
     }
 
+    @Test
     public void testSpecialOptChars() {
 
         // '?'
@@ -112,6 +106,7 @@ public class OptionBuilderTest extends TestCase {
         }
     }
 
+    @Test
     public void testOptionArgNumbers() {
         OptionBuilder.withDescription( "option description" );
         OptionBuilder.hasArgs( 2 );
@@ -119,6 +114,7 @@ public class OptionBuilderTest extends TestCase {
         assertEquals( 2, opt.getArgs() );
     }
 
+    @Test
     public void testIllegalOptions() {
         // bad single character option
         try {

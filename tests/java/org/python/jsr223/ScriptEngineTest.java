@@ -1,5 +1,10 @@
 package org.python.jsr223;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigInteger;
@@ -15,15 +20,14 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Test;
 import org.python.core.Options;
 import org.python.core.PyList;
 import org.python.core.PyString;
 
-import junit.framework.TestCase;
+public class ScriptEngineTest  {
 
-public class ScriptEngineTest extends TestCase {
-
+    @Test
     public void testEvalString() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -36,6 +40,7 @@ public class ScriptEngineTest extends TestCase {
         assertEquals(Arrays.asList("sample.py"), pythonEngine.eval("sys.argv"));
     }
 
+    @Test
     public void testEvalStringArgv() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -49,6 +54,7 @@ public class ScriptEngineTest extends TestCase {
         assertEquals(Arrays.asList("sample.py", "foo", "bar"), pythonEngine.eval("sys.argv"));
     }
 
+    @Test
     public void testEvalStringNoFilenameWithArgv() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -70,6 +76,7 @@ public class ScriptEngineTest extends TestCase {
         assertEquals(Arrays.asList("foo", "bar"), pythonEngine.eval("sys.argv"));
     }
 
+    @Test
     public void testSyntaxError() {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -82,9 +89,10 @@ public class ScriptEngineTest extends TestCase {
             assertTrue(e.getMessage().startsWith("SyntaxError: "));
             return;
         }
-        assertTrue("Expected a ScriptException", false);
+        fail("Expected a ScriptException");
     }
 
+    @Test
     public void testPythonException() {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -96,9 +104,10 @@ public class ScriptEngineTest extends TestCase {
             assertTrue(e.getMessage().startsWith("NameError: "));
             return;
         }
-        assertTrue("Expected a ScriptException", false);
+        fail("Expected a ScriptException");
     }
 
+    @Test
     public void testScriptFilename() {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -110,9 +119,10 @@ public class ScriptEngineTest extends TestCase {
             assertEquals("sample.py", e.getFileName());
             return;
         }
-        assertTrue("Expected a ScriptException", false);
+        fail("Expected a ScriptException");
     }
 
+    @Test
     public void testCompileEvalString() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -125,6 +135,7 @@ public class ScriptEngineTest extends TestCase {
         assertEquals(Arrays.asList("sample.py"), pythonEngine.eval("sys.argv"));
     }
 
+    @Test
     public void testEvalReader() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -137,6 +148,7 @@ public class ScriptEngineTest extends TestCase {
         assertEquals(Arrays.asList("sample.py"), pythonEngine.eval("sys.argv"));
     }
 
+    @Test
     public void testCompileEvalReader() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -149,6 +161,7 @@ public class ScriptEngineTest extends TestCase {
         assertEquals(Arrays.asList("sample.py"), pythonEngine.eval("sys.argv"));
     }
 
+    @Test
     public void testBindings() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -206,6 +219,7 @@ public class ScriptEngineTest extends TestCase {
      *
      * @throws Exception
      */
+    @Test
     public void testThreadLocalBindings() throws ScriptException, InterruptedException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -236,6 +250,7 @@ public class ScriptEngineTest extends TestCase {
         assertEquals("__main__", pythonEngine.eval("__name__"));
     }
 
+    @Test
     public void testInvoke() throws ScriptException, NoSuchMethodException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -247,6 +262,7 @@ public class ScriptEngineTest extends TestCase {
         assertEquals("spam", invocableEngine.invokeMethod("  spam  ", "strip"));
     }
 
+    @Test
     public void testInvokeFunctionNoSuchMethod() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         Invocable invocableEngine = (Invocable)manager.getEngineByName("python");
@@ -256,9 +272,10 @@ public class ScriptEngineTest extends TestCase {
         } catch (NoSuchMethodException e) {
             return;
         }
-        assertTrue("Expected a NoSuchMethodException", false);
+        fail("Expected a NoSuchMethodException");
     }
 
+    @Test
     public void testInvokeMethodNoSuchMethod() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         Invocable invocableEngine = (Invocable)manager.getEngineByName("python");
@@ -271,6 +288,7 @@ public class ScriptEngineTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetInterface() throws ScriptException, IOException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -286,6 +304,7 @@ public class ScriptEngineTest extends TestCase {
         assertEquals(2, readable.read(null));
     }
 
+    @Test
     public void testInvokeMethodNoSuchArgs() throws ScriptException, NoSuchMethodException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -295,6 +314,7 @@ public class ScriptEngineTest extends TestCase {
         assertEquals(newStringCapitalize, "Test");
     }
 
+    @Test
     public void testPdb() {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -311,6 +331,7 @@ public class ScriptEngineTest extends TestCase {
     // FIXME PyScriptEngineScope lacks items(), iteritems(), and other dict methods
     // This should be added in a future release
 
+    @Test
     public void testScope_repr() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -318,21 +339,23 @@ public class ScriptEngineTest extends TestCase {
         pythonEngine.eval("b = 'hi'");
         String repr = (String)pythonEngine.eval("repr(locals())");
         // locals() contains builtins as of 2.7.0, so we need to selectively test
-        Assert.assertTrue(repr.contains("'a': 4"));
-        Assert.assertTrue(repr.contains("'b': u'hi'"));
+        assertTrue(repr.contains("'a': 4"));
+        assertTrue(repr.contains("'b': u'hi'"));
     }
 
+    @Test
     public void testScope_iter() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
         pythonEngine.eval("a = 4");
         pythonEngine.eval("b = 'hi'");
         PyList locals = (PyList) pythonEngine.eval("sorted((item for item in locals()))");
-        Assert.assertTrue(locals.contains("a"));
-        Assert.assertTrue(locals.contains("b"));
-        Assert.assertTrue(locals.contains("__name__"));
+        assertTrue(locals.contains("a"));
+        assertTrue(locals.contains("b"));
+        assertTrue(locals.contains("__name__"));
     }
 
+    @Test
     public void testScope_lookup() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -343,6 +366,7 @@ public class ScriptEngineTest extends TestCase {
         assertEquals("4", pythonEngine.get("arepr"));
     }
 
+    @Test
     public void testIssue1681() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -356,6 +380,7 @@ public class ScriptEngineTest extends TestCase {
         assertEquals("a string", pythonEngine.get("result2"));
     }
 
+    @Test
     public void testIssue1698() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -364,6 +389,7 @@ public class ScriptEngineTest extends TestCase {
         pythonEngine.eval("warnings.warn('test')");
     }
 
+    @Test
     public void testSiteImportedByDefault() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");
@@ -371,6 +397,7 @@ public class ScriptEngineTest extends TestCase {
         pythonEngine.eval("'site' in sys.modules");
     }
 
+    @Test
     public void testSiteCanBeNotImported() throws ScriptException {
         try {
             Options.importSite = false;
@@ -384,6 +411,7 @@ public class ScriptEngineTest extends TestCase {
         }
     }
 
+    @Test
     public void testIssue2090() throws ScriptException {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine pythonEngine = manager.getEngineByName("python");

@@ -1,9 +1,9 @@
 package org.python.core;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Odd tests of the Python {@code str} implementation that are best done from Java. */
 public class PyStringTest {
@@ -17,10 +17,10 @@ public class PyStringTest {
     public void preventNonBytePyString() {
         try {
             // Quercus cerris (turkey oak) in Turkish. https://tr.wikipedia.org
-            PyString s = Py.newString("Saçlı meşe");
+            Py.newString("Saçlı meşe");
         } catch (IllegalArgumentException iae) {
             String m = iae.getMessage();
-            assertTrue("Quotes message", m.contains("Sa\\xe7l\\u0131 me\\u015fe"));
+            assertTrue(m.contains("Sa\\xe7l\\u0131 me\\u015fe"), "Quotes message");
             return;
         }
         fail("Expected exception not thrown");

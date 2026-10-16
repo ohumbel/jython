@@ -1,27 +1,25 @@
 package org.python.compiler;
 
-import static org.junit.Assert.assertArrayEquals;
-
-/**
- * Some JavaMaker smoke tests
- */
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.lang.reflect.Array;
 import java.util.Properties;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.core.PySystemState;
 import org.python.core.RegistryKey;
 import org.python.util.PythonInterpreter;
 
-
+/**
+ * Some JavaMaker smoke tests
+ */
 public class JavaMakerSmokeTest {
 
     public PythonInterpreter interp;
     public Class<?> proxyClass;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         Properties props = new Properties(System.getProperties());
         props.setProperty(RegistryKey.PYTHON_CACHEDIR_SKIP, "true");

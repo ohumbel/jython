@@ -1,11 +1,16 @@
 package org.python.util.install;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 import org.python.util.install.Installation.JavaVersionInfo;
 
-import junit.framework.TestCase;
+public class FrameInstallerTest  {
 
-public class FrameInstallerTest extends TestCase {
-
+    @Test
     public void testInitDefaultJava() {
         FrameInstaller.initDefaultJava();
         JavaVersionInfo vInfo = FrameInstaller.getJavaVersionInfo();
@@ -21,6 +26,7 @@ public class FrameInstallerTest extends TestCase {
         assertTrue(vendor.length() > 0);
     }
     
+    @Test
     public void testJavaVersionInfo() {
         String version = "1;2;3";
         String vendor = "jython [macrosystems]";
@@ -40,6 +46,7 @@ public class FrameInstallerTest extends TestCase {
         assertEquals(specificationVersion, returnedInfo.getSpecificationVersion());
     }
 
+    @Test
     public void testInstallationType() {
         InstallationType installationType = new InstallationType();
         installationType.addLibraryModules();
@@ -57,6 +64,7 @@ public class FrameInstallerTest extends TestCase {
         assertTrue(returnedType.installSources());
     }
 
+    @Test
     public void testStandalone() {
         InstallationType installationType = new InstallationType();
         installationType.setStandalone();
@@ -76,6 +84,7 @@ public class FrameInstallerTest extends TestCase {
         assertFalse(returnedType.installSources());
     }
     
+    @Test
     public void testSetGetJavaHomeHandler() {
         assertNotNull(FrameInstaller.getJavaHomeHandler());
         JavaHomeHandler handler1 = new JavaHomeHandler();

@@ -10,32 +10,26 @@
 
 package org.apache.commons.cli;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BuildTest extends TestCase
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class BuildTest 
 {
 
-    public static Test suite() { 
-        return new TestSuite(BuildTest.class); 
-    }
-
-    public BuildTest(String name)
-    {
-        super(name);
-    }
-
+    @BeforeEach
     public void setUp()
     {
-
     }
 
+    @AfterEach
     public void tearDown()
     {
-
     }
 
+    @Test
     public void testSimple()
     {
         Options opts = new Options();
@@ -49,6 +43,7 @@ public class BuildTest extends TestCase
                        "toggle -b");
     }
 
+    @Test
     public void testDuplicateSimple()
     {
         Options opts = new Options();
@@ -63,6 +58,7 @@ public class BuildTest extends TestCase
         assertEquals( "last one in wins", "toggle -a*", opts.getOption("a").getDescription() );
     }
 
+    @Test
     public void testLong()
     {
         Options opts = new Options();
@@ -79,6 +75,7 @@ public class BuildTest extends TestCase
 
     }
 
+    @Test
     public void testDuplicateLong()
     {
         Options opts = new Options();

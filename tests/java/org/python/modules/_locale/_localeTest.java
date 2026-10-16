@@ -3,10 +3,11 @@
 
 package org.python.modules._locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.python.core.RegistryKey.PYTHON_LOCALE_CONTROL;
 
 import java.nio.charset.Charset;
@@ -16,8 +17,8 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.core.Py;
 import org.python.core.PyCode;
 import org.python.core.PyDictionary;
@@ -36,7 +37,7 @@ public class _localeTest {
     private PySystemState systemState;
     private PythonInterpreter interp;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // Initialise a Jython interpreter
         systemState = Py.getSystemState();
@@ -102,16 +103,20 @@ public class _localeTest {
         assertNotNull(_localeModule);
     }
 
-    @Test(expected = PyException.class)
+    @Test
     public void moduleImportLegacy() {
-        jython2LegacyState();
-        importAndInit();
+        assertThrows(PyException.class, () -> {
+            jython2LegacyState();
+            importAndInit();
+        });
     }
 
-    @Test(expected = PyException.class)
+    @Test
     public void moduleImportDefault() {
-        defaultState();
-        importAndInit();
+        assertThrows(PyException.class, () -> {
+            defaultState();
+            importAndInit();
+        });
     }
 
     private static int javaMajorVersion() {
@@ -235,7 +240,7 @@ public class _localeTest {
                 "result2");
     }
 
-    @Test(expected = PyException.class)
+    @Test
     public void setLocaleInvalid() {
         settableInit();
         // @formatter:off
@@ -243,7 +248,9 @@ public class _localeTest {
             "from _locale import setlocale \n"
           + "result = setlocale(_locale.LC_ALL,'green_midget_cafe_nosuch') \n";
         // @formatter:on
-        interp.exec(script);
+        assertThrows(PyException.class, () -> {
+            interp.exec(script);
+        });
     }
 
     @Test
