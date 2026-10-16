@@ -1,13 +1,19 @@
 package org.python.util.install;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 
+import org.junit.jupiter.api.Test;
 import org.python.util.install.Installation.JavaVersionInfo;
 
-import junit.framework.TestCase;
+public class InstallationTest  {
 
-public class InstallationTest extends TestCase {
-
+    @Test
     public void testGetExternalJavaVersion() {
         JavaHomeHandler javaHomeHandler = new JavaHomeHandler();
         JavaVersionInfo versionInfo = Installation.getExternalJavaVersion(javaHomeHandler);
@@ -20,6 +26,7 @@ public class InstallationTest extends TestCase {
         assertNotSame("", versionInfo.getVendor());
     }
 
+    @Test
     public void testGetExternalJavaVersionWithError() {
         JavaHomeHandler javaHomeHandler = new JavaHomeHandler("non_existing/home");
         JavaVersionInfo versionInfo = Installation.getExternalJavaVersion(javaHomeHandler);
@@ -28,6 +35,7 @@ public class InstallationTest extends TestCase {
         assertTrue(reason.indexOf("invalid") >= 0);
     }
 
+    @Test
     public void testGetExternalJavaVersionNoBinDirectory() {
         File wrongHome = new File(System.getProperty("user.home"));
         JavaHomeHandler javaHomeHandler = new JavaHomeHandler(wrongHome.getAbsolutePath());
@@ -37,6 +45,7 @@ public class InstallationTest extends TestCase {
         assertTrue(reason.indexOf("invalid") >= 0);
     }
 
+    @Test
     public void testGetExternalJavaVersionNoJavaInBinDirectory() {
         File wrongHome = new File(System.getProperty("user.home"));
         File binDir = new File(wrongHome, "bin");
@@ -54,6 +63,7 @@ public class InstallationTest extends TestCase {
         }
     }
 
+    @Test
     public void testIsValidJavaVersion() {
         JavaVersionInfo javaVersionInfo = new JavaVersionInfo();
 
@@ -73,6 +83,7 @@ public class InstallationTest extends TestCase {
         assertTrue(Installation.isValidJava(javaVersionInfo));
     }
 
+    @Test
     public void testGetJavaSpecificationVersion() {
         String specificationVersion = "1.4.2";
         assertEquals(14, Installation.getJavaSpecificationVersion(specificationVersion));
@@ -82,6 +93,7 @@ public class InstallationTest extends TestCase {
         assertEquals(16, Installation.getJavaSpecificationVersion(specificationVersion));
     }
 
+    @Test
     public void testIsGNUJava() {
         assertFalse(Installation.isGNUJava());
         String originalVmName = System.getProperty(Installation.JAVA_VM_NAME);
@@ -95,6 +107,7 @@ public class InstallationTest extends TestCase {
         }
     }
     
+    @Test
     public void testGetDefaultJavaVersion() {
         JavaVersionInfo info = Installation.getDefaultJavaVersion();
         assertNotNull(info);

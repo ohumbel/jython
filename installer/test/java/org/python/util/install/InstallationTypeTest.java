@@ -1,16 +1,21 @@
 package org.python.util.install;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// test checkin
-public class InstallationTypeTest extends TestCase {
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+public class InstallationTypeTest  {
 
     private InstallationType _type;
 
+    @BeforeEach
     protected void setUp() {
         _type = new InstallationType();
     }
 
+    @Test
     public void testConstruction() {
         assertTrue(_type.isStandard());
         assertFalse(_type.isMinimum());
@@ -19,6 +24,7 @@ public class InstallationTypeTest extends TestCase {
         assertTrue(_type.isPredefined());
     }
 
+    @Test
     public void testStandard() {
         _type.setStandard();
         assertTrue(_type.isStandard());
@@ -30,6 +36,7 @@ public class InstallationTypeTest extends TestCase {
         assertTrue(_type.isPredefined());
     }
 
+    @Test
     public void testMinimum() {
         assertFalse(_type.isMinimum());
         _type.setMinimum();
@@ -42,6 +49,7 @@ public class InstallationTypeTest extends TestCase {
         assertTrue(_type.isPredefined());
     }
 
+    @Test
     public void testAll() {
         assertFalse(_type.isAll());
         _type.setAll();
@@ -54,6 +62,7 @@ public class InstallationTypeTest extends TestCase {
         assertTrue(_type.isPredefined());
     }
 
+    @Test
     public void testStandalone() {
         assertFalse(_type.isStandalone());
         _type.setStandalone();
@@ -70,6 +79,7 @@ public class InstallationTypeTest extends TestCase {
         assertFalse(_type.installSources());
     }
 
+    @Test
     public void testAddRemove() {
         _type.removeDocumentation();
         assertTrue(_type.installLibraryModules());

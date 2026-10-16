@@ -1,14 +1,19 @@
 package org.apache.commons.cli;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class HelpFormatterTest extends TestCase {
+public class HelpFormatterTest  {
 
     private Options _options;
 
+    @BeforeEach
     protected void setUp() {
         _options = new Options();
         Option aOption = new Option("a", "Aa", false, "option A");
@@ -22,6 +27,7 @@ public class HelpFormatterTest extends TestCase {
     /**
      * the setUp above used to print [-a | -b] [-a] [-b]
      */
+    @Test
     public void testOptionGroupDuplication() {
         String help = unifyNewLines(getFormattedHelp());
         String expectedHelp = unifyNewLines(new String("usage: syntax [-a | -b]\n-a,--Aa option A\n-b,--Bb option B\n"));
@@ -34,6 +40,7 @@ public class HelpFormatterTest extends TestCase {
      * Options following an option group used to be non blank separated: [-b | -a][-o] instead of
      * [-b | -a] [-o]
      */
+    @Test
     public void testOptionGroupSubsequentOptions() {
         _options.addOption(new Option("o", "Option O"));
         String help = getFormattedHelp();
