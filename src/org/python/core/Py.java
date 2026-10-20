@@ -28,7 +28,7 @@ import org.python.core.adapter.ClassicPyObjectAdapter;
 import org.python.core.adapter.ExtensiblePyObjectAdapter;
 import org.python.modules.posix.PosixModule;
 
-import jline.console.UserInterruptException;
+import org.jline.reader.UserInterruptException;
 import jnr.constants.Constant;
 import jnr.constants.platform.Errno;
 import jnr.posix.util.Platform;

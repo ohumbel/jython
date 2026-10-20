@@ -235,7 +235,7 @@ An example ant.properties file:
                 <file name="jnr-ffi-2.3.3.jar"/>
                 <file name="jnr-netdb-1.2.0.jar"/>
                 <file name="jnr-posix-3.2.4.jar"/>
-                <file name="jline-2.14.6.jar"/>
+                <file name="jline-4.4.7.jar"/>
                 <file name="netty-buffer-4.2.18.Final.jar"/>
                 <file name="netty-codec-base-4.2.18.Final.jar"/>
                 <file name="netty-common-4.2.18.Final.jar"/>
@@ -824,7 +824,9 @@ The text for an official release would continue like ...
                 <path refid="main.classpath" />
             </classpath>
         </taskdef>
-        <jarjar destfile="${dist.dir}/${jython.deploy.jar}"  update="${jar.update}">
+        <!-- produce the big shadowed jar using jarjar -->
+        <property name="initial.jarjared.jar" value="jarjared.jar"/>
+        <jarjar destfile="${dist.dir}/${initial.jarjared.jar}" update="${jar.update}">
             <zipfileset src="${dist.dir}/${jython.dev.jar}"/>
             <!-- pin to Antlr 3 until we upgrade parsing -->
             <zipfileset src="extlibs/antlr-runtime-3.5.3.jar"/>
@@ -895,8 +897,7 @@ The text for an official release would continue like ...
             <rule pattern="org.apache.xerces.**" result="org.python.apache.xerces.@1"/>
             <rule pattern="org.apache.wml.**" result="org.python.apache.wml.@1"/>
             <rule pattern="org.apache.html.**" result="org.python.apache.html.@1"/>
-            <zipfileset src="extlibs/jline-2.14.6.jar"/>
-            <rule pattern="jline.**" result="org.python.jline.@1"/>
+            <!-- leave jline out: jarjar cannot handle FFM classes - if we exclude them, the console is broken -->
             <manifest>
                 <attribute name="Main-Class" value="org.python.util.jython" />
                 <attribute name="Built-By" value="${user.name}" />
@@ -915,6 +916,17 @@ The text for an official release would continue like ...
                 </section>
             </manifest>
         </jarjar>
+        <!-- pack jline as is - see above -->
+        <jar destfile="${dist.dir}/${jython.deploy.jar}" update="${jar.update}">
+            <zipfileset src="${dist.dir}/${initial.jarjared.jar}"/>
+            <zipfileset src="extlibs/jline-4.4.7.jar" excludes="META-INF/MANIFEST.MF"/>
+        </jar>
+        <!-- delete the intermediate .jar file -->
+        <delete>
+            <filelist dir="${dist.dir}">
+                <file name="${initial.jarjared.jar}"/>
+            </filelist>
+        </delete>
     </target>
 
     <target name="jar-standalone" depends="jar-complete, copy-lib">
