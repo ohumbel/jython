@@ -235,7 +235,7 @@ An example ant.properties file:
                 <file name="jnr-ffi-2.3.3.jar"/>
                 <file name="jnr-netdb-1.2.0.jar"/>
                 <file name="jnr-posix-3.2.4.jar"/>
-                <file name="jline-4.4.7.jar"/>
+                <file name="jline-4.4.8.jar"/>
                 <file name="netty-buffer-4.2.19.Final.jar"/>
                 <file name="netty-codec-base-4.2.19.Final.jar"/>
                 <file name="netty-common-4.2.19.Final.jar"/>
@@ -919,7 +919,7 @@ The text for an official release would continue like ...
         <!-- pack jline as is - see above -->
         <jar destfile="${dist.dir}/${jython.deploy.jar}" update="${jar.update}">
             <zipfileset src="${dist.dir}/${initial.jarjared.jar}"/>
-            <zipfileset src="extlibs/jline-4.4.7.jar" excludes="META-INF/MANIFEST.MF"/>
+            <zipfileset src="extlibs/jline-4.4.8.jar" excludes="META-INF/MANIFEST.MF"/>
         </jar>
         <!-- delete the intermediate .jar file -->
         <delete>
