@@ -3,9 +3,9 @@
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/extlibs/ant-1.10.18.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/antlr-complete-3.5.3.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/asm-9.10.1.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/asm-commons-9.10.1.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/asm-util-9.10.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/asm-9.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/asm-commons-9.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/asm-util-9.11.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/bcpkix-jdk18on-1.86.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/bcprov-jdk18on-1.86.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/commons-compress-1.28.0.jar!/" />
@@ -43,13 +43,13 @@
       <root url="jar://$PROJECT_DIR$/extlibs/jnr-posix-3.2.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/junit-4.13.2.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/mysql-connector-j-9.7.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/netty-buffer-4.2.18.Final.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/netty-codec-base-4.2.18.Final.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/netty-common-4.2.18.Final.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/netty-handler-4.2.18.Final.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/netty-resolver-4.2.18.Final.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/netty-transport-4.2.18.Final.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/netty-transport-native-unix-common-4.2.18.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/netty-buffer-4.2.19.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/netty-codec-base-4.2.19.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/netty-common-4.2.19.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/netty-handler-4.2.19.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/netty-resolver-4.2.19.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/netty-transport-4.2.19.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/netty-transport-native-unix-common-4.2.19.Final.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/postgresql-42.7.13.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/profile.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jakarta.servlet-api-6.1.0.jar!/" />
