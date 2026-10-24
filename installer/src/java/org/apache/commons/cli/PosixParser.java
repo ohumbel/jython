@@ -75,6 +75,7 @@ import java.util.Iterator;
 public class PosixParser extends Parser {
 
     /** holder for flattened tokens */
+    @SuppressWarnings("rawtypes")
     private ArrayList tokens = new ArrayList();
     /** specifies if bursting should continue */
     private boolean eatTheRest;
@@ -132,11 +133,13 @@ public class PosixParser extends Parser {
      * when an non option is found.
      * @return The flattened <code>arguments</code> String array.
      */
+    @SuppressWarnings("unchecked")
     protected String[] flatten(Options options, String[] arguments, boolean stopAtNonOption) {
         init();
         this.options = options;
 
         // an iterator for the command line tokens
+        @SuppressWarnings("rawtypes")
         Iterator iter = Arrays.asList(arguments).iterator();
         String token = null;
 
@@ -189,7 +192,8 @@ public class PosixParser extends Parser {
      *
      * @param iter An iterator over the remaining tokens
      */
-    private void gobble( Iterator iter ) {
+    @SuppressWarnings("unchecked")
+    private void gobble(@SuppressWarnings("rawtypes") Iterator iter) {
         if( eatTheRest ) {
             while( iter.hasNext() ) {
                 tokens.add( iter.next() );
@@ -210,6 +214,7 @@ public class PosixParser extends Parser {
      *
      * @param value The current token
      */
+    @SuppressWarnings("unchecked")
     private void process( String value ) {
         if( currentOption != null && currentOption.hasArg() ) {
             if( currentOption.hasArg() ) {
@@ -233,6 +238,7 @@ public class PosixParser extends Parser {
      *
      * @param hyphen The hyphen token
      */
+    @SuppressWarnings("unchecked")
     private void processSingleHyphen( String hyphen ) {
         tokens.add( hyphen );
     }
@@ -249,6 +255,7 @@ public class PosixParser extends Parser {
      * @param stopAtNonOption Specifies whether flattening should halt
      * at the first non option.
      */
+    @SuppressWarnings("unchecked")
     private void processOptionToken( String token, boolean stopAtNonOption ) {
         if( this.options.hasOption( token ) ) {
             currentOption = this.options.getOption( token );
@@ -267,6 +274,7 @@ public class PosixParser extends Parser {
      * @param longToken
      * @param stopAtNonOption
      */
+    @SuppressWarnings("unchecked")
     private void processLongOptionToken(String longToken, boolean stopAtNonOption ) {
         String token;
         String value = null;
@@ -316,6 +324,7 @@ public class PosixParser extends Parser {
      * </ul>
      * </p>
      */
+    @SuppressWarnings("unchecked")
     protected void burstToken( String token, boolean stopAtNonOption ) {
         int tokenLength = token.length();
 

@@ -1,8 +1,8 @@
 package org.python.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -248,7 +248,7 @@ public class ByteBufferTestSupport {
      * @param actual result to test
      */
     static void assertBytesEqual(String message, byte[] expected, byte[] actual) {
-        assertEquals(message + " (array size)", expected.length, actual.length);
+        assertEquals(expected.length, actual.length, message + " (array size)");
         assertBytesEqual(message, expected, 0, expected.length, actual, 0, 1);
     }
 
@@ -374,7 +374,7 @@ public class ByteBufferTestSupport {
      */
     protected static void assertIntsEqual(String message, int[] expected, int[] actual) {
         int n = expected.length;
-        assertEquals(message, n, actual.length);
+        assertEquals(n, actual.length, message);
         // Should be safe to compare the values
         int j;
         for (j = 0; j < n; j++) {
@@ -418,7 +418,7 @@ public class ByteBufferTestSupport {
      */
     static void checkReadCorrect(byte[] a, byte[] b, byte[] c, int t, int n, int u, int s, int p) {
         // Check the b is the same as a
-        assertEquals("Storage size differs from reference", a.length, b.length);
+        assertEquals(a.length, b.length, "Storage size differs from reference");
         for (int k = 0; k < b.length; k++) {
             if (a[k] != b[k]) {
                 fail("Stored data changed during read");
@@ -458,7 +458,7 @@ public class ByteBufferTestSupport {
      * @param p the distance in <code>b</code> between the start bytes of successive items
      */
     static void checkWriteCorrect(byte[] a, byte[] b, byte[] c, int t, int n, int u, int s, int p) {
-        assertEquals("Stored size has changed", a.length, b.length);
+        assertEquals(a.length, b.length, "Stored size has changed");
         checkEqualInSlice(b, c, t, n, u, s, p);
         checkUnchangedElsewhere(a, b, n, u, s, p);
     }
@@ -523,8 +523,8 @@ public class ByteBufferTestSupport {
      */
     static void checkUnchangedElsewhere(byte[] a, byte[] b, int n, int u, int s, int p) {
         // Check correct use of the test
-        assertEquals("Stored size has changed", a.length, b.length);
-        assertFalse("Unit size exceeds spacing", u > p && u + p > 0);
+        assertEquals(a.length, b.length, "Stored size has changed");
+        assertFalse(u > p && u + p > 0, "Unit size exceeds spacing");
         String bufferChangedAt = "buffer changed at %d (outside slice)";
 
         int absp, low, high;
@@ -577,9 +577,9 @@ public class ByteBufferTestSupport {
     /** Common code for <code>checkReadCorrect</code> and <code>checkWriteCorrect</code>. */
     private static void checkSliceArgs(byte[] b, byte[] c, int t, int n, int u, int s, int p) {
         // Check correct use of the test
-        assertFalse("Slice data less than n units", c.length < t + n * u);
-        assertFalse("Slice data exceeds destination", n * u > b.length);
-        assertFalse("Unit size exceeds spacing", u > p && u + p > 0);
+        assertFalse(c.length < t + n * u, "Slice data less than n units");
+        assertFalse(n * u > b.length, "Slice data exceeds destination");
+        assertFalse(u > p && u + p > 0, "Unit size exceeds spacing");
     }
 
 }

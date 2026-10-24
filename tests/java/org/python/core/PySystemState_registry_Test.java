@@ -1,5 +1,9 @@
 package org.python.core;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -9,12 +13,14 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Properties;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for property handling (pre, post and registry files)
  */
-public class PySystemState_registry_Test extends TestCase {
+class PySystemState_registry_Test  {
 
     /** The name of the installed registry file */
     private static final String REGISTRY = "registry";
@@ -62,14 +68,14 @@ public class PySystemState_registry_Test extends TestCase {
 
     private File _tmpDir;
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
         findRoot();
         storeOriginals();
         uninitialize();
     }
 
-    @Override
+    @AfterEach
     protected void tearDown() throws Exception {
         restoreOriginals();
         cleanup();
@@ -80,7 +86,8 @@ public class PySystemState_registry_Test extends TestCase {
      * 
      * @throws Exception
      */
-    public void testInitialize_PrePostProperties() throws Exception {
+    @Test
+    void testInitialize_PrePostProperties() throws Exception {
         Properties preProps = createPreProperties();
         preProps.setProperty(FIRST_PROP, PRE);
         preProps.setProperty(SECOND_PROP, PRE);
@@ -100,7 +107,8 @@ public class PySystemState_registry_Test extends TestCase {
      * 
      * @throws Exception
      */
-    public void testInitialize_Registry_User() throws Exception {
+    @Test
+    void testInitialize_Registry_User() throws Exception {
         // prepare both registry files
         String installedContent = FIRST_PROP.concat("=").concat(INSTALLED);
         appendToInstalledRegistry(installedContent);
@@ -120,7 +128,8 @@ public class PySystemState_registry_Test extends TestCase {
      * 
      * @throws Exception
      */
-    public void testInitialize_Pre_Registries() throws Exception {
+    @Test
+    void testInitialize_Pre_Registries() throws Exception {
         // prepare both registry files
         String contentToAppend = FIRST_PROP.concat("=").concat(INSTALLED);
         appendToInstalledRegistry(contentToAppend);
@@ -142,7 +151,8 @@ public class PySystemState_registry_Test extends TestCase {
      * 
      * @throws Exception
      */
-    public void testInitialize_Post_Registries() throws Exception {
+    @Test
+    void testInitialize_Post_Registries() throws Exception {
         // prepare both registry files
         String contentToAppend = FIRST_PROP.concat("=").concat(INSTALLED);
         appendToInstalledRegistry(contentToAppend);

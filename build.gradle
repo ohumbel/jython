@@ -164,7 +164,9 @@ dependencies {
   implementation(libs.netty.transport)
   implementation(libs.netty.transport.native.unix.common)
 
-  testImplementation(libs.junit)
+  testImplementation(libs.junit.jupiter)
+  testImplementation(libs.junit.platform.launcher)
+  testImplementation(libs.antlr.complete)
 }
 
 
@@ -181,9 +183,14 @@ sourceSets {
 
   test {  // Non-standard locations must be specified explicitly
     java {
-      srcDirs = ['tests/java']
+      // add installer sources here, because we only want to compile them and run the tests
+      srcDirs = ['tests/java', 'installer/src/java', 'installer/test/java']
       // Reference to proprietary libraries not supplied
       exclude 'com/ziclix/python/sql/**'
+    }
+    resources {
+      srcDirs = ['installer/src/java']
+      exclude '**/*.java'
     }
   }
 }
@@ -785,6 +792,8 @@ compileTestJava {
 }
 
 test {
+
+  useJUnitPlatform()
 
   dependsOn copyLib
 

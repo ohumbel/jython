@@ -2,10 +2,11 @@
 // Licensed to the PSF under a Contributor Agreement
 package org.python.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.python.util.PythonInterpreter;
 
 /**
@@ -41,7 +42,7 @@ import org.python.util.PythonInterpreter;
  * The initial version of this unit test was created in response to
  * <a href="https://bugs.jython.org/issue2834">issue 2834</a>.
  */
-public class ConcurrentTypeTest {
+class ConcurrentTypeTest {
 
     private static int RUNNERS = 100;
 
@@ -84,7 +85,7 @@ public class ConcurrentTypeTest {
      * {@code PySystemState}.
      */
     @Test
-    public void testSharedState() {
+    void testSharedState() {
 
         // Make all the runners in advance.
         List<SharedStateRunner> runners = new ArrayList<>(RUNNERS);
@@ -98,7 +99,7 @@ public class ConcurrentTypeTest {
         // Check status of every thread
         for (SharedStateRunner r : runners) {
             PyObject e = r.globals.__finditem__("e");
-            assertEquals("Runner " + r.instance, null, e);
+            assertNull(e, "Runner " + r.instance);
         }
     }
 
@@ -143,7 +144,7 @@ public class ConcurrentTypeTest {
      *
      */
     @Test
-    public void testSeparateState() {
+    void testSeparateState() {
 
         // Make all the runners in advance.
         List<SeparateStateRunner> runners = new ArrayList<>(RUNNERS);
@@ -157,7 +158,7 @@ public class ConcurrentTypeTest {
         // Check status of every thread
         for (SeparateStateRunner r : runners) {
             PyObject e = r.globals.__finditem__("e");
-            assertEquals("Runner " + r.instance, null, e);
+            assertNull(e, "Runner " + r.instance);
         }
     }
 
@@ -187,7 +188,7 @@ public class ConcurrentTypeTest {
      * when the member {@code Thread.sleep} is not found.
      */
     @Test
-    public void testSeparateState2() {
+    void testSeparateState2() {
 
         // Make all the runners in advance.
         List<SeparateStateRunner> runners = new ArrayList<>(RUNNERS);
@@ -201,7 +202,7 @@ public class ConcurrentTypeTest {
         // Check status of every thread
         for (SeparateStateRunner r : runners) {
             PyObject e = r.globals.__finditem__("e");
-            assertEquals("Runner " + r.instance, null, e);
+            assertNull(e, "Runner " + r.instance);
         }
     }
 
@@ -224,7 +225,7 @@ public class ConcurrentTypeTest {
      * {@code ClassLoader}. In this variant we import * from Foo, and test the static members.
      */
     @Test
-    public void testSeparateLoader() {
+    void testSeparateLoader() {
 
         // Compile the Java source and cache it in this file manager: */
         ClassCacheFileManager fileManager = getClassCacheFileManager(loadedJava, "Foo");
@@ -241,7 +242,7 @@ public class ConcurrentTypeTest {
         // Check result of every thread
         for (SeparateLoaderRunner r : runners) {
             PyObject e = r.globals.__finditem__("e");
-            assertEquals("Runner " + r.instance, null, e);
+            assertNull(e, "Runner " + r.instance);
             PyObject staticConstant = r.globals.__finditem__("staticConstant");
             assertNotNull(staticConstant);
             assertEquals(staticConstant.asInt(), 42);
@@ -287,7 +288,7 @@ public class ConcurrentTypeTest {
      * members.
      */
     @Test
-    public void testSeparateLoader2() {
+    void testSeparateLoader2() {
 
         // Compile the Java source and cache it in this file manager: */
         ClassCacheFileManager fileManager = getClassCacheFileManager(loadedJava, "Foo");
@@ -307,7 +308,7 @@ public class ConcurrentTypeTest {
 
         for (SeparateLoaderRunner r : runners) {
             PyObject e = r.globals.__finditem__("e");
-            assertEquals("Runner " + r.instance, null, e);
+            assertNull(e, "Runner " + r.instance);
             PyObject m = r.globals.__finditem__("m");
             assertEquals(m.toString(), "forty-two");
             PyObject x = r.globals.__finditem__("x");
@@ -458,7 +459,7 @@ public class ConcurrentTypeTest {
         // Create a task (future) to perform the compilation
         CompilationTask task =
                 COMPILER.getTask(null, fileManager, null, null, null, compilationUnits);
-        assertTrue("Compilation of Java class failed", task.call());
+        assertTrue(task.call(), "Compilation of Java class failed");
 
         return fileManager;
     }
@@ -482,6 +483,6 @@ public class ConcurrentTypeTest {
                 running |= t.isAlive();
             }
         }
-        assertFalse("runners did not finish", running);
+        assertFalse(running, "runners did not finish");
     }
 }

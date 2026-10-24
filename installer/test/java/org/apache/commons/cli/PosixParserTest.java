@@ -1,8 +1,11 @@
 package org.apache.commons.cli;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PosixParserTest extends TestCase {
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class PosixParserTest  {
 
     private static final String TEST_SHORT = "t";
     private static final String TEST_LONG = "test";
@@ -16,7 +19,8 @@ public class PosixParserTest extends TestCase {
     private Options _options;
     private Parser _parser;
 
-    protected void setUp() {
+    @BeforeEach
+    void setUp() {
         _parser = new PosixParser();
 
         _options = new Options();
@@ -27,7 +31,8 @@ public class PosixParserTest extends TestCase {
     /**
      * test that an unknown single option and a double hyphen option (with or without argument) are treated the same
      */
-    public void testFlattenStop() {
+    @Test
+    void testFlattenStop() {
         boolean stopAtNonOption = true; // means unallowed tokens should not be added
         String[] args;
         String[] expectedFlattened;
@@ -35,40 +40,41 @@ public class PosixParserTest extends TestCase {
         // unknown single dash option
         args = new String[] { "-u" };
         expectedFlattened = new String[0];
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
         args = new String[] { "-u", TEST_SHORT_OPTION };
         expectedFlattened = new String[] { TEST_SHORT_OPTION };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
 
         // unknown double dash option
         args = new String[] { "--unknown" };
         expectedFlattened = new String[0];
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
         args = new String[] { "--unknown", TEST_LONG_OPTION };
         expectedFlattened = new String[] { TEST_LONG_OPTION };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
 
         // unknown double dash option with argument after =
         args = new String[] { "--unknown=" + ARGUMENT };
         expectedFlattened = new String[0];
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
         args = new String[] { "--unknown="+ARGUMENT, TEST_LONG_OPTION };
         expectedFlattened = new String[] { TEST_LONG_OPTION };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
 
         // unknown double dash option with argument after ' '
         args = new String[] { "--unknown", ARGUMENT };
         expectedFlattened = new String[] { ARGUMENT };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
         args = new String[] { "--unknown", ARGUMENT, TEST_LONG_OPTION };
         expectedFlattened = new String[] { ARGUMENT, TEST_LONG_OPTION };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
     }
 
     /**
      * test that an unknown single option and a double hyphen option (with or without argument) are treated the same
      */
-    public void testFlattenNoStop() {
+    @Test
+    void testFlattenNoStop() {
         boolean stopAtNonOption = false; // means every token should be added
         String[] args;
         String[] expectedFlattened;
@@ -76,40 +82,41 @@ public class PosixParserTest extends TestCase {
         // unknown single dash option
         args = new String[] { "-u" };
         expectedFlattened = new String[] { "-u" };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
         args = new String[] { "-u", TEST_SHORT_OPTION };
         expectedFlattened = new String[] { "-u", TEST_SHORT_OPTION };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
 
         // unknown double dash option
         args = new String[] { "--unknown" };
         expectedFlattened = new String[] { "--unknown" };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
         args = new String[] { "--unknown", TEST_LONG_OPTION };
         expectedFlattened = new String[] { "--unknown", TEST_LONG_OPTION };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
 
         // unknown double dash option with argument after =
         args = new String[] { "--unknown=" + ARGUMENT };
         expectedFlattened = new String[] { "--unknown", ARGUMENT };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
         args = new String[] { "--unknown="+ ARGUMENT, TEST_LONG_OPTION };
         expectedFlattened = new String[] { "--unknown", ARGUMENT, TEST_LONG_OPTION };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
 
         // unknown double dash option with argument after ' '
         args = new String[] { "--unknown", ARGUMENT };
         expectedFlattened = new String[] { "--unknown", ARGUMENT };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
         args = new String[] { "--unknown", ARGUMENT, TEST_LONG_OPTION };
         expectedFlattened = new String[] { "--unknown", ARGUMENT, TEST_LONG_OPTION };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
     }
 
     /**
      * test that a misspelled long option (-test instead of --test) is not interpreted as -t est
      */
-    public void testMisspelledLongOption() {
+    @Test
+    void testMisspelledLongOption() {
         boolean stopAtNonOption = false; // means every token should be added
         String[] args;
         String[] expectedFlattened;
@@ -118,7 +125,7 @@ public class PosixParserTest extends TestCase {
         String singleDashLongOption = "-" + TEST_LONG; 
         args = new String[] { singleDashLongOption };
         expectedFlattened = new String[] { singleDashLongOption };
-        assertEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
+        assertArraysEquals(expectedFlattened, _parser.flatten(_options, args, stopAtNonOption));
     }
     
     //
@@ -128,10 +135,10 @@ public class PosixParserTest extends TestCase {
     /**
      * Assert that the content of the specified object arrays is equal
      */
-    private void assertEquals(Object[] correct, Object[] tested) {
-        assertEquals("different array lengths:", correct.length, tested.length);
+    private void assertArraysEquals(Object[] correct, Object[] tested) {
+        assertEquals(correct.length, tested.length, "different array lengths");
         for (int i = 0; i < correct.length; i++) {
-            assertEquals("position " + i + " of array differs", correct[i], tested[i]);
+            assertEquals(correct[i], tested[i], "position " + i + " of array differs");
         }
     }
 

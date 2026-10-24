@@ -128,6 +128,7 @@ public class Option implements Cloneable {
     private Object type;
 
     /** the list of argument values **/
+    @SuppressWarnings("rawtypes")
     private ArrayList values = new ArrayList();
     
     /** option char (only valid for single character options) */
@@ -482,6 +483,7 @@ public class Option implements Cloneable {
      * 
      * @param value is a/the value of this Option
      */
+    @SuppressWarnings("unchecked")
     public boolean addValue( String value ) {
 
         switch( numberOfArgs ) {
@@ -547,6 +549,7 @@ public class Option implements Cloneable {
      * @return the values of this Option as a String array 
      * or null if there are no values
      */
+    @SuppressWarnings("unchecked")
     public String[] getValues() {
         return this.values.size()==0 ? null : (String[])this.values.toArray(new String[]{});
     }
@@ -555,6 +558,7 @@ public class Option implements Cloneable {
      * @return the values of this Option as a List
      * or null if there are no values
      */
+    @SuppressWarnings("rawtypes")
     public java.util.List getValuesList() {
         return this.values;
     }

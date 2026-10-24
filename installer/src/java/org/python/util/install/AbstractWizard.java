@@ -15,7 +15,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -26,7 +25,11 @@ import javax.swing.JSeparator;
 
 public abstract class AbstractWizard extends JDialog implements ValidationListener {
 
+    private static final long serialVersionUID = -2515706949567429383L;
+
     private class WizardGlassPane extends JPanel implements MouseListener, KeyListener {
+        private static final long serialVersionUID = -4438674702080718059L;
+
         WizardGlassPane() {
             super();
             setOpaque(false);
@@ -69,10 +72,10 @@ public abstract class AbstractWizard extends JDialog implements ValidationListen
     private WizardGlassPane _glassPane;
     private AbstractWizardHeader _header;
     private boolean _headerVisible = false;
-    private ArrayList _listeners;
+    private ArrayList<WizardListener> _listeners;
     private Action _nextAction;
     private JButton _nextButton;
-    private ArrayList _pages;
+    private ArrayList<AbstractWizardPage> _pages;
     private Action _previousAction;
     private JButton _previousButton;
 
@@ -99,7 +102,7 @@ public abstract class AbstractWizard extends JDialog implements ValidationListen
 
     public final void addPage(AbstractWizardPage page) {
         if (_pages == null)
-            _pages = new ArrayList();
+            _pages = new ArrayList<>();
         if (page == null || _pages.contains(page))
             return;
         _pages.add(page);
@@ -112,7 +115,7 @@ public abstract class AbstractWizard extends JDialog implements ValidationListen
         if (listener == null)
             return;
         if (_listeners == null)
-            _listeners = new ArrayList(5);
+            _listeners = new ArrayList<>(5);
         if (_listeners.contains(listener))
             return;
         _listeners.add(listener);
@@ -132,8 +135,7 @@ public abstract class AbstractWizard extends JDialog implements ValidationListen
         if (_listeners == null || _listeners.isEmpty())
             return;
         WizardEvent event = new WizardEvent(this);
-        for (Iterator it = _listeners.iterator(); it.hasNext();) {
-            WizardListener listener = (WizardListener) it.next();
+        for (WizardListener listener : _listeners) {
             listener.wizardCancelled(event);
         }
     }
@@ -142,8 +144,7 @@ public abstract class AbstractWizard extends JDialog implements ValidationListen
         if (_listeners == null || _listeners.isEmpty())
             return;
         WizardEvent event = new WizardEvent(this);
-        for (Iterator it = _listeners.iterator(); it.hasNext();) {
-            WizardListener listener = (WizardListener) it.next();
+        for (WizardListener listener : _listeners) {
             listener.wizardFinished(event);
         }
     }
@@ -152,8 +153,7 @@ public abstract class AbstractWizard extends JDialog implements ValidationListen
         if (_listeners == null || _listeners.isEmpty())
             return;
         WizardEvent event = new WizardEvent(this);
-        for (Iterator it = _listeners.iterator(); it.hasNext();) {
-            WizardListener listener = (WizardListener) it.next();
+        for (WizardListener listener : _listeners) {
             listener.wizardNext(event);
         }
     }
@@ -162,8 +162,7 @@ public abstract class AbstractWizard extends JDialog implements ValidationListen
         if (_listeners == null || _listeners.isEmpty())
             return;
         WizardEvent event = new WizardEvent(this);
-        for (Iterator it = _listeners.iterator(); it.hasNext();) {
-            WizardListener listener = (WizardListener) it.next();
+        for (WizardListener listener : _listeners) {
             listener.wizardPrevious(event);
         }
     }
@@ -172,8 +171,7 @@ public abstract class AbstractWizard extends JDialog implements ValidationListen
         if (_listeners == null || _listeners.isEmpty())
             return;
         WizardEvent event = new WizardEvent(this);
-        for (Iterator it = _listeners.iterator(); it.hasNext();) {
-            WizardListener listener = (WizardListener) it.next();
+        for (WizardListener listener : _listeners) {
             listener.wizardStarted(event);
         }
     }
@@ -234,7 +232,7 @@ public abstract class AbstractWizard extends JDialog implements ValidationListen
     }
 
     private void initComponents() {
-        _pages = new ArrayList();
+        _pages = new ArrayList<>();
         getContentPane().setLayout(new BorderLayout(0, 0));
         _header = new WizardHeader();
         getContentPane().add(_header, BorderLayout.NORTH);

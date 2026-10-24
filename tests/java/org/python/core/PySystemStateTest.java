@@ -1,5 +1,9 @@
 package org.python.core;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -12,12 +16,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
 import org.python.util.PythonInterpreter;
 
 import jnr.posix.util.Platform;
-import junit.framework.TestCase;
 
-public class PySystemStateTest extends TestCase {
+class PySystemStateTest {
 
     /**
      * A class to hold examples of URLs (just the path and class noise) and the reference answer.
@@ -96,7 +100,8 @@ public class PySystemStateTest extends TestCase {
      * that may (if the protocol intends it) represent characters in some encoding. In the case of a
      * JAR-file URL, these octets encode the file path elements in UTF-8.
      */
-    public void testGetJarFileNameFromURL() throws Exception {
+    @Test
+    void testGetJarFileNameFromURL() throws Exception {
         // null
         assertNull(Py.getJarFileNameFromURL(null));
         // Examples from the table
@@ -113,7 +118,8 @@ public class PySystemStateTest extends TestCase {
      * a counterpart in the local file system. However, the implementation and test are based on
      * behaviour observed when this is the case.
      */
-    public void testGetJarFileNameFromURL_jboss() throws Exception {
+    @Test
+    void testGetJarFileNameFromURL_jboss() throws Exception {
         final String protocol = "vfszip";
         final URLStreamHandler handler = new TestJBossURLStreamHandler();
         // Test with any class file in org.python.core
@@ -179,7 +185,8 @@ public class PySystemStateTest extends TestCase {
      * as reported by a JavaWebStart application. As the path points to a HTTP resource, there is no
      * way to find the jar in the local file system: in this case, the method must return null.
      */
-    public void testGetJarFileNameFromURL_javaWebStart() throws MalformedURLException, URISyntaxException {
+    @Test
+    void testGetJarFileNameFromURL_javaWebStart() throws MalformedURLException, URISyntaxException {
         // Examples from the table
         for (JarExample ex : jarExamples) {
             // Something like jar:file:/some_dir/some.jar!/a/package/with/A.class
@@ -188,14 +195,16 @@ public class PySystemStateTest extends TestCase {
         }
     }
 
-    public void testImport() throws Exception {
+    @Test
+    void testImport() throws Exception {
         Options.importSite = false;
         try {
             PySystemState pySystemState = new PySystemState();
             PySystemState.initialize();
-            PythonInterpreter interpreter = new PythonInterpreter(null, pySystemState);
-            interpreter.exec("import os");
-            assertTrue(interpreter.getSystemState().modules.__contains__(new PyString("os")));
+            try (PythonInterpreter interpreter = new PythonInterpreter(null, pySystemState)) {
+                interpreter.exec("import os");
+                assertTrue(interpreter.getSystemState().modules.__contains__(new PyString("os")));
+            }
         } finally {
             Options.importSite = true;
         }

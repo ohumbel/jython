@@ -87,18 +87,23 @@ import java.util.Map;
 public class Options {
 
     /** a map of the options with the character key */
+    @SuppressWarnings("rawtypes")
     private Map  shortOpts    = new HashMap();
 
     /** a map of the options with the long key */
+    @SuppressWarnings("rawtypes")
     private Map  longOpts     = new HashMap();
 
     /** a list of the required options */
+    @SuppressWarnings("rawtypes")
     private List requiredOpts = new ArrayList();
     
     /** a map of the option groups */
+    @SuppressWarnings("rawtypes")
     private Map optionGroups  = new HashMap();
     
     /** a list of all options, in sequence of addition, only in use when isSortAsAdded() */
+    @SuppressWarnings("rawtypes")
     private List _addedOpts = new ArrayList();
 
     /** flag for the sort behaviour */
@@ -125,7 +130,9 @@ public class Options {
      * @param group the OptionGroup that is to be added
      * @return the resulting Options instance
      */
+    @SuppressWarnings("unchecked")
     public Options addOptionGroup( OptionGroup group ) {
+        @SuppressWarnings("rawtypes")
         Iterator options = group.getOptions().iterator();
 
         if( group.isRequired() ) {
@@ -179,6 +186,7 @@ public class Options {
      * @param opt the option that is to be added 
      * @return the resulting Options instance
      */
+    @SuppressWarnings("unchecked")
     public Options addOption(Option opt)  {
         String shortOpt = "-" + opt.getOpt();
         
@@ -205,6 +213,7 @@ public class Options {
      *
      * @return read-only Collection of {@link Option} objects in this descriptor
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Collection getOptions() {
         if (isSortAsAdded()) {
             return _addedOpts;
@@ -236,6 +245,7 @@ public class Options {
      *
      * @return the List of Options
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     List helpOptions() {
         if (isSortAsAdded()) {
             return _addedOpts;
@@ -249,6 +259,7 @@ public class Options {
      *
      * @return Collection of required options
      */
+    @SuppressWarnings("rawtypes")
     public List getRequiredOptions() {
         return requiredOpts;
     }

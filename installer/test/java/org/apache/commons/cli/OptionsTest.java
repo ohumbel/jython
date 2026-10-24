@@ -1,22 +1,27 @@
 package org.apache.commons.cli;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Collection;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
-public class OptionsTest extends TestCase {
+class OptionsTest  {
 
     private Options _options;
 
-    public void testSortAsAdded() {
+    @Test
+    void testSortAsAdded() {
         _options = new Options();
         _options.setSortAsAdded(true);
         _options.addOption("f", "first", false, "first");
         _options.addOption("s", "second", false, "second");
         _options.addOption("t", "third", false, "third");
-        Collection optionCollection = _options.getOptions();
-        Iterator optionIterator = optionCollection.iterator();
+        Collection<?> optionCollection = _options.getOptions();
+        Iterator<?> optionIterator = optionCollection.iterator();
         assertTrue(optionIterator.hasNext());
         assertEquals("first", ((Option) optionIterator.next()).getLongOpt());
         assertTrue(optionIterator.hasNext());

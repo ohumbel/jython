@@ -91,7 +91,7 @@ public class FrameInstaller {
     }
 
     protected static Locale getLanguage() {
-        return new Locale(getProperty(TextKeys.LANGUAGE_PROPERTY));
+        return Locale.of(getProperty(TextKeys.LANGUAGE_PROPERTY));
     }
 
     protected static InstallationType getInstallationType() {

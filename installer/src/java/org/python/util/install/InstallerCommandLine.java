@@ -175,7 +175,7 @@ public class InstallerCommandLine {
             System.err.println(pe.getMessage());
             return false;
         }
-        List unrecognized = _commandLine.getArgList();
+        List<?> unrecognized = _commandLine.getArgList();
         if (unrecognized.size() > 0) {
             System.err.println("unrecognized argument(s): " + unrecognized);
             return false;

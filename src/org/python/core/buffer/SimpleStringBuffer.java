@@ -55,8 +55,6 @@ public class SimpleStringBuffer extends SimpleBuffer {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * This method uses {@link String#charAt(int)} rather than create an actual byte buffer.
      */
     @Override

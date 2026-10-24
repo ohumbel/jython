@@ -1,7 +1,12 @@
 package org.python.expose.generate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.IOException;
 
+import org.junit.jupiter.api.Test;
 import org.python.core.Py;
 import org.python.core.PyNewWrapper;
 import org.python.core.PyObject;
@@ -9,11 +14,12 @@ import org.python.core.PyType;
 import org.python.expose.ExposedMethod;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
-import org.python.expose.TypeBuilder;
+import org.python.expose.TypeBuilder ;
 
-public class TypeExposerTest extends InterpTestCase {
+class TypeExposerTest extends InterpTestCase {
 
-    public void testMakeBuilder() throws Exception {
+    @Test
+    void testMakeBuilder() throws Exception {
         ExposedTypeProcessor etp = new ExposedTypeProcessor(getClass().getClassLoader()
                 .getResourceAsStream("org/python/expose/generate/SimpleExposed.class"));
         TypeBuilder t = etp.getTypeExposer().makeBuilder();
@@ -31,7 +37,8 @@ public class TypeExposerTest extends InterpTestCase {
         dict.__finditem__("tostring").__get__(new SimpleExposed(), type);
     }
 
-    public void testGoodNew() throws IOException {
+    @Test
+    void testGoodNew() throws IOException {
         ExposedTypeProcessor etp = new ExposedTypeProcessor(getClass().getClassLoader()
                 .getResourceAsStream("org/python/expose/generate/TypeExposerTest$SimplestNew.class"));
         TypeBuilder te = etp.getTypeExposer().makeBuilder();
@@ -41,7 +48,8 @@ public class TypeExposerTest extends InterpTestCase {
         assertEquals(Py.One, new_.new_impl(false, null, null, null));
     }
 
-    public void testCatchingDupes() throws IOException {
+    @Test
+    void testCatchingDupes() throws IOException {
         try {
             new ExposedTypeProcessor(getClass().getClassLoader()
                     .getResourceAsStream("org/python/expose/generate/TypeExposerTest$DupeMethodNames.class"));

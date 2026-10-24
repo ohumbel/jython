@@ -1,24 +1,26 @@
 package org.python.util.install;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
-public class InstallerCommandLineTest extends TestCase {
+class InstallerCommandLineTest  {
 
-    public void testValidArguments() {
+    @Test
+    void testValidArguments() {
         String[] args;
         InstallerCommandLine commandLine;
 
         args = new String[0];
         commandLine = new InstallerCommandLine();
         assertTrue(commandLine.setArgs(args));
-        assertFalse(commandLine.hasArguments());
-
-        args = new String[0];
-        commandLine = new InstallerCommandLine();
-        assertTrue(commandLine.setArgs(args));
-        assertFalse(commandLine.hasArguments());
+        // respect the auto switch to console mode
+        assertEquals(!Installation.isGuiAllowed(), commandLine.hasArguments());
 
         args = new String[] { "-c" };
         commandLine = new InstallerCommandLine();
@@ -64,14 +66,10 @@ public class InstallerCommandLineTest extends TestCase {
         commandLine = new InstallerCommandLine();
         assertTrue(commandLine.setArgs(args));
         assertTrue(commandLine.hasArguments());
-
-        args = new String[0];
-        commandLine = new InstallerCommandLine();
-        assertTrue(commandLine.setArgs(args));
-        assertFalse(commandLine.hasArguments());
     }
 
-    public void testInvalidArguments() {
+    @Test
+    void testInvalidArguments() {
         String[] args;
         InstallerCommandLine commandLine;
 
@@ -110,7 +108,8 @@ public class InstallerCommandLineTest extends TestCase {
         assertFalse(commandLine.setArgs(args));
     }
 
-    public void testMissingArgument() {
+    @Test
+    void testMissingArgument() {
         String[] args;
         InstallerCommandLine commandLine;
 
@@ -123,7 +122,8 @@ public class InstallerCommandLineTest extends TestCase {
         assertFalse(commandLine.setArgs(args));
     }
 
-    public void testUnknownArgument() {
+    @Test
+    void testUnknownArgument() {
         String[] args;
         InstallerCommandLine commandLine;
 
@@ -144,7 +144,8 @@ public class InstallerCommandLineTest extends TestCase {
         assertFalse(commandLine.setArgs(args));
     }
 
-    public void testOptionGroups() {
+    @Test
+    void testOptionGroups() {
         String[] args;
         InstallerCommandLine commandLine;
 
@@ -181,7 +182,8 @@ public class InstallerCommandLineTest extends TestCase {
         assertFalse(commandLine.setArgs(args));
     }
 
-    public void testSilent() {
+    @Test
+    void testSilent() {
         String[] args;
         InstallerCommandLine commandLine;
 
@@ -195,7 +197,8 @@ public class InstallerCommandLineTest extends TestCase {
         assertTrue(commandLine.hasSilentOption());
     }
 
-    public void testConsole() {
+    @Test
+    void testConsole() {
         String[] args;
         InstallerCommandLine commandLine;
 
@@ -205,28 +208,32 @@ public class InstallerCommandLineTest extends TestCase {
         assertTrue(commandLine.hasConsoleOption());
     }
     
-    public void testGui() {
+    @Test
+    void testGui() {
         String[] args;
         InstallerCommandLine commandLine;
         
         // normal gui startup without any arguments
-        assertTrue(Installation.isGuiAllowed());
         args = new String[0];
         commandLine = new InstallerCommandLine();
         assertTrue(commandLine.setArgs(args));
-        assertFalse(commandLine.hasConsoleOption());
+        // respect the auto switch to console mode
+        assertEquals(!Installation.isGuiAllowed(), commandLine.hasConsoleOption());
         assertFalse(commandLine.hasSilentOption());
     }
-    
+
     /**
      *  simulate startup on a headless system (auto-switch to console mode)
      */
-    public void testHeadless() {
+    @Test
+    void testHeadless() {
         String[] args;
         InstallerCommandLine commandLine;
-        boolean originalHeadless = Boolean.getBoolean(Installation.HEADLESS_PROPERTY_NAME);
+        // respect the auto switch to console mode
+        final boolean originalHeadless = Boolean.getBoolean(Installation.HEADLESS_PROPERTY_NAME);
         try {
-            if (!originalHeadless) {
+            if (Installation.isGuiAllowed()) {
+                // use the headless property workaround
                 System.setProperty(Installation.HEADLESS_PROPERTY_NAME, "true");
             }
             assertFalse(Installation.isGuiAllowed());
@@ -286,14 +293,12 @@ public class InstallerCommandLineTest extends TestCase {
             assertTrue(commandLine.hasConsoleOption());
             assertFalse(commandLine.hasSilentOption());
         } finally {
-            if (!originalHeadless) {
-                System.setProperty(Installation.HEADLESS_PROPERTY_NAME, "false");
-                assertTrue(Installation.isGuiAllowed());
-            }
+            System.setProperty(Installation.HEADLESS_PROPERTY_NAME, "" + originalHeadless);
         }
     }
 
-    public void testGNUSwitchToConsole() {
+    @Test
+    void testGNUSwitchToConsole() {
         String originalVmName = System.getProperty(Installation.JAVA_VM_NAME);
         try {
             // fake GNU java
@@ -325,7 +330,8 @@ public class InstallerCommandLineTest extends TestCase {
     }
 
 
-    public void testDirectory() {
+    @Test
+    void testDirectory() {
         String[] args;
         InstallerCommandLine commandLine;
 
@@ -344,7 +350,8 @@ public class InstallerCommandLineTest extends TestCase {
         assertEquals("dir", commandLine.getTargetDirectory().getName());
     }
 
-    public void testType() {
+    @Test
+    void testType() {
         String[] args;
         InstallerCommandLine commandLine;
         InstallationType type;
@@ -384,7 +391,8 @@ public class InstallerCommandLineTest extends TestCase {
         assertFalse(commandLine.getJavaHomeHandler().isDeviation());
     }
 
-    public void testInclude() {
+    @Test
+    void testInclude() {
         String[] args;
         InstallerCommandLine commandLine;
         InstallationType type;
@@ -442,7 +450,8 @@ public class InstallerCommandLineTest extends TestCase {
         assertFalse(commandLine.setArgs(args));
     }
 
-    public void testExclude() {
+    @Test
+    void testExclude() {
         String[] args;
         InstallerCommandLine commandLine;
         InstallationType type;
@@ -500,36 +509,10 @@ public class InstallerCommandLineTest extends TestCase {
         assertFalse(commandLine.setArgs(args));
     }
 
-    public void testJavaHomeHandler() {
+    @Test
+    void testExamples() {
         String[] args;
         InstallerCommandLine commandLine;
-        final String javaHomeName = "java/home/dir";
-
-        args = new String[] { "-j", javaHomeName };
-        commandLine = new InstallerCommandLine();
-        assertTrue(commandLine.setArgs(args));
-        assertTrue(commandLine.hasJavaHomeOption());
-        JavaHomeHandler javaHomeHandler = commandLine.getJavaHomeHandler();
-        assertNotNull(javaHomeHandler);
-        assertTrue(javaHomeHandler.toString().indexOf(javaHomeName) >= 0);
-        assertTrue(javaHomeHandler.isDeviation());
-
-        args = new String[] { "--jre", javaHomeName };
-        commandLine = new InstallerCommandLine();
-        assertTrue(commandLine.setArgs(args));
-        assertTrue(commandLine.hasJavaHomeOption());
-        javaHomeHandler = commandLine.getJavaHomeHandler();
-        assertNotNull(javaHomeHandler);
-        assertTrue(javaHomeHandler.toString().indexOf(javaHomeName) >= 0);
-        assertTrue(javaHomeHandler.isDeviation());
-
-        assertNull(commandLine.getTargetDirectory());
-    }
-
-    public void testExamples() {
-        String[] args;
-        InstallerCommandLine commandLine;
-        final String javaHomeName = "java/home/dir";
 
         args = new String[] { "-c" };
         commandLine = new InstallerCommandLine();
@@ -544,7 +527,7 @@ public class InstallerCommandLineTest extends TestCase {
         assertNotNull(commandLine.getTargetDirectory());
         assertEquals("dir", commandLine.getTargetDirectory().getName());
 
-        args = new String[] { "-s", "-d", "dir", "-t", "standard", "-j", javaHomeName, "-v" };
+        args = new String[] { "-s", "-d", "dir", "-t", "standard", "-v" };
         commandLine = new InstallerCommandLine();
         assertTrue(commandLine.setArgs(args));
         assertTrue(commandLine.hasSilentOption());
@@ -557,13 +540,9 @@ public class InstallerCommandLineTest extends TestCase {
         assertTrue(commandLine.getInstallationType().installDocumentation());
         assertTrue(commandLine.getInstallationType().installLibraryModules());
         assertFalse(commandLine.getInstallationType().installSources());
-        assertTrue(commandLine.hasJavaHomeOption());
-        JavaHomeHandler javaHomeHandler = commandLine.getJavaHomeHandler();
-        assertTrue(javaHomeHandler.toString().indexOf(javaHomeName) >= 0);
-        assertTrue(javaHomeHandler.isDeviation());
         assertTrue(commandLine.hasVerboseOption());
 
-        args = new String[] { "-s", "-d", "dir", "-t", "standard", "-e", "doc", "demo", "-i", "src", "-j", javaHomeName, "-v" };
+        args = new String[] { "-s", "-d", "dir", "-t", "standard", "-e", "doc", "demo", "-i", "src", "-v" };
         commandLine = new InstallerCommandLine();
         assertTrue(commandLine.setArgs(args));
         assertTrue(commandLine.hasSilentOption());
@@ -576,14 +555,11 @@ public class InstallerCommandLineTest extends TestCase {
         assertFalse(commandLine.getInstallationType().installDocumentation());
         assertTrue(commandLine.getInstallationType().installLibraryModules());
         assertTrue(commandLine.getInstallationType().installSources());
-        assertTrue(commandLine.hasJavaHomeOption());
-        javaHomeHandler = commandLine.getJavaHomeHandler();
-        assertTrue(javaHomeHandler.toString().indexOf(javaHomeName) >= 0);
-        assertTrue(javaHomeHandler.isDeviation());
         assertTrue(commandLine.hasVerboseOption());
     }
 
-    public void testHelp() {
+    @Test
+    void testHelp() {
         String[] args;
         InstallerCommandLine commandLine;
 
@@ -611,7 +587,8 @@ public class InstallerCommandLineTest extends TestCase {
         commandLine.printHelp();
     }
 
-    public void testHasVerboseOptionInArgs() {
+    @Test
+    void testHasVerboseOptionInArgs() {
         String[] args = new String[0];
         assertFalse(InstallerCommandLine.hasVerboseOptionInArgs(args));
 

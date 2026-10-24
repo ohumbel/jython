@@ -164,11 +164,7 @@ public class JavaSelectionPage extends AbstractWizardPage {
             fileChooser.setFileFilter(new DirectoryFilter());
             fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             if (fileChooser.isAcceptAllFileFilterUsed()) {
-                if (Installation.isMacintosh() && Installation.isJDK141()) {
-                    // work around ArrayIndexOutOfBoundsExceptio on Mac OS X, java version 1.4.1
-                } else {
-                    fileChooser.setAcceptAllFileFilterUsed(false);
-                }
+                fileChooser.setAcceptAllFileFilterUsed(false);
             }
             int returnValue = fileChooser.showDialog(_browse, getText(SELECT));
             if (returnValue == JFileChooser.APPROVE_OPTION) {

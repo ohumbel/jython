@@ -1,8 +1,11 @@
 package org.python.compiler;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-public class ModuleTest extends TestCase {
+import org.junit.jupiter.api.Test;
+
+class ModuleTest {
 
     /**
      * In order to get testCopysign() in test_math.py passing, PyFloatConstant needs to distinguish
@@ -12,7 +15,8 @@ public class ModuleTest extends TestCase {
      *   # copysign should let us distinguish signs of zeros
      * </pre>
      */
-    public void testPyFloatConstant_Zero() {
+    @Test
+    void testPyFloatConstant_Zero() {
         PyFloatConstant positiveZero = new PyFloatConstant(0.0);
         PyFloatConstant negativeZero = new PyFloatConstant(-0.0);
         assertNotSame(positiveZero, negativeZero);

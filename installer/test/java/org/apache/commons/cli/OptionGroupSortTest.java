@@ -1,24 +1,31 @@
 package org.apache.commons.cli;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Collection;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class OptionGroupSortTest extends TestCase {
+class OptionGroupSortTest  {
 
     private OptionGroup _optionGroup;
 
-    protected void setUp() {
+    @BeforeEach
+    void setUp() {
         _optionGroup = new OptionGroup();
         _optionGroup.addOption(new Option("f", "first", false, "first"));
         _optionGroup.addOption(new Option("s", "second", false, "second"));
         _optionGroup.addOption(new Option("t", "third", false, "third"));
     }
 
-    public void testSortNames() {
-        Collection names = _optionGroup.getNames();
-        Iterator namesIterator = names.iterator();
+    @Test
+    void testSortNames() {
+        Collection<?> names = _optionGroup.getNames();
+        Iterator<?> namesIterator = names.iterator();
         assertTrue(namesIterator.hasNext());
         assertEquals("-f", (String) namesIterator.next());
         assertTrue(namesIterator.hasNext());
@@ -28,9 +35,10 @@ public class OptionGroupSortTest extends TestCase {
         assertFalse(namesIterator.hasNext());
     }
 
-    public void testSortOptions() {
-        Collection options = _optionGroup.getOptions();
-        Iterator optionIterator = options.iterator();
+    @Test
+    void testSortOptions() {
+        Collection<?> options = _optionGroup.getOptions();
+        Iterator<?> optionIterator = options.iterator();
         assertTrue(optionIterator.hasNext());
         assertEquals("first", ((Option) optionIterator.next()).getLongOpt());
         assertTrue(optionIterator.hasNext());

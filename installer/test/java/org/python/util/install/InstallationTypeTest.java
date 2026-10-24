@@ -1,17 +1,22 @@
 package org.python.util.install;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// test checkin
-public class InstallationTypeTest extends TestCase {
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class InstallationTypeTest  {
 
     private InstallationType _type;
 
-    protected void setUp() {
+    @BeforeEach
+    void setUp() {
         _type = new InstallationType();
     }
 
-    public void testConstruction() {
+    @Test
+    void testConstruction() {
         assertTrue(_type.isStandard());
         assertFalse(_type.isMinimum());
         assertFalse(_type.isAll());
@@ -19,7 +24,8 @@ public class InstallationTypeTest extends TestCase {
         assertTrue(_type.isPredefined());
     }
 
-    public void testStandard() {
+    @Test
+    void testStandard() {
         _type.setStandard();
         assertTrue(_type.isStandard());
         assertTrue(_type.installLibraryModules());
@@ -30,7 +36,8 @@ public class InstallationTypeTest extends TestCase {
         assertTrue(_type.isPredefined());
     }
 
-    public void testMinimum() {
+    @Test
+    void testMinimum() {
         assertFalse(_type.isMinimum());
         _type.setMinimum();
         assertTrue(_type.isMinimum());
@@ -42,7 +49,8 @@ public class InstallationTypeTest extends TestCase {
         assertTrue(_type.isPredefined());
     }
 
-    public void testAll() {
+    @Test
+    void testAll() {
         assertFalse(_type.isAll());
         _type.setAll();
         assertTrue(_type.isAll());
@@ -54,7 +62,8 @@ public class InstallationTypeTest extends TestCase {
         assertTrue(_type.isPredefined());
     }
 
-    public void testStandalone() {
+    @Test
+    void testStandalone() {
         assertFalse(_type.isStandalone());
         _type.setStandalone();
         assertTrue(_type.isStandalone());
@@ -70,7 +79,8 @@ public class InstallationTypeTest extends TestCase {
         assertFalse(_type.installSources());
     }
 
-    public void testAddRemove() {
+    @Test
+    void testAddRemove() {
         _type.removeDocumentation();
         assertTrue(_type.installLibraryModules());
         assertTrue(_type.installDemosAndExamples());

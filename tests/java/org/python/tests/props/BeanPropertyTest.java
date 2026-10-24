@@ -1,26 +1,31 @@
 package org.python.tests.props;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+
+
 
 import org.python.core.PyStringMap;
 import org.python.core.PySystemState;
 import org.python.util.PythonInterpreter;
 
-public class BeanPropertyTest extends TestCase {
+class BeanPropertyTest  {
 
     private PythonInterpreter interp;
 
-    @Override
+    @BeforeEach
     protected void setUp() throws Exception {
         interp = new PythonInterpreter(new PyStringMap(), new PySystemState());
     }
 
-    public void testReadonly() {
+    @Test
+    void testReadonly() {
         //This used to cause an NPE see http://bugs.jython.org/issue1295 
         interp.exec("from org.python.tests.props import Readonly;Readonly().a = 'test'");
     }
 
-    public void testShadowing() {
+    @Test
+    void testShadowing() {
         interp.execfile("tests/python/prop_test.py");
     }
 

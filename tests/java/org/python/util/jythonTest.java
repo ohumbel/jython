@@ -1,8 +1,8 @@
 package org.python.util;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.python.core.Console;
 import org.python.core.PlainConsole;
 import org.python.core.Py;
@@ -26,7 +26,7 @@ import org.python.core.Py;
  *              org.junit.runner.JUnitCore org.python.util.jythonTest
  * </pre>
  */
-public class jythonTest {
+class jythonTest {
 
     private static String[] commands = {"-c", "import sys; print type(sys._jy_console)"};
 
@@ -34,7 +34,7 @@ public class jythonTest {
      * Test that the default behaviour is to provide a JLineConsole.
      */
     @Test
-    public void testDefaultConsole() {
+    void testDefaultConsole() {
         jython.main(commands);
         Console console = Py.getConsole();
         assertEquals(JLineConsole.class, console.getClass());

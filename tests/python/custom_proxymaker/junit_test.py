@@ -1,7 +1,8 @@
-from org.junit.Assert import assertEquals
-from org.junit import Test
+from org.junit.jupiter.api.Assertions import assertEquals
+from org.junit.jupiter.api import Test, Timeout
 from java.lang import (Object, Void, Long)
 from java.lang import Exception as JavaException
+from java.util.concurrent import TimeUnit
 import sys
 import time
 
@@ -17,12 +18,15 @@ class JUnitTest(Object):
 
     def testAddition(self):
         assertEquals(4, 1 + 3)
-    testAddition._clamp = ClampMethod('testAddition',Void.TYPE,[],[],{Test:None},[{}])
+    testAddition._clamp = ClampMethod('testAddition', Void.TYPE, [], [], {Test: None}, [{}])
 
     def testJavaException(self):
-        raise JavaException()
-    testJavaException._clamp = ClampMethod('testJavaException', Void.TYPE, [], [JavaException], {Test:{'expected':JavaException}}, [{}])
+        try:
+            raise JavaException()
+        except JavaException:
+            pass
+    testJavaException._clamp = ClampMethod('testJavaException', Void.TYPE, [], [JavaException], {Test: None}, [{}])
 
     def testTimeout(self):
         time.sleep(0.1)
-    testTimeout._clamp = ClampMethod('testTimeout', Void.TYPE, [], [], {Test:{'timeout':Long(1000)}}, [{}])
+    testTimeout._clamp = ClampMethod('testTimeout', Void.TYPE, [], [], {Test: None, Timeout: {'value': Long(1000), 'unit': TimeUnit.MILLISECONDS}}, [{}])

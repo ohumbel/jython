@@ -10,30 +10,24 @@
 
 package org.apache.commons.cli;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author John Keyes (john at integralsource.com)
  * @version $Revision: 3134 $
  */
-public class ParseRequiredTest extends TestCase
+class ParseRequiredTest 
 {
-
     private Options _options = null;
     private CommandLineParser parser = new PosixParser();
 
-    public static Test suite() { 
-        return new TestSuite(ParseRequiredTest.class); 
-    }
-
-    public ParseRequiredTest(String name)
-    {
-        super(name);
-    }
-
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         OptionBuilder.withLongOpt( "bfile" );
         OptionBuilder.hasArg();
@@ -48,12 +42,8 @@ public class ParseRequiredTest extends TestCase
             .addOption( opt2 );
     }
 
-    public void tearDown()
-    {
-
-    }
-
-    public void testWithRequiredOption()
+    @Test
+    void testWithRequiredOption()
     {
         String[] args = new String[] {  "-b", "file" };
 
@@ -61,10 +51,10 @@ public class ParseRequiredTest extends TestCase
         {
             CommandLine cl = parser.parse(_options,args);
             
-            assertTrue( "Confirm -a is NOT set", !cl.hasOption("a") );
-            assertTrue( "Confirm -b is set", cl.hasOption("b") );
-            assertTrue( "Confirm arg of -b", cl.getOptionValue("b").equals("file") );
-            assertTrue( "Confirm NO of extra args", cl.getArgList().size() == 0);
+            assertTrue(!cl.hasOption("a"), "Confirm -a is NOT set");
+            assertTrue(cl.hasOption("b"), "Confirm -b is set");
+            assertTrue(cl.getOptionValue("b").equals("file"), "Confirm arg of -b");
+            assertTrue(cl.getArgList().size() == 0, "Confirm NO of extra args");
         }
         catch (ParseException e)
         {
@@ -72,7 +62,8 @@ public class ParseRequiredTest extends TestCase
         }
     }
 
-    public void testOptionAndRequiredOption()
+    @Test
+    void testOptionAndRequiredOption()
     {
         String[] args = new String[] {  "-a", "-b", "file" };
 
@@ -80,10 +71,10 @@ public class ParseRequiredTest extends TestCase
         {
             CommandLine cl = parser.parse(_options,args);
 
-            assertTrue( "Confirm -a is set", cl.hasOption("a") );
-            assertTrue( "Confirm -b is set", cl.hasOption("b") );
-            assertTrue( "Confirm arg of -b", cl.getOptionValue("b").equals("file") );
-            assertTrue( "Confirm NO of extra args", cl.getArgList().size() == 0);
+            assertTrue(cl.hasOption("a"), "Confirm -a is set");
+            assertTrue(cl.hasOption("b"), "Confirm -b is set");
+            assertTrue(cl.getOptionValue("b").equals("file"), "Confirm arg of -b");
+            assertTrue(cl.getArgList().size() == 0, "Confirm NO of extra args");
         }
         catch (ParseException e)
         {
@@ -91,7 +82,8 @@ public class ParseRequiredTest extends TestCase
         }
     }
 
-    public void testMissingRequiredOption()
+    @Test
+    void testMissingRequiredOption()
     {
         String[] args = new String[] { "-a" };
 

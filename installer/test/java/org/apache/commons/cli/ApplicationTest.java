@@ -1,8 +1,10 @@
 package org.apache.commons.cli;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.Test; 
 
 /**
  * <p>
@@ -19,21 +21,10 @@ import junit.framework.TestSuite;
  *
  * @author John Keyes (john at integralsource.com)
  */
-public class ApplicationTest extends TestCase {
+class ApplicationTest  {
 
-    public static Test suite() { 
-        return new TestSuite(ApplicationTest.class); 
-    }
-
-    public ApplicationTest(String name)
-    {
-        super(name);
-    }
-    
-    /**
-     *	
-     */
-    public void testLs() {
+    @Test
+    void testLs() {
         // create the command line parser
         CommandLineParser parser = new PosixParser();
         Options options = new Options();
@@ -69,7 +60,8 @@ public class ApplicationTest extends TestCase {
     /**
      * Ant test
      */
-    public void testAnt() {
+    @Test
+    void testAnt() {
         // use the GNU parser
         CommandLineParser parser = new GnuParser( );
         Options options = new Options();

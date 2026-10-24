@@ -1,21 +1,26 @@
 package org.python.core;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.math.BigInteger;
 
-import junit.framework.TestCase;
-
+import org.junit.jupiter.api.Test;
 import org.python.core.stringlib.FieldNameIterator;
 import org.python.core.stringlib.IntegerFormatter;
 import org.python.core.stringlib.InternalFormat;
+import org.python.core.stringlib.InternalFormat.Spec;
 import org.python.core.stringlib.MarkupIterator;
 import org.python.core.stringlib.TextFormatter;
-import org.python.core.stringlib.InternalFormat.Spec;
 import org.python.util.PythonInterpreter;
 
 /**
  * Tests for internal bits and pieces of string.format implementation.
  */
-public class StringFormatTest extends TestCase {
+class StringFormatTest {
 
     /** Exception-raising seems to need the interpreter to be initialised **/
     PythonInterpreter interp = new PythonInterpreter();
@@ -23,7 +28,8 @@ public class StringFormatTest extends TestCase {
     /** Switches mode in tests that have a shared implementation for bytes and Unicode modes. */
     private boolean useBytes = true;
 
-    public void testInternalFormatSpec() {
+    @Test
+    void testInternalFormatSpec() {
         InternalFormat.Spec spec;
         spec = InternalFormat.fromText("x");
         assertFalse(Spec.specified(spec.align));
@@ -83,7 +89,8 @@ public class StringFormatTest extends TestCase {
      * original <code>testFormatIntOrLong</code> which tested <code>PyInteger.formatIntOrLong</code>
      * .
      */
-    public void testPrepareFormatter() {
+    @Test
+    void testPrepareFormatter() {
         int v = 123;
         IntegerFormatter f;
         f = PyInteger.prepareFormatter(InternalFormat.fromText("d"));
@@ -145,7 +152,8 @@ public class StringFormatTest extends TestCase {
      * original <code>testFormatIntOrLong</code> which tested <code>PyInteger.formatIntOrLong</code>
      * .
      */
-    public void testPrepareFormatterLong() {
+    @Test
+    void testPrepareFormatterLong() {
         BigInteger v = BigInteger.valueOf(123);
         IntegerFormatter f;
         f = PyInteger.prepareFormatter(InternalFormat.fromText("d"));
@@ -229,7 +237,8 @@ public class StringFormatTest extends TestCase {
         }
     }
 
-    public void testFormatString() {
+    @Test
+    void testFormatString() {
         String v = "abc";
         TextFormatter f;
         f = PyString.prepareFormatter(InternalFormat.fromText(""));
@@ -243,7 +252,7 @@ public class StringFormatTest extends TestCase {
         assertEquals("abc   ", f.format(v).pad().getResult());
     }
 
-    public void implTestMarkupIterator() {
+    void implTestMarkupIterator() {
         MarkupIterator iterator = newMarkupIterator("abc");
         assertEquals("abc", iterator.nextChunk().literalText);
         assertNull(iterator.nextChunk());
@@ -281,12 +290,14 @@ public class StringFormatTest extends TestCase {
         assertMarkupError("}", "Single '}' encountered in format string");
     }
 
-    public void testMarkupIteratorBytes() {
+    @Test
+    void testMarkupIteratorBytes() {
         useBytes = true;
         implTestMarkupIterator();
     }
 
-    public void testMarkupIteratorUnicode() {
+    @Test
+    void testMarkupIteratorUnicode() {
         useBytes = false;
         implTestMarkupIterator();
     }
@@ -307,7 +318,7 @@ public class StringFormatTest extends TestCase {
         assertEquals(expected, error);
     }
 
-    public void implTestFieldNameIterator() {
+    void implTestFieldNameIterator() {
         FieldNameIterator it = newFieldNameIterator("abc");
         assertEquals("abc", it.head());
         assertNull(it.nextChunk());
@@ -331,12 +342,14 @@ public class StringFormatTest extends TestCase {
         assertNull(it.nextChunk());
     }
 
-    public void testFieldNameIteratorBytes() {
+    @Test
+    void testFieldNameIteratorBytes() {
         useBytes = true;
         implTestFieldNameIterator();
     }
 
-    public void testFieldNameIteratorUnicode() {
+    @Test
+    void testFieldNameIteratorUnicode() {
         useBytes = false;
         implTestFieldNameIterator();
     }

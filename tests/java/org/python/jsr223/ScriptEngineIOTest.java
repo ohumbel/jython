@@ -1,41 +1,48 @@
 package org.python.jsr223;
 
-import javax.script.Bindings;
-import javax.script.Invocable;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.script.ScriptEngineFactory;
-import javax.script.SimpleBindings;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import junit.framework.TestCase;
-
-import java.io.FileReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-public class ScriptEngineIOTest extends TestCase
+import javax.script.Bindings;
+import javax.script.Invocable;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.script.SimpleBindings ;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class ScriptEngineIOTest 
 {
     ScriptEngineFactory pythonEngineFactory;
     ScriptEngine pythonEngine;
 
-    public void setUp() throws ScriptException
+    @BeforeEach
+    void setUp() throws ScriptException
     {
         pythonEngineFactory = new PyScriptEngineFactory();
         pythonEngine = new PyScriptEngine(pythonEngineFactory);
     }
 
-    public void testEvalString() throws ScriptException
+    @Test
+    void testEvalString() throws ScriptException
     {
         assertNull(pythonEngine.eval("x = 5"));
         assertEquals(Integer.valueOf(5), pythonEngine.eval("x"));
     }
 
-    public void testReadline() throws ScriptException
+    @Test
+    void testReadline() throws ScriptException
     {
         final String testString = "Shazaam Batman!\n";
 
@@ -45,7 +52,8 @@ public class ScriptEngineIOTest extends TestCase
         assertEquals(testString, pythonEngine.eval("sys.stdin.readline()"));
     }
 
-    public void testReadlines() throws ScriptException
+    @Test
+    void testReadlines() throws ScriptException
     {
         final String testString = "Holy Smokes Batman!\nBIF!\r\n\nKAPOW!!!\rTHE END.";
 
@@ -57,7 +65,8 @@ public class ScriptEngineIOTest extends TestCase
         assertEquals("Holy Smokes Batman!\nBIF!\n\nKAPOW!!!\nTHE END.\n", o);
     }
 
-    public void testWriter() throws ScriptException
+    @Test
+    void testWriter() throws ScriptException
     {
         final StringWriter sw = new StringWriter();
 
@@ -69,7 +78,8 @@ public class ScriptEngineIOTest extends TestCase
         assertEquals(testString, sw.toString());
     }
 
-    public void testErrorWriter() throws ScriptException
+    @Test
+    void testErrorWriter() throws ScriptException
     {
         final StringWriter stdout = new StringWriter();
         final StringWriter stderr = new StringWriter();
@@ -88,7 +98,8 @@ public class ScriptEngineIOTest extends TestCase
         assertEquals(testString2, stderr.toString());
     }
 
-    public void testEvalWithReader() throws ScriptException, FileNotFoundException
+    @Test
+    void testEvalWithReader() throws ScriptException, FileNotFoundException
     {
         //Check that multiple evals don't cause an NPE.
         //See issue http://bugs.jython.org/issue1536
@@ -119,7 +130,8 @@ public class ScriptEngineIOTest extends TestCase
         }
     }
 
-   public void testGetInterfaceCharSequence1() throws ScriptException, IOException {
+    @Test
+    void testGetInterfaceCharSequence1() throws ScriptException, IOException {
            ScriptEngineManager manager = new ScriptEngineManager();
            ScriptEngine engine = manager.getEngineByName("python");
            Invocable invocableEngine = (Invocable) engine;
@@ -136,7 +148,8 @@ public class ScriptEngineIOTest extends TestCase
            assertEquals("aaa", seq.toString());
    }
 
-   public void testGetInterfaceCharSequence2() throws ScriptException, IOException {
+    @Test
+    void testGetInterfaceCharSequence2() throws ScriptException, IOException {
            ScriptEngineManager manager = new ScriptEngineManager();
            ScriptEngine pythonEngine = manager.getEngineByName("python");
            Invocable invocableEngine = (Invocable) pythonEngine;

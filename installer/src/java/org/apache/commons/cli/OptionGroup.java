@@ -74,6 +74,7 @@ import java.util.List;
 public class OptionGroup {
     
     /** hold the options in added order */
+    @SuppressWarnings("rawtypes")
     private List optionList = new ArrayList();
 
     /** the name of the selected option */
@@ -88,6 +89,7 @@ public class OptionGroup {
      * @param opt the option to add to this group
      * @return this option group with opt added
      */
+    @SuppressWarnings("unchecked")
     public OptionGroup addOption(Option opt) {
         optionList.add(opt);
         return this;
@@ -97,6 +99,7 @@ public class OptionGroup {
      * @return the names of the options in this group as a 
      * <code>Collection</code>
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Collection getNames() {
         List namesList = new ArrayList();
         Iterator optionsIterator = optionList.iterator();
@@ -110,6 +113,7 @@ public class OptionGroup {
     /**
      * @return the options in this group as a <code>Collection</code>
      */
+    @SuppressWarnings("rawtypes")
     public Collection getOptions() {
         return optionList;
     }
@@ -165,6 +169,7 @@ public class OptionGroup {
     public String toString() {
         StringBuffer buff = new StringBuffer();
 
+        @SuppressWarnings("rawtypes")
         Iterator iter = getOptions().iterator();
 
         buff.append( "[" );

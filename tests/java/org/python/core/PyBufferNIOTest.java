@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.runners.Parameterized.Parameters;
+
 import org.python.core.ByteBufferTestSupport.ByteMaterial;
 import org.python.core.PyBufferTestSupport.ExporterFactory;
 import org.python.core.PyBufferTestSupport.TestSpec;
@@ -13,10 +13,17 @@ import org.python.core.PyBufferTestSupport.WritableExporterFactory;
 import org.python.core.buffer.BaseBuffer;
 import org.python.core.buffer.SimpleNIOBuffer;
 
-public class PyBufferNIOTest extends PyBufferTest {
+class PyBufferNIOTest extends PyBufferTest {
 
-    public PyBufferNIOTest(TestSpec spec) {
-        super(spec);
+    PyBufferNIOTest() {}
+
+    static Collection<TestSpec> useData() {
+        Collection<TestSpec[]> pairs = genTestSpecs();
+        List<TestSpec> specs = new java.util.ArrayList<>(pairs.size());
+        for (TestSpec[] pair : pairs) {
+            specs.add(pair[0]);
+        }
+        return specs;
     }
 
     /**
@@ -33,8 +40,7 @@ public class PyBufferNIOTest extends PyBufferTest {
      *
      * @return generated list of test data
      */
-    @Parameters
-    public static Collection<TestSpec[]> genTestSpecs() {
+    static Collection<TestSpec[]> genTestSpecs() {
 
         PyBufferTestSupport s = new PyBufferTestSupport(sliceLengths, sliceSteps);
 

@@ -60,12 +60,11 @@
  */
 package org.apache.commons.cli;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /** 
@@ -86,12 +85,15 @@ import java.util.Map;
 public class CommandLine {
     
     /** the unrecognised options/arguments */
+    @SuppressWarnings("rawtypes")
     private List args    = new LinkedList();
 
     /** the processed options */
+    @SuppressWarnings("rawtypes")
     private Map options = new HashMap();
 
     /** Map of unique options for ease to get complete list of options */
+    @SuppressWarnings("rawtypes")
     private Map hashcodeMap = new HashMap();
 
     /** the processed options */
@@ -132,6 +134,7 @@ public class CommandLine {
     public Object getOptionObject( String opt ) {
         String res = getOptionValue( opt );
         
+        @SuppressWarnings("rawtypes")
         Object type = ((Option)((List)options.get(opt)).iterator().next()).getType();
         return res == null ? null : TypeHandler.createValue(res, type);
     }
@@ -176,11 +179,15 @@ public class CommandLine {
      * @return Values of the argument if option is set, and has an argument,
      * otherwise null.
      */
+    @SuppressWarnings("unchecked")
     public String[] getOptionValues( String opt ) {
+        @SuppressWarnings("rawtypes")
         List values = new java.util.ArrayList();
 
         if( options.containsKey( opt ) ) {
+            @SuppressWarnings("rawtypes")
             List opts = (List)options.get( opt );
+            @SuppressWarnings("rawtypes")
             Iterator iter = opts.iterator();
 
             while( iter.hasNext() ) {
@@ -232,6 +239,7 @@ public class CommandLine {
      *
      * @return remaining items passed in but not parsed as an array
      */
+    @SuppressWarnings("unchecked")
     public String[] getArgs() {
         String[] answer = new String[ args.size() ];
         args.toArray( answer );
@@ -243,6 +251,7 @@ public class CommandLine {
      *
      * @return remaining items passed in but not parsed as a <code>List</code>.
      */
+    @SuppressWarnings("rawtypes")
     public List getArgList() {
         return args;
     }
@@ -273,6 +282,7 @@ public class CommandLine {
      *
      * @param arg the unrecognised option/argument.
      */
+    @SuppressWarnings("unchecked")
     void addArg(String arg) {
         args.add( arg );
     }
@@ -283,8 +293,9 @@ public class CommandLine {
      *
      * @param opt the processed option
      */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     void addOption( Option opt ) {
-        hashcodeMap.put( new Integer( opt.hashCode() ), opt );
+        hashcodeMap.put(Integer.valueOf(opt.hashCode()), opt);
 
         String key = opt.getOpt();
         if( " ".equals(key) ) {
@@ -306,6 +317,7 @@ public class CommandLine {
      * @return an <code>Iterator</code> over the processed {@link Option} 
      * members of this {@link CommandLine}
      */
+    @SuppressWarnings("rawtypes")
     public Iterator iterator( ) {
         return hashcodeMap.values().iterator();
     }
@@ -315,7 +327,9 @@ public class CommandLine {
      *
      * @return an array of the processed {@link Option}s.
      */
+    @SuppressWarnings("unchecked")
     public Option[] getOptions( ) {
+        @SuppressWarnings("rawtypes")
         Collection processed = hashcodeMap.values();
 
         // reinitialise array

@@ -1,6 +1,11 @@
 package org.python.core;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.python.core.ByteBufferTestSupport.assertIntsEqual;
 import static org.python.core.PyBufferTestSupport.bytesFromByteAt;
 
@@ -12,10 +17,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.python.core.ByteBufferTestSupport.ByteMaterial;
 import org.python.core.PyBufferTestSupport.ExporterFactory;
 import org.python.core.PyBufferTestSupport.ReadonlyExporterFactory;
@@ -53,8 +56,8 @@ import org.python.util.PythonInterpreter;
  * N-dimensional cases, and some need a complete re-think. Sub-classing this test would probably be
  * a good way to extend it to a wider range.
  */
-@RunWith(Parameterized.class)
-public class PyBufferTest {
+
+class PyBufferTest {
 
     /** Control amount of output. Instance variable so can be adjusted temporarily in test. */
     protected int verbosity = 0;
@@ -85,10 +88,21 @@ public class PyBufferTest {
      *
      * @param pair The test material and a buffer created by the test-runner.
      */
-    public PyBufferTest(TestSpec spec) {
+    PyBufferTest() {}
+
+    void setSpec(TestSpec spec) {
         this.spec = spec;
         ref = spec.ref;
         createObjAndView();
+    }
+
+    static Collection<TestSpec> useData() {
+        Collection<TestSpec[]> pairs = genTestSpecs();
+        List<TestSpec> specs = new java.util.ArrayList<>(pairs.size());
+        for (TestSpec[] pair : pairs) {
+            specs.add(pair[0]);
+        }
+        return specs;
     }
 
     /**
@@ -124,8 +138,7 @@ public class PyBufferTest {
      *
      * @return generated list of test data
      */
-    @Parameters
-    public static Collection<TestSpec[]> genTestSpecs() {
+    static Collection<TestSpec[]> genTestSpecs() {
 
         PyBufferTestSupport s = new PyBufferTestSupport(sliceLengths, sliceSteps);
 
@@ -243,46 +256,58 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBUF#isReadonly()}. */
-    @Test
-    public void testIsReadonly() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testIsReadonly(TestSpec spec) {
+        setSpec(spec);
         announce("isReadonly");
         assertTrue(view.isReadonly() == spec.readonly);
     }
 
     /** Test method for {@link org.python.core.PyBUF#getNdim()}. */
-    @Test
-    public void testGetNdim() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testGetNdim(TestSpec spec) {
+        setSpec(spec);
         announce("getNdim");
         // Only know how to do 1 dimension at the moment
-        assertEquals("unexpected ndim", spec.shape.length, view.getNdim());
+        assertEquals(spec.shape.length, view.getNdim(), "unexpected ndim");
     }
 
     /** Test method for {@link org.python.core.PyBUF#getShape()}. */
-    @Test
-    public void testGetShape() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testGetShape(TestSpec spec) {
+        setSpec(spec);
         announce("getShape");
         int[] shape = view.getShape();
-        assertNotNull("shape[] should always be provided", shape);
+        assertNotNull(shape, "shape[] should always be provided");
         assertIntsEqual("unexpected shape", spec.shape, shape);
     }
 
     /** Test method for {@link org.python.core.PyBUF#getLen()}. */
-    @Test
-    public void testGetLen() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testGetLen(TestSpec spec) {
+        setSpec(spec);
         announce("getLen");
-        assertEquals("unexpected length", ref.length, view.getLen());
+        assertEquals(ref.length, view.getLen(), "unexpected length");
     }
 
     /** Test method for {@link org.python.core.PyBUF#getObj()}. */
-    @Test
-    public void testGetObj() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testGetObj(TestSpec spec) {
+        setSpec(spec);
         announce("getObj");
-        assertEquals("unexpected exporting object", obj, view.getObj());
+        assertEquals(obj, view.getObj(), "unexpected exporting object");
     }
 
     /** Test method for {@link org.python.core.PyBuffer#byteAt(int)}. */
-    @Test
-    public void testByteAt() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testByteAt(TestSpec spec) {
+        setSpec(spec);
         announce("byteAt");
         for (int i = 0; i < ref.length; i++) {
             assertEquals(ref.bytes[i], view.byteAt(i));
@@ -290,8 +315,10 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#byteAt(int[])}. */
-    @Test
-    public void testByteAtNdim() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testByteAtNdim(TestSpec spec) {
+        setSpec(spec);
         announce("byteAt (n-dim)");
         int[] index = new int[1];
 
@@ -315,8 +342,10 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#intAt(int)}. */
-    @Test
-    public void testIntAt() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testIntAt(TestSpec spec) {
+        setSpec(spec);
         announce("intAt");
         for (int i = 0; i < ref.length; i++) {
             assertEquals(ref.ints[i], view.intAt(i));
@@ -324,8 +353,10 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#intAt(int[])}. */
-    @Test
-    public void testIntAtNdim() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testIntAtNdim(TestSpec spec) {
+        setSpec(spec);
         announce("intAt (n-dim)");
         int[] index = new int[1];
 
@@ -348,8 +379,10 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#storeAt(byte, int)}. */
-    @Test
-    public void testStoreAt() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testStoreAt(TestSpec spec) {
+        setSpec(spec);
         announce("storeAt");
         int n = ref.length;
         int[] exp = ref.ints.clone();
@@ -378,8 +411,10 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#storeAt(byte, int[])}. */
-    @Test
-    public void testStoreAtNdim() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testStoreAtNdim(TestSpec spec) {
+        setSpec(spec);
         announce("storeAt (n-dim)");
         int[] index = new int[1];
         int n = ref.length;
@@ -423,8 +458,10 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#copyTo(byte[], int)}. */
-    @Test
-    public void testCopyTo() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testCopyTo(TestSpec spec) {
+        setSpec(spec);
         final int OFFSET = 5;
         announce("copyTo");
         int n = ref.length;
@@ -437,13 +474,15 @@ public class PyBufferTest {
         view.copyTo(actual, OFFSET);
         ByteBufferTestSupport.assertBytesEqual("copyTo(offset) incorrect", ref.bytes, actual,
                 OFFSET);
-        assertEquals("data before destination", 0, actual[OFFSET - 1]);
-        assertEquals("data after destination", 0, actual[OFFSET + n]);
+        assertEquals(0, actual[OFFSET - 1], "data before destination");
+        assertEquals(0, actual[OFFSET + n], "data after destination");
     }
 
     /** Test method for {@link org.python.core.PyBuffer#copyTo(int, byte[], int, int)}. */
-    @Test
-    public void testSliceCopyTo() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testSliceCopyTo(TestSpec spec) {
+        setSpec(spec);
         announce("copyTo (from slice)");
         final int OFFSET = 3;
 
@@ -491,8 +530,10 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#copyFrom(byte[], int, int, int)}. */
-    @Test
-    public void testCopyFrom() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testCopyFrom(TestSpec spec) {
+        setSpec(spec);
         announce("copyFrom");
         final int OFFSET = 3;
         final int L = ref.length;
@@ -564,8 +605,10 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#copyFrom(PyBuffer)}. */
-    @Test
-    public void testCopyFromPyBuffer() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testCopyFromPyBuffer(TestSpec spec) {
+        setSpec(spec);
         announce("copyFrom (PyBuffer)");
 
         /*
@@ -685,8 +728,10 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#copyFrom(PyBuffer)} when source is same. */
-    @Test
-    public void testCopyFromSelf() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testCopyFromSelf(TestSpec spec) {
+        setSpec(spec);
         announce("copyFrom (self)");
 
         // The test material (this time) presents a view of n bytes from a buffer of L bytes.
@@ -794,7 +839,7 @@ public class PyBufferTest {
      * Test method for {@link org.python.core.BufferProtocol#getBuffer()} and
      * {@link org.python.core.PyBuffer#getBuffer()}.
      */
-    public void testGetBufferForRead() {
+    void testGetBufferForRead() {
         announce("getBuffer(READ): ");
         // Go through all the allowed combinations of flags and tassles
         for (int flags : spec.validFlags) {
@@ -809,7 +854,7 @@ public class PyBufferTest {
      * Test method for {@link org.python.core.BufferProtocol#getBuffer()} and
      * {@link org.python.core.PyBuffer#getBuffer()}.
      */
-    public void testGetBufferForWrite() {
+    void testGetBufferForWrite() {
         announce("getBuffer(WRITE): ");
         if (!spec.readonly) {
             // Go through all the allowed combinations of flags and tassles adding WRITABLE
@@ -837,8 +882,10 @@ public class PyBufferTest {
      * Test method for {@link org.python.core.PyBUF#release()}, exercising the release semantics of
      * PyBuffer in the try-with-resources pattern.
      */
-    @Test
-    public void testReleaseTryWithResources() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testReleaseTryWithResources(TestSpec spec) {
+        setSpec(spec);
         announce("release (via try)");
         /*
          * this.obj is an actual exporter and this.view is a buffer view onto it.
@@ -865,8 +912,10 @@ public class PyBufferTest {
      * sequence orchestrated by the client code. At the end, the view should be fully released, (
      * {@link PyBuffer#isReleased()}<code>==true</code>).
      */
-    @Test
-    public void testRelease() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testRelease(TestSpec spec) {
+        setSpec(spec);
         announce("release");
         int flags = PyBUF.STRIDES | PyBUF.FORMAT;
 
@@ -902,8 +951,10 @@ public class PyBufferTest {
      * We check this is true, and that a new buffer may still be acquired from the real object, but
      * not from the released buffer.
      */
-    @Test
-    public void testGetAfterRelease() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testGetAfterRelease(TestSpec spec) {
+        setSpec(spec);
         announce("getBuffer (after release)");
 
         // The test objects should have exactly one export
@@ -946,9 +997,9 @@ public class PyBufferTest {
      */
     private void maybeCheckExporting(BufferProtocol subject) {
         if (subject instanceof TestableExporter) {
-            assertTrue("exports not being counted", ((TestableExporter)subject).isExporting());
+            assertTrue(((TestableExporter)subject).isExporting(), "exports not being counted");
         } else if (subject instanceof PyBuffer) {
-            assertFalse("exports not being counted (PyBuffer)", ((PyBuffer)subject).isReleased());
+            assertFalse(((PyBuffer)subject).isReleased(), "exports not being counted (PyBuffer)");
         } else if (subject instanceof PyByteArray) {
             // Size-changing access should fail
             try {
@@ -969,9 +1020,9 @@ public class PyBufferTest {
      */
     private void maybeCheckNotExporting(BufferProtocol subject) {
         if (subject instanceof TestableExporter) {
-            assertFalse("exports counted incorrectly", ((TestableExporter)subject).isExporting());
+            assertFalse(((TestableExporter)subject).isExporting(), "exports counted incorrectly");
         } else if (subject instanceof PyBuffer) {
-            assertTrue("exports counted incorrectly (PyBuffer)", ((PyBuffer)subject).isReleased());
+            assertTrue(((PyBuffer)subject).isReleased(), "exports counted incorrectly (PyBuffer)");
         } else if (subject instanceof PyByteArray) {
             // Size-changing access should succeed
             try {
@@ -986,8 +1037,10 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#getBufferSlice(int, int, int, int)}. */
-    @Test
-    public void testGetBufferSliceWithStride() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testGetBufferSliceWithStride(TestSpec spec) {
+        setSpec(spec);
         announce("getBuffer (slice & stride)");
 
         // Generate some slices from the material and the test view
@@ -1053,36 +1106,42 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#getNIOByteBuffer()}. */
-    @Test
-    public void testGetNIOByteBuffer() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testGetNIOByteBuffer(TestSpec spec) {
+        setSpec(spec);
         announce("getNIOByteBuffer");
         int stride = spec.getStride();
         ByteBuffer bb = view.getNIOByteBuffer();
         ByteBufferTestSupport.assertBytesEqual("buffer does not match reference", ref.bytes, bb,
                 stride);
         if (spec.readonly) {
-            assertTrue("ByteBuffer should be read-only", bb.isReadOnly());
+            assertTrue(bb.isReadOnly(), "ByteBuffer should be read-only");
         } else {
-            assertFalse("ByteBuffer should not be read-only", bb.isReadOnly());
+            assertFalse(bb.isReadOnly(), "ByteBuffer should not be read-only");
         }
 
     }
 
     /** Test method for {@link org.python.core.PyBuffer#hasArray()}. */
-    @Test
-    public void testHasArray() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testHasArray(TestSpec spec) {
+        setSpec(spec);
         announce("hasArray");
         if (spec.hasArray) {
-            assertTrue("a backing array was expected", view.hasArray());
+            assertTrue(view.hasArray(), "a backing array was expected");
         } else {
-            assertFalse("no backing array was expected", view.hasArray());
+            assertFalse(view.hasArray(), "no backing array was expected");
         }
     }
 
     /** Test method for {@link org.python.core.PyBuffer#getBuf()}. */
-    @Test
+    @ParameterizedTest
+    @MethodSource("useData")
     @SuppressWarnings("deprecation")
-    public void testGetBuf() {
+    void testGetBuf(TestSpec spec) {
+        setSpec(spec);
         announce("getBuf");
         if (spec.hasArray) {
             int stride = spec.getStride();
@@ -1092,9 +1151,11 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#getPointer(int)}. */
-    @Test
+    @ParameterizedTest
+    @MethodSource("useData")
     @SuppressWarnings("deprecation")
-    public void testGetPointer() {
+    void testGetPointer(TestSpec spec) {
+        setSpec(spec);
         announce("getPointer");
         if (spec.hasArray) {
             int itemsize = spec.getItemsize();
@@ -1116,9 +1177,11 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBuffer#getPointer(int[])}. */
-    @Test
+    @ParameterizedTest
+    @MethodSource("useData")
     @SuppressWarnings("deprecation")
-    public void testGetPointerNdim() {
+    void testGetPointerNdim(TestSpec spec) {
+        setSpec(spec);
         int[] index = new int[1];
         announce("getPointer(array)");
         if (spec.hasArray) {
@@ -1150,14 +1213,16 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBUF#getStrides()}. */
-    @Test
-    public void testGetStrides() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testGetStrides(TestSpec spec) {
+        setSpec(spec);
         announce("getStrides");
         for (int flags : spec.validFlags) {
             PyBuffer view = this.view.getBuffer(flags);
             // Strides array irrespective of the client flags ... (different from CPython)
             int[] strides = view.getStrides();
-            assertNotNull("strides[] should always be provided", strides);
+            assertNotNull(strides, "strides[] should always be provided");
             // The strides must have the expected value if length >1
             if (ref.bytes.length > 1) {
                 assertIntsEqual("unexpected strides", spec.strides, strides);
@@ -1166,8 +1231,10 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBUF#getSuboffsets()}. */
-    @Test
-    public void testGetSuboffsets() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testGetSuboffsets(TestSpec spec) {
+        setSpec(spec);
         announce("getSuboffsets");
         // Null for all test material
         assertNull(view.getSuboffsets());
@@ -1175,15 +1242,17 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBUF#isContiguous(char)}. */
-    @Test
-    public void testIsContiguous() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testIsContiguous(TestSpec spec) {
+        setSpec(spec);
         announce("isContiguous");
         // All test material is 1-dimensional so it's fairly simple and same for all orders
         int ndim = spec.shape[0], stride = spec.getStride(), itemsize = spec.getItemsize();
         boolean contig = ndim < 2 || stride == itemsize;
         for (String orderMsg : validOrders) {
             char order = orderMsg.charAt(0);
-            assertEquals(orderMsg, view.isContiguous(order), contig);
+            assertEquals(contig, view.isContiguous(order), orderMsg);
         }
     }
 
@@ -1191,15 +1260,16 @@ public class PyBufferTest {
             "F-contiguous test fail", "Any-contiguous test fail"};
 
     /** Test method for {@link org.python.core.PyBuffer#getFormat()}. */
-    @Test
-    public void testGetFormat() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testGetFormat(TestSpec spec) {
+        setSpec(spec);
         announce("getFormat");
-        TestSpec spec = this.spec;
 
         for (int flags : spec.validFlags) {
             PyBuffer view = this.view.getBuffer(flags);
             // Format given irrespective of the client flags ... (different from CPython)
-            assertNotNull("format should always be provided", view.getFormat());
+            assertNotNull(view.getFormat(), "format should always be provided");
             assertEquals("B", view.getFormat());
             // And, we can ask for it explicitly ...
             view = this.view.getBuffer(flags | PyBUF.FORMAT);
@@ -1208,19 +1278,23 @@ public class PyBufferTest {
     }
 
     /** Test method for {@link org.python.core.PyBUF#getItemsize()}. */
-    @Test
-    public void testGetItemsize() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testGetItemsize(TestSpec spec) {
+        setSpec(spec);
         announce("getItemsize");
         // Unity for all test material
         assertEquals(1, view.getItemsize());
     }
 
     /** Test method for {@link org.python.core.PyBuffer#toString()}. */
-    @Test
-    public void testToString() {
+    @ParameterizedTest
+    @MethodSource("useData")
+    void testToString(TestSpec spec) {
+        setSpec(spec);
         announce("toString");
         String r = view.toString();
-        assertEquals("buffer does not match reference", ref.string, r);
+        assertEquals(ref.string, r, "buffer does not match reference");
     }
 
     /**

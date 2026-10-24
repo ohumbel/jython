@@ -3,10 +3,11 @@
 
 package org.python.modules._locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.python.core.RegistryKey.PYTHON_LOCALE_CONTROL;
 
 import java.nio.charset.Charset;
@@ -16,8 +17,8 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.core.Py;
 import org.python.core.PyCode;
 import org.python.core.PyDictionary;
@@ -31,13 +32,13 @@ import org.python.core.PySystemState;
 import org.python.core.PyUnicode;
 import org.python.util.PythonInterpreter;
 
-public class _localeTest {
+class _localeTest {
 
     private PySystemState systemState;
     private PythonInterpreter interp;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         // Initialise a Jython interpreter
         systemState = Py.getSystemState();
         interp = new PythonInterpreter(new PyStringMap(), systemState);
@@ -96,22 +97,26 @@ public class _localeTest {
     }
 
     @Test
-    public void moduleImportSettable() {
+    void moduleImportSettable() {
         settableInit();
         PyObject _localeModule = interp.get("_locale");
         assertNotNull(_localeModule);
     }
 
-    @Test(expected = PyException.class)
-    public void moduleImportLegacy() {
-        jython2LegacyState();
-        importAndInit();
+    @Test
+    void moduleImportLegacy() {
+        assertThrows(PyException.class, () -> {
+            jython2LegacyState();
+            importAndInit();
+        });
     }
 
-    @Test(expected = PyException.class)
-    public void moduleImportDefault() {
-        defaultState();
-        importAndInit();
+    @Test
+    void moduleImportDefault() {
+        assertThrows(PyException.class, () -> {
+            defaultState();
+            importAndInit();
+        });
     }
 
     private static int javaMajorVersion() {
@@ -125,7 +130,7 @@ public class _localeTest {
         return major;
     }
 
-    public void setLocaleEN_US(String tag) {
+    void setLocaleEN_US(String tag) {
         // Anchor test to a popular locale to prove alignment
         settableInit();
         /*
@@ -165,7 +170,7 @@ public class _localeTest {
     }
 
     @Test
-    public void setLocaleEN_US_Underscore() {
+    void setLocaleEN_US_Underscore() {
         /*
          * Locales are aliased to underscore equivalents, due to that being a common convention in
          * Python and Java itself.
@@ -174,12 +179,12 @@ public class _localeTest {
     }
 
     @Test
-    public void setLocaleEN_US_Dash() {
+    void setLocaleEN_US_Dash() {
         setLocaleEN_US("en-US");
     }
 
     @Test
-    public void setLocaleEN_US_Tuple() {
+    void setLocaleEN_US_Tuple() {
         settableInit();
         // @formatter:off
         String script =
@@ -194,7 +199,7 @@ public class _localeTest {
     }
 
     @Test
-    public void setLocaleNotLCALL() {
+    void setLocaleNotLCALL() {
         settableInit();
         String script = "import locale \n" + "caught = False \n" + "try: \n"
                 + "    locale.setlocale(locale.LC_MONETARY,'zh-CN') \n"
@@ -205,7 +210,7 @@ public class _localeTest {
     }
 
     @Test
-    public void setLocaleEmpty() {
+    void setLocaleEmpty() {
         settableInit();
         // @formatter:off
         String script =
@@ -221,7 +226,7 @@ public class _localeTest {
     }
 
     @Test
-    public void setLocaleDefault() {
+    void setLocaleDefault() {
         settableInit();
         // @formatter:off
         String script =
@@ -235,19 +240,21 @@ public class _localeTest {
                 "result2");
     }
 
-    @Test(expected = PyException.class)
-    public void setLocaleInvalid() {
+    @Test
+    void setLocaleInvalid() {
         settableInit();
         // @formatter:off
         String script =
             "from _locale import setlocale \n"
           + "result = setlocale(_locale.LC_ALL,'green_midget_cafe_nosuch') \n";
         // @formatter:on
-        interp.exec(script);
+        assertThrows(PyException.class, () -> {
+            interp.exec(script);
+        });
     }
 
     @Test
-    public void setLocaleGerman() {
+    void setLocaleGerman() {
         settableInit();
         // @formatter:off
         String script =
@@ -278,7 +285,7 @@ public class _localeTest {
     }
 
     @Test
-    public void setLocaleChinaMainland() {
+    void setLocaleChinaMainland() {
         settableInit();
         /*
          * Java has ¥ rather than 元 \u5143 for zh-CN. Java has negative sign preceding, Python
@@ -316,7 +323,7 @@ public class _localeTest {
     }
 
     @Test
-    public void setlocaleJPEncodingCurrencyFallback() {
+    void setlocaleJPEncodingCurrencyFallback() {
         settableInit();
         /*
          * Deliberately set a Japanese locale with an ANSI US codepage lacking the ¥ \uffe5
@@ -368,7 +375,7 @@ public class _localeTest {
     }
 
     @Test
-    public void utf16EncodingAndFallback() {
+    void utf16EncodingAndFallback() {
         /*
          * Chinese Finland is not usually found in locale databases, so this lets us create our own
          * locale with unusual symbols.
@@ -396,7 +403,7 @@ public class _localeTest {
     }
 
     @Test
-    public void negativeSignPosition() {
+    void negativeSignPosition() {
         // per documentation for Python locale module
         Locale locale = Locale.forLanguageTag("en-US");
         DecimalFormat df = (DecimalFormat) NumberFormat.getCurrencyInstance(locale);
@@ -425,7 +432,7 @@ public class _localeTest {
     }
 
     @Test
-    public void positiveCurrencyPrecedesValue() {
+    void positiveCurrencyPrecedesValue() {
         Locale locale = Locale.forLanguageTag("en-US");
         DecimalFormat df = (DecimalFormat) NumberFormat.getCurrencyInstance(locale);
         df.setPositivePrefix("$"); // $123 as in en-US Java 8
@@ -437,7 +444,7 @@ public class _localeTest {
     }
 
     @Test
-    public void negativeCurrencyPrecedesValue() {
+    void negativeCurrencyPrecedesValue() {
         Locale locale = Locale.forLanguageTag("en-US");
         DecimalFormat df = (DecimalFormat) NumberFormat.getCurrencyInstance(locale);
         df.setNegativePrefix("($"); // ($123) as in en-US Java 8
@@ -449,7 +456,7 @@ public class _localeTest {
     }
 
     @Test
-    public void positiveSeparatedBySpace() {
+    void positiveSeparatedBySpace() {
         Locale locale = Locale.forLanguageTag("en-US");
         DecimalFormat df = (DecimalFormat) NumberFormat.getCurrencyInstance(locale);
         df.setPositivePrefix("$"); // $123 as in en-US Java 8
@@ -461,7 +468,7 @@ public class _localeTest {
     }
 
     @Test
-    public void negativeSeparatedBySpace() {
+    void negativeSeparatedBySpace() {
         Locale locale = Locale.forLanguageTag("de-DE");
         DecimalFormat df = (DecimalFormat) NumberFormat.getCurrencyInstance(locale);
         // Many Java locales use U+00A0, non-breaking space, for spacing, rather than " ".
@@ -479,7 +486,7 @@ public class _localeTest {
     }
 
     @Test
-    public void extendedWhitespace() {
+    void extendedWhitespace() {
         assertTrue(JyLocale.isExtendedWhitespace(' '));
         assertFalse(JyLocale.isExtendedWhitespace('a'));
         assertTrue(JyLocale.isExtendedWhitespace('\u00A0'));
@@ -487,7 +494,7 @@ public class _localeTest {
     }
 
     @Test
-    public void getlocale() {
+    void getlocale() {
         settableInit();
         // @formatter:off
         String script =
@@ -510,7 +517,7 @@ public class _localeTest {
     }
 
     @Test
-    public void setlocaleC() {
+    void setlocaleC() {
         settableInit();
         // @formatter:off
         String script =
@@ -543,7 +550,7 @@ public class _localeTest {
     }
 
     @Test
-    public void strCompareUS() {
+    void strCompareUS() {
         settableInit();
         _locale.setlocale(_locale.LC_ALL, new PyString("en_US"));
         assertEquals(-1, _locale.strcoll(new PyString("aaa"), new PyString("baa")));
@@ -552,7 +559,7 @@ public class _localeTest {
     }
 
     @Test
-    public void strCompareChineseMainlandInterp() {
+    void strCompareChineseMainlandInterp() {
         Py.writeDebug("_localeTest", "strCompareCMI()");
         // also test exposure through locale itself here
         settableInit();
@@ -574,7 +581,7 @@ public class _localeTest {
     }
 
     @Test
-    public void strCompareC() {
+    void strCompareC() {
         Py.writeDebug("_localeTest", "strCompareC()");
         // also test exposure through locale itself here
         settableInit();
@@ -591,7 +598,7 @@ public class _localeTest {
     }
 
     @Test
-    public void strxfrm() {
+    void strxfrm() {
         Py.writeDebug("_localeTest", "strxfrm()");
         settableInit();
         // @formatter:off
@@ -609,7 +616,7 @@ public class _localeTest {
     }
 
     @Test
-    public void dateSymbols() {
+    void dateSymbols() {
         settableInit();
         // @formatter:off
         String script =

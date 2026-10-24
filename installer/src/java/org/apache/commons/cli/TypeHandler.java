@@ -63,8 +63,10 @@ package org.apache.commons.cli;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Date;
 
 /**
@@ -87,6 +89,7 @@ public class TypeHandler {
      * @return The instance of <code>obj</code> initialised with
      * the value of <code>str</code>.
      */
+    @SuppressWarnings("rawtypes")
     public static Object createValue(String str, Object obj) {
         return createValue(str, (Class)obj);
     }
@@ -100,7 +103,7 @@ public class TypeHandler {
      * @return The instance of <code>clazz</code> initialised with
      * the value of <code>str</code>.
      */
-    public static Object createValue(String str, Class clazz) {
+    public static Object createValue(String str, @SuppressWarnings("rawtypes") Class clazz) {
         if( PatternOptionBuilder.STRING_VALUE == clazz) {
             return str;
         } else
@@ -138,7 +141,9 @@ public class TypeHandler {
       * @param str the argument value
       * @return the initialised object, or null if it couldn't create the Object.
       */
+    @SuppressWarnings("unchecked")
     public static Object createObject(String str) {
+        @SuppressWarnings("rawtypes")
         Class cl = null;
         try {
             cl = Class.forName(str);
@@ -150,13 +155,9 @@ public class TypeHandler {
         Object instance = null;
 
         try {
-            instance = cl.newInstance();
-        } catch (InstantiationException cnfe) {
-            System.err.println("InstantiationException; Unable to create: "+str);
-            return null;
-        }
-        catch (IllegalAccessException cnfe) {
-            System.err.println("IllegalAccessException; Unable to create: "+str);
+            instance = cl.getConstructor().newInstance();
+        } catch (Exception cnfe) {
+            System.err.println("Unable to create: " + str);
             return null;
         }
 
@@ -187,6 +188,7 @@ public class TypeHandler {
      * @param str the class name
      * @return The class if it is found, otherwise return null
      */
+    @SuppressWarnings("rawtypes")
     public static Class createClass(String str) {
         try {
             return Class.forName(str);
@@ -220,8 +222,8 @@ public class TypeHandler {
      */
     public static URL createURL(String str) {
         try {
-            return new URL(str);
-        } catch (MalformedURLException mue) {
+            return URL.of(new URI(str), null);
+        } catch (MalformedURLException | URISyntaxException e) {
             System.err.println("Unable to parse: "+str);
             return null;
         }

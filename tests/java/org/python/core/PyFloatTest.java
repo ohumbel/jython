@@ -1,8 +1,12 @@
 package org.python.core;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PyFloatTest extends TestCase {
+import org.junit.jupiter.api.Test;
+
+class PyFloatTest  {
 
     private final static double nan = Double.NaN;
 
@@ -13,7 +17,8 @@ public class PyFloatTest extends TestCase {
     /**
      * test the basic behavior of java.lang.Double extreme values
      */
-    public void test_Double_InfinityAndNaN() {
+    @Test
+    void test_Double_InfinityAndNaN() {
         assertTrue(Double.NaN != nan); // this is the definition of NaN
         assertTrue(Double.isNaN(nan));
         assertFalse(Double.isInfinite(nan));
@@ -31,7 +36,8 @@ public class PyFloatTest extends TestCase {
     /**
      * test extreme values
      */
-    public void testInfinityAndNaN() {
+    @Test
+    void testInfinityAndNaN() {
         PyFloat fNan = new PyFloat(Double.NaN);
         PyFloat fInf = new PyFloat(Double.POSITIVE_INFINITY);
         PyFloat fNinf = new PyFloat(Double.NEGATIVE_INFINITY);
@@ -52,7 +58,8 @@ public class PyFloatTest extends TestCase {
     /**
      * test formatting of extreme values
      */
-    public void testInfinityAndNaN_repr() {
+    @Test
+    void testInfinityAndNaN_repr() {
         PyFloat fNan = new PyFloat(Double.NaN);
         PyFloat fInf = new PyFloat(Double.POSITIVE_INFINITY);
         PyFloat fNinf = new PyFloat(Double.NEGATIVE_INFINITY);

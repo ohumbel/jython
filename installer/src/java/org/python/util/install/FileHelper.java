@@ -136,7 +136,8 @@ public final class FileHelper {
      * @return The url of the file, can be null
      */
     public static URL getRelativeURL(Class<?> clazz, String fileName) {
-        String filePath = getRelativePackagePath(clazz) + "/" + fileName;
+        String name = fileName.startsWith("/") ? fileName.substring(1) : fileName;
+        String filePath = getRelativePackagePath(clazz) + "/" + name;
         return Thread.currentThread().getContextClassLoader().getResource(filePath);
     }
 
@@ -153,7 +154,8 @@ public final class FileHelper {
      * @return The input stream of the file, can be null
      */
     public static InputStream getRelativeURLAsStream(Class<?> clazz, String fileName) {
-        String filePath = getRelativePackagePath(clazz) + "/" + fileName;
+        String name = fileName.startsWith("/") ? fileName.substring(1) : fileName;
+        String filePath = getRelativePackagePath(clazz) + "/" + name;
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
     }
 

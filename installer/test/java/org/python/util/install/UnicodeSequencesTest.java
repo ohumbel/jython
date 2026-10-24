@@ -1,29 +1,32 @@
 package org.python.util.install;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
-public class UnicodeSequencesTest extends TestCase {
+class UnicodeSequencesTest  {
 
-    private static Set _latin1Encodings;
+    private static Set<String> _latin1Encodings;
 
-    public void testUmlaute() {
+    @Test
+    void testUmlaute() {
         String fileEncoding = System.getProperty("file.encoding", "unknown");
         if (getLatin1Encodings().contains(fileEncoding)) {
-            assertEquals("ä", UnicodeSequences.a2);
-            assertEquals("Ä", UnicodeSequences.A2);
-            assertEquals("ö", UnicodeSequences.o2);
-            assertEquals("Ö", UnicodeSequences.O2);
-            assertEquals("ü", UnicodeSequences.u2);
-            assertEquals("Ü", UnicodeSequences.U2);
+            assertEquals("ï¿½", UnicodeSequences.a2);
+            assertEquals("ï¿½", UnicodeSequences.A2);
+            assertEquals("ï¿½", UnicodeSequences.o2);
+            assertEquals("ï¿½", UnicodeSequences.O2);
+            assertEquals("ï¿½", UnicodeSequences.u2);
+            assertEquals("ï¿½", UnicodeSequences.U2);
         }
     }
 
-    private static Set getLatin1Encodings() {
+    private static Set<String> getLatin1Encodings() {
         if (_latin1Encodings == null) {
-            _latin1Encodings = new HashSet(3);
+            _latin1Encodings = new HashSet<>(3);
             _latin1Encodings.add("ISO-LATIN-1");
             _latin1Encodings.add("ISO-8859-1");
             _latin1Encodings.add("Cp1252");

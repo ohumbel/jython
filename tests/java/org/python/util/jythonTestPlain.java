@@ -1,9 +1,9 @@
 package org.python.util;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.python.core.RegistryKey.PYTHON_CONSOLE;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.python.core.Console;
 import org.python.core.PlainConsole;
 import org.python.core.Py;
@@ -26,7 +26,7 @@ import org.python.core.Py;
  *              org.junit.runner.JUnitCore org.python.util.jythonTestPlain
  * </pre>
  */
-public class jythonTestPlain {
+class jythonTestPlain {
 
     private static String[] commands = {"-c", "import sys; print type(sys._jy_console)"};
 
@@ -36,7 +36,7 @@ public class jythonTestPlain {
      * be issued when the test runs.
      */
     @Test
-    public void testFallbackConsole() {
+    void testFallbackConsole() {
         System.out.println("testFallbackConsole");
         System.getProperties().setProperty(PYTHON_CONSOLE, "org.python.util.InteractiveConsole");
         jython.main(commands);
@@ -48,17 +48,18 @@ public class jythonTestPlain {
      * Show that a {@link PlainConsole} may be replaced with a {@link JLineConsole}.
      */
     @Test
-    public void testChangeConsole() throws Exception {
+    void testChangeConsole() throws Exception {
         System.out.println("testChangeConsole");
         // In the case where this test is run in isolation, cause initialisation with PlainConsole
         System.getProperties().setProperty(PYTHON_CONSOLE, "org.python.core.PlainConsole");
-        PythonInterpreter interp = new PythonInterpreter();
-        // Now replace it
-        Py.installConsole(new JLineConsole(null));
-        jython.main(commands);
-        Console console = Py.getConsole();
-        assertEquals(JLineConsole.class, console.getClass());
-        interp.cleanup();
+        try (PythonInterpreter interp = new PythonInterpreter()) {
+            // Now replace it
+            Py.installConsole(new JLineConsole(null));
+            jython.main(commands);
+            Console console = Py.getConsole();
+            assertEquals(JLineConsole.class, console.getClass());
+            interp.cleanup();
+        }
     }
 
 }

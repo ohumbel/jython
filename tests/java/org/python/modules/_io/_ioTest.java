@@ -1,11 +1,11 @@
 /* Copyright (c)2013 Jython Developers */
 package org.python.modules._io;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,8 +14,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.python.core.Py;
 import org.python.core.PyException;
 import org.python.core.PyFile;
@@ -30,7 +30,7 @@ import org.python.util.PythonInterpreter;
  * extensive regression test in Lib/test/test_io.py, but that is quite complex. This test case
  * exists to exercise selected functionality in isolation.
  */
-public class _ioTest {
+class _ioTest {
 
     // Some file names to use
     private final String FILE1 = "$test_1_tmp";
@@ -47,8 +47,8 @@ public class _ioTest {
      *
      * @throws java.lang.Exception
      */
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         // Initialise a Jython interpreter
         systemState = Py.getSystemState();
         dict = new PyStringMap();
@@ -59,17 +59,17 @@ public class _ioTest {
      * Test importing the _io module into the global namespace of {@link #interp}.
      */
     @Test
-    public void moduleImport() {
+    void moduleImport() {
         interp.exec("import _io");
         PyObject _io = interp.get("_io");
-        org.junit.Assert.assertNotNull(_io);
+        assertNotNull(_io);
     }
 
     /**
      * Test raising a Python _io.UnsupportedOperation from Java code directly.
      */
     @Test
-    public void javaRaiseUnsupportedOperation() {
+    void javaRaiseUnsupportedOperation() {
 
         // Built-in modules seem not to initialise until we actually use an interpreter
         interp.exec("import io");
@@ -78,22 +78,22 @@ public class _ioTest {
         PyException pye = _jyio.UnsupportedOperation("Message from _ioTest");
         PyObject type = pye.type;
         String repr = type.toString();
-        assertEquals("Class name", "<class '_io.UnsupportedOperation'>", repr);
+        assertEquals("<class '_io.UnsupportedOperation'>", repr, "Class name");
 
         // Raise from Java into Python and catch it in a variable: _IOBase.fileno() raises it
         interp.exec("try :\n    io.IOBase().fileno()\n" + "except Exception as e:\n    pass");
         PyObject e = interp.get("e");
 
         String m = e.toString();
-        assertTrue("Exception '" + m + "' should both contain 'UnsupportedOperation' and 'fileno'",
-                        m.contains("UnsupportedOperation") && m.contains("fileno"));
+        assertTrue(m.contains("UnsupportedOperation") && m.contains("fileno"),
+                "Exception '" + m + "' should both contain 'UnsupportedOperation' and 'fileno'");
     }
 
     /**
      * Test raising a Python _io.UnsupportedOperation from Python code into Java.
      */
     @Test
-    public void pythonRaiseUnsupportedOperation() {
+    void pythonRaiseUnsupportedOperation() {
         interp.exec("import _io");
         try {
             interp.exec("raise _io.UnsupportedOperation()");
@@ -105,7 +105,7 @@ public class _ioTest {
 
     /** Check <code>PyFile().fileno()</code> is acceptable to <code>_io.open()</code> */
     @Test
-    public void openPyFileByFileno() throws IOException {
+    void openPyFileByFileno() throws IOException {
         @SuppressWarnings("unused")
         PySystemState sys = Py.getSystemState();
         PyFile file = new PyFile(FILE1, "w", 1);
@@ -114,7 +114,7 @@ public class _ioTest {
 
     /** Check <code>PyFile(OutputStream).fileno()</code> is acceptable to <code>_io.open()</code> */
     @Test
-    public void openPyFileOStreamByFileno() throws IOException {
+    void openPyFileOStreamByFileno() throws IOException {
         @SuppressWarnings("unused")
         PySystemState sys = Py.getSystemState();
         OutputStream ostream = new FileOutputStream(FILE1);
@@ -124,21 +124,21 @@ public class _ioTest {
 
     /** Check <code>sys.stdin.fileno()</code> is acceptable to <code>_io.open()</code> */
     @Test
-    public void openStdinByFileno() throws IOException {
+    void openStdinByFileno() throws IOException {
         PySystemState sys = Py.getSystemState();
         openByFilenoTest(sys.stdin, "rb");
     }
 
     /** Check <code>sys.stdout.fileno()</code> is acceptable to <code>_io.open()</code> */
     @Test
-    public void openStdoutByFileno() throws IOException {
+    void openStdoutByFileno() throws IOException {
         PySystemState sys = Py.getSystemState();
         openByFilenoTest(sys.stdout, "wb");
     }
 
     /** Check <code>sys.stderr.fileno()</code> is acceptable to <code>_io.open()</code> */
     @Test
-    public void openStderrByFileno() throws IOException {
+    void openStderrByFileno() throws IOException {
         PySystemState sys = Py.getSystemState();
         openByFilenoTest(sys.stderr, "wb");
     }
@@ -151,7 +151,7 @@ public class _ioTest {
      * @param mode mode string "rb" etc.
      * @throws IOException
      */
-    public void openByFilenoTest(PyObject file, String mode) throws IOException {
+    void openByFilenoTest(PyObject file, String mode) throws IOException {
         PyObject pyfd = file.invoke("fileno");
         @SuppressWarnings("unused")
         RawIOBase fd = (RawIOBase)pyfd.__tojava__(RawIOBase.class);
@@ -170,7 +170,7 @@ public class _ioTest {
      * @throws IOException
      */
     @Test
-    public void closeNeglectedFiles() throws IOException {
+    void closeNeglectedFiles() throws IOException {
 
         // File names
         final String F = FILE1;     // Raw file
@@ -230,7 +230,7 @@ public class _ioTest {
      * @throws IOException
      */
     @Test
-    public void closeNeglectedPyFiles() throws IOException {
+    void closeNeglectedPyFiles() throws IOException {
 
         // File names
         final String F = FILE1;     // Raw file
@@ -307,9 +307,9 @@ public class _ioTest {
 
         // Check as expected
         String msg = "Bytes read from " + name;
-        assertEquals(msg, expBytes.length, n);
+        assertEquals(expBytes.length, n, msg);
         byte[] resBytes = Arrays.copyOf(r, n);
-        assertArrayEquals(msg, expBytes, resBytes);
+        assertArrayEquals(expBytes, resBytes, msg);
 
         // Delete the file
         if (delete) {

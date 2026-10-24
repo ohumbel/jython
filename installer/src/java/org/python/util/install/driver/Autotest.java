@@ -8,8 +8,6 @@ import org.python.util.install.Installation;
 import org.python.util.install.InstallationListener;
 import org.python.util.install.InstallerCommandLine;
 import org.python.util.install.JavaHomeHandler;
-import org.python.util.install.JavaVersionTester;
-import org.python.util.install.Installation.JavaVersionInfo;
 
 public abstract class Autotest implements InstallationListener {
 
@@ -17,7 +15,6 @@ public abstract class Autotest implements InstallationListener {
 
     private static int _count = 0; // unique test number
     private static File _rootDirectory = null;
-    private static JavaVersionInfo _systemDefaultJavaVersion;
 
     private String _name;
     private File _targetDir;
@@ -250,25 +247,7 @@ public abstract class Autotest implements InstallationListener {
      * @return <code>true</code> if we can handle exclamation marks, <code>false</code> otherwise
      */
     private boolean canHandleExclamationMarks() {
-        boolean exclamation = false;
-        if (!Installation.isWindows()) {
-            // get the running java specification version
-            String specificationVersion = System.getProperty(JavaVersionTester.JAVA_SPECIFICATION_VERSION,
-                                                             "");
-            if (Installation.getJavaSpecificationVersion(specificationVersion) > 15) {
-                // get the system default java version
-                if (_systemDefaultJavaVersion == null) {
-                    _systemDefaultJavaVersion = Installation.getDefaultJavaVersion();
-                }
-                if (_systemDefaultJavaVersion.getErrorCode() == Installation.NORMAL_RETURN) {
-                    specificationVersion = _systemDefaultJavaVersion.getSpecificationVersion();
-                    if (Installation.getJavaSpecificationVersion(specificationVersion) > 15) {
-                        exclamation = true;
-                    }
-                }
-            }
-        }
-        return exclamation;
+        return !Installation.isWindows();
     }
 
 }

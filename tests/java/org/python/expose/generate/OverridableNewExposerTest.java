@@ -1,5 +1,9 @@
 package org.python.expose.generate;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.python.core.BytecodeLoader;
@@ -12,9 +16,10 @@ import org.python.core.PyType;
 import org.python.expose.ExposedNew;
 import org.python.expose.ExposedType;
 
-public class OverridableNewExposerTest extends InterpTestCase implements PyTypes, Opcodes {
+class OverridableNewExposerTest extends InterpTestCase implements PyTypes, Opcodes {
 
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         super.setUp();
         ne = new OverridableNewExposer(Type.getType(Instantiable.class),
                                 Type.getType(Instantiable.class),
@@ -28,24 +33,22 @@ public class OverridableNewExposerTest extends InterpTestCase implements PyTypes
         instance.setWrappedType(type);
     }
 
-    public void testSimple() throws Exception {
+    @Test
+    void testSimple() throws Exception {
         assertEquals("org/python/expose/generate/OverridableNewExposerTest$Instantiable$exposed___new__",
                      ne.getInternalName());
         assertEquals("org.python.expose.generate.OverridableNewExposerTest$Instantiable$exposed___new__",
                      ne.getClassName());
         assertSame("__new__", instance.__getattr__("__name__").toString());
         Instantiable created = (Instantiable)instance.__call__(type);
-        assertEquals("Just calling the actual new doesn't call its init", 0, created.timesCalled);
+        assertEquals(0, created.timesCalled, "Just calling the actual new doesn't call its init");
         created = (Instantiable)instance.new_impl(true, type, Py.EmptyObjects, Py.NoKeywords);
-        assertEquals("Passing true to new_init should get the init method called",
-                     1,
-                     created.timesCalled);
-        assertEquals("the regular type is passed in for normal instantiation",
-                     type,
-                     created.forType);
+        assertEquals(1, created.timesCalled, "Passing true to new_init should get the init method called");
+        assertEquals(type, created.forType, "the regular type is passed in for normal instantiation");
     }
 
-    public void testSubtype() throws Exception {
+    @Test
+    void testSubtype() throws Exception {
         PyType sub = (PyType)PyType.newType(new PyNewWrapper() {
 
             public PyObject new_impl(boolean init,
@@ -59,8 +62,8 @@ public class OverridableNewExposerTest extends InterpTestCase implements PyTypes
                                                                sub,
                                                                Py.EmptyObjects,
                                                                Py.NoKeywords);
-        assertEquals("new's init isn't called when a subtype comes in", 0, created.timesCalled);
-        assertSame("the subtype is created when a subtype is passed in", sub, created.forType);
+        assertEquals(0, created.timesCalled, "new's init isn't called when a subtype comes in");
+        assertSame(sub, created.forType, "the subtype is created when a subtype is passed in");
     }
 
     @ExposedType()

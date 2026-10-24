@@ -80,6 +80,7 @@ public abstract class Parser implements CommandLineParser {
     /** current Options */
     private Options options;
     /** list of required options strings */
+    @SuppressWarnings("rawtypes")
     private List requiredOptions;
 
     /**
@@ -139,7 +140,9 @@ public abstract class Parser implements CommandLineParser {
 
         boolean eatTheRest = false;
 
+        @SuppressWarnings("rawtypes")
         List tokenList = Arrays.asList( flatten( opts, arguments, stopAtNonOption ) );
+        @SuppressWarnings("rawtypes")
         ListIterator iterator = tokenList.listIterator();
 
         // process each flattened token
@@ -203,6 +206,7 @@ public abstract class Parser implements CommandLineParser {
         // if there are required options that have not been
         // processsed
         if( requiredOptions.size() > 0 ) {
+            @SuppressWarnings("rawtypes")
             Iterator iter = requiredOptions.iterator();
             StringBuffer buff = new StringBuffer();
 
@@ -215,7 +219,7 @@ public abstract class Parser implements CommandLineParser {
         }
     }
 
-    public void processArgs( Option opt, ListIterator iter ) 
+    public void processArgs(Option opt, @SuppressWarnings("rawtypes") ListIterator iter)
     throws ParseException
     {
         // loop until an option is found
@@ -239,7 +243,7 @@ public abstract class Parser implements CommandLineParser {
         }
     }
 
-    private void processOption( String arg, ListIterator iter ) 
+    private void processOption(String arg, @SuppressWarnings("rawtypes") ListIterator iter) 
     throws ParseException
     {
         // get the option represented by arg

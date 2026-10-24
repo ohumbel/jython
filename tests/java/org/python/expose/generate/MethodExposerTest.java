@@ -1,5 +1,10 @@
 package org.python.expose.generate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.fail;
+
+import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.python.core.BytecodeLoader;
@@ -10,9 +15,9 @@ import org.python.core.PyObject;
 import org.python.core.ThreadState;
 import org.python.expose.MethodType;
 
-public class MethodExposerTest extends InterpTestCase implements Opcodes, PyTypes {
+class MethodExposerTest extends InterpTestCase implements Opcodes, PyTypes {
 
-    public static InstanceMethodExposer createExposer(String methodName,
+    static InstanceMethodExposer createExposer(String methodName,
                                                       Type returnType,
                                                       Type... args) {
         return new InstanceMethodExposer(Type.getType(SimpleExposed.class),
@@ -22,12 +27,12 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
                                          "simpleexposed");
     }
 
-    public static PyBuiltinCallable createBound(String methodName, Type returnType, Type... args)
+    static PyBuiltinCallable createBound(String methodName, Type returnType, Type... args)
             throws Exception {
         return createBound(createExposer(methodName, returnType, args));
     }
 
-    public static PyBuiltinCallable createBound(MethodExposer me) throws Exception {
+    static PyBuiltinCallable createBound(MethodExposer me) throws Exception {
         Class<?> descriptor = me.load(new BytecodeLoader.Loader());
         PyBuiltinCallable func = instantiate(descriptor, me.getNames()[0]);
         if (me instanceof ClassMethodExposer) {
@@ -36,18 +41,19 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         return func.bind(new SimpleExposed());
     }
 
-    public static PyBuiltinCallable instantiate(Class<?> descriptor, String name) throws Exception {
+    static PyBuiltinCallable instantiate(Class<?> descriptor, String name) throws Exception {
         return (PyBuiltinCallable)descriptor.getConstructor(String.class).newInstance(name);
     }
 
-    public void testSimpleMethod() throws Exception {
+    @Test
+    void testSimpleMethod() throws Exception {
         InstanceMethodExposer mp = createExposer("simple_method", VOID);
         assertEquals("simple_method", mp.getNames()[0]);
         assertEquals("org/python/expose/generate/SimpleExposed$simple_method_exposer",
                      mp.getInternalName());
         assertEquals("org.python.expose.generate.SimpleExposed$simple_method_exposer",
                      mp.getClassName());
-        Class descriptor = mp.load(new BytecodeLoader.Loader());
+        Class<?> descriptor = mp.load(new BytecodeLoader.Loader());
         PyBuiltinCallable instance = instantiate(descriptor, "simple_method");
         assertSame("simple_method", instance.__getattr__("__name__").toString());
         SimpleExposed simpleExposed = new SimpleExposed();
@@ -57,20 +63,24 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         assertEquals(1, simpleExposed.timesCalled);
     }
 
-    public void testPrefixing() throws Exception {
+    @Test
+    void testPrefixing() throws Exception {
         assertEquals("prefixed", createExposer("simpleexposed_prefixed", VOID).getNames()[0]);
     }
 
-    public void testStringReturn() throws Exception {
+    @Test
+    void testStringReturn() throws Exception {
         assertEquals(Py.newString(SimpleExposed.TO_STRING_RETURN),
                      createBound("toString", STRING).__call__());
     }
 
-    public void testBooleanReturn() throws Exception {
+    @Test
+    void testBooleanReturn() throws Exception {
         assertEquals(Py.False, createBound("__nonzero__", BOOLEAN).__call__());
     }
 
-    public void testArgumentPassing() throws Exception {
+    @Test
+    void testArgumentPassing() throws Exception {
         PyBuiltinCallable bound = createBound("takesArgument", Type.DOUBLE_TYPE, PYOBJ);
         assertEquals(1.0, Py.py2double(bound.__call__(Py.One)));
         try {
@@ -79,7 +89,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         } catch (Exception e) {}
     }
 
-    public void testBinary() throws Exception {
+    @Test
+    void testBinary() throws Exception {
         InstanceMethodExposer exposer = createExposer("__add__", PYOBJ, PYOBJ);
         exposer.type = MethodType.BINARY;
         PyBuiltinCallable bound = createBound(exposer);
@@ -87,7 +98,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         assertEquals(Py.One, bound.__call__(Py.False));
     }
 
-    public void testCmp() throws Exception {
+    @Test
+    void testCmp() throws Exception {
         InstanceMethodExposer exp = createExposer("__cmp__", INT, PYOBJ);
         exp.type = MethodType.CMP;
         PyBuiltinCallable bound = createBound(exp);
@@ -102,7 +114,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         assertEquals(Py.One, bound.__call__(Py.False));
     }
 
-    public void testNoneDefault() throws Exception {
+    @Test
+    void testNoneDefault() throws Exception {
         InstanceMethodExposer exp = createExposer("defaultToNone", PYOBJ, PYOBJ);
         exp.defaults = new String[] {"Py.None"};
         PyBuiltinCallable bound = createBound(exp);
@@ -110,7 +123,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         assertEquals(Py.None, bound.__call__());
     }
 
-    public void testNullDefault() throws Exception {
+    @Test
+    void testNullDefault() throws Exception {
         InstanceMethodExposer exp = createExposer("defaultToNull", PYOBJ, PYOBJ);
         exp.defaults = new String[] {"null"};
         PyBuiltinCallable bound = createBound(exp);
@@ -118,7 +132,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         assertEquals(null, bound.__call__());
     }
 
-    public void testIntDefault() throws Exception {
+    @Test
+    void testIntDefault() throws Exception {
         InstanceMethodExposer exp = createExposer("defaultToOne", PYOBJ, INT);
         exp.defaults = new String[] {"1"};
         PyBuiltinCallable bound = createBound(exp);
@@ -131,7 +146,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         } catch (NumberFormatException nfe) {}
     }
 
-    public void testPrimitiveDefaults() throws Exception {
+    @Test
+    void testPrimitiveDefaults() throws Exception {
         InstanceMethodExposer exp = createExposer("manyPrimitives",
                                                   STRING,
                                                   CHAR,
@@ -149,7 +165,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         } catch (InvalidExposingException iee) {}
     }
 
-    public void testFullArguments() throws Exception {
+    @Test
+    void testFullArguments() throws Exception {
         InstanceMethodExposer exp = new InstanceMethodExposer(Type.getType(SimpleExposed.class),
                                                               Opcodes.ACC_PUBLIC,
                                                               "fullArgs",
@@ -174,7 +191,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         } catch (InvalidExposingException ite) {}
     }
 
-    public void testExposingStatic() {
+    @Test
+    void testExposingStatic() {
         try {
             new InstanceMethodExposer(Type.getType(SimpleExposed.class),
                                       Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
@@ -185,17 +203,20 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         } catch (InvalidExposingException ite) {}
     }
 
-    public void testPrimitiveReturns() throws Exception {
+    @Test
+    void testPrimitiveReturns() throws Exception {
         assertEquals(12, Py.py2int(createBound("shortReturn", SHORT).__call__()));
         assertEquals(0, Py.py2int(createBound("byteReturn", BYTE).__call__()));
         assertEquals("a", createBound("charReturn", CHAR).__call__().toString());
     }
 
-    public void testNullReturns() throws Exception {
+    @Test
+    void testNullReturns() throws Exception {
         assertEquals(Py.None, createBound("stringReturnNull", STRING).__call__());
     }
 
-    public void testClassMethod() throws Exception {
+    @Test
+    void testClassMethod() throws Exception {
         ClassMethodExposer exp = new ClassMethodExposer(Type.getType(SimpleExposed.class),
                                                         Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                                                         "classmethod",
@@ -209,7 +230,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         assertEquals("a", bound.__call__().toString());
     }
 
-    public void testClassMethodDefaults() throws Exception {
+    @Test
+    void testClassMethodDefaults() throws Exception {
         ClassMethodExposer exp = new ClassMethodExposer(Type.getType(SimpleExposed.class),
                                                         Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                                                         "defaultsclassmethod",
@@ -228,7 +250,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         assertEquals(3, bound.__call__(Py.newString("nothello"), Py.One).asInt());
     }
 
-    public void testThreadState() throws Exception {
+    @Test
+    void testThreadState() throws Exception {
         PyBuiltinCallable bound = createBound("needsThreadState", STRING, THREAD_STATE, STRING);
         ThreadState ts = Py.getThreadState();
         PyObject expected = Py.newString("foo got state " + ts.hashCode());
@@ -239,7 +262,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
                      bound.__call__(ts, Py.newString("foo")));
     }
 
-    public void testThreadStateFullArguments() throws Exception {
+    @Test
+    void testThreadStateFullArguments() throws Exception {
         InstanceMethodExposer exp = new InstanceMethodExposer(Type.getType(SimpleExposed.class),
                                                               Opcodes.ACC_PUBLIC,
                                                               "needsThreadStateWide",
@@ -255,7 +279,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         assertEquals(Py.One, bound.__call__(Py.One));
     }
 
-    public void testThreadStateClassMethod() throws Exception {
+    @Test
+    void testThreadStateClassMethod() throws Exception {
         ClassMethodExposer exp = new ClassMethodExposer(Type.getType(SimpleExposed.class),
                                                         Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                                                         "needsThreadStateClass",
@@ -277,7 +302,8 @@ public class MethodExposerTest extends InterpTestCase implements Opcodes, PyType
         assertEquals(expected, bound.__call__(arg0, arg1));
     }
 
-    public void test__new__() throws Exception {
+    @Test
+    void test__new__() throws Exception {
         try {
             createExposer("__new__", VOID);
             fail("Shouldn't be able to make a MethodExposer with the name __new__");

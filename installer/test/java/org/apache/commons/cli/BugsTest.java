@@ -10,31 +10,19 @@
 
 package org.apache.commons.cli;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-public class BugsTest extends TestCase
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+class BugsTest 
 {
 
-    public static Test suite() { 
-        return new TestSuite( BugsTest.class );
-    }
-
-    public BugsTest( String name )
-    {
-        super( name );
-    }
-
-    public void setUp()
-    {
-    }
-
-    public void tearDown()
-    {
-    }
-
-    public void test11457() {
+    @Test
+    void test11457() {
         Options options = new Options();
         OptionBuilder.withLongOpt( "verbose" );
         options.addOption( OptionBuilder.create() );
@@ -52,7 +40,8 @@ public class BugsTest extends TestCase
         }
     }
 
-    public void test11458()
+    @Test
+    void test11458()
     {
         Options options = new Options();
         OptionBuilder.withValueSeparator( '=' );
@@ -104,7 +93,8 @@ public class BugsTest extends TestCase
         }
     }
 
-    public void test11680()
+    @Test
+    void test11680()
     {
         Options options = new Options();
         options.addOption("f", true, "foobar");
@@ -129,7 +119,8 @@ public class BugsTest extends TestCase
         }
     }
 
-    public void test11456()
+    @Test
+    void test11456()
     {
         // Posix 
         Options options = new Options();
@@ -169,7 +160,8 @@ public class BugsTest extends TestCase
 
     }
 
-    public void test12210() {
+    @Test
+    void test12210() {
         // create the main options object which will handle the first parameter
         Options mainOptions = new Options();
         // There can be 2 main exclusive options:  -exec|-rep
@@ -227,7 +219,8 @@ public class BugsTest extends TestCase
         }
     }
 
-    public void test13425() {
+    @Test
+    void test13425() {
         Options options = new Options();
         OptionBuilder.withLongOpt( "old-password" );
         OptionBuilder.withDescription( "Use this option to specify the old password" );
@@ -261,7 +254,8 @@ public class BugsTest extends TestCase
         fail( "MissingArgumentException not caught." + line);
     }
 
-    public void test13666() {
+    @Test
+    void test13666() {
         Options options = new Options();
         OptionBuilder.withDescription( "dir" );
         OptionBuilder.hasArg();
@@ -276,7 +270,8 @@ public class BugsTest extends TestCase
         }
     }
 
-    public void test13935() {
+    @Test
+    void test13935() {
         OptionGroup directions = new OptionGroup();
 
         Option left = new Option( "l", "left", false, "go left" );

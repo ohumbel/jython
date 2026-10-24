@@ -1,5 +1,8 @@
 package org.python.expose.generate;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -10,9 +13,10 @@ import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyType;
 
-public class ExposedTypeProcessorTest extends InterpTestCase {
+class ExposedTypeProcessorTest extends InterpTestCase {
 
-    public void testDetectType() throws Exception {
+    @Test
+    void testDetectType() throws Exception {
         InputStream in = getClass().getClassLoader()
                 .getResourceAsStream("org/python/expose/generate/SimpleExposed.class");
         ExposedTypeProcessor ice = new ExposedTypeProcessor(in);
@@ -46,7 +50,8 @@ public class ExposedTypeProcessorTest extends InterpTestCase {
         assertEquals(desc.__getattr__("__doc__"), new PyString("tostring docs"));
     }
 
-    public void testNoAnnotationType() throws IOException {
+    @Test
+    void testNoAnnotationType() throws IOException {
         InputStream in = getClass().getClassLoader()
                 .getResourceAsStream("org/python/expose/generate/ExposedTypeProcessorTest.class");
         try {
