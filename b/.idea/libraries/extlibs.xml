@@ -2,6 +2,7 @@
   <library name="extlibs">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/extlibs/ant-1.10.18.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/ang-jarjar-1.18.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/antlr-complete-3.5.3.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/asm-9.11.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/asm-commons-9.11.jar!/" />
@@ -12,7 +13,7 @@
       <root url="jar://$PROJECT_DIR$/extlibs/commons-io-2.22.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/guava-33.7.2-jre.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/icu4j-78.3.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/jarjar-1.7.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/jarjar-1.18.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/java-sizeof-0.0.5.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jdbc-15.0.1.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jffi-1.4.3.jar!/" />
