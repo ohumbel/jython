@@ -15,13 +15,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Location;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class VersionMatchingAntTaskTest {
+
+    static Set<String> antArtefacts = new HashSet<>();
 
     private VersionMatchingAntTask task;
 
@@ -29,7 +35,11 @@ class VersionMatchingAntTaskTest {
     void setUp() throws Exception {
         task = new VersionMatchingAntTask();
         setLocationToBuildXml();
+        // add all ant artefacts to a static collection (for parameterized tests
+        antArtefacts.addAll(task.parseAntArtefacts());
     }
+
+
 
     @Test
     void testGetLocation() {
@@ -42,14 +52,12 @@ class VersionMatchingAntTaskTest {
     void testParseGradleAretfacts() throws IOException {
         Set<String> gradleArtefacts = task.parseGradleArtefacts();
         assertNotNull(gradleArtefacts);
-        assertEquals(20, gradleArtefacts.size());
+        assertEquals(21, gradleArtefacts.size());
     }
 
     @Test
     void testParseAntArtefacts() throws IOException {
-        Set<String> antArtefacts = task.parseAntArtefacts();
-        assertNotNull(antArtefacts);
-        assertEquals(39, antArtefacts.size());
+        assertEquals(41, antArtefacts.size());
     }
 
     @Test
@@ -84,6 +92,7 @@ class VersionMatchingAntTaskTest {
         assertEquals("icu4j-78.7.jar", calculateGradleArtefact("rev_icu4j", "78.7"));
         assertEquals("jdbc-15.3.2.1.jar", calculateGradleArtefact("rev_informix", "15.3.2.1"));
         assertEquals("jakarta.servlet-api-6.1.0.jar", calculateGradleArtefact("rev_jakarta_servlet_api", "6.1.0"));
+        assertEquals("ant-jarjar-1.18.1.jar", calculateGradleArtefact("rev_jarjar", "1.18.1"));
         assertEquals("java-sizeof-0.1.2.jar", calculateGradleArtefact("rev_java_sizeof", "0.1.2"));
         assertEquals("jffi-1.3.15.jar", calculateGradleArtefact("rev_jffi", "1.3.15"));
         assertEquals("jline-3.30.4.jar", calculateGradleArtefact("rev_jline", "3.30.4"));
@@ -96,21 +105,30 @@ class VersionMatchingAntTaskTest {
         assertEquals("ojdbc8-23.26.1.2.3.jar", calculateGradleArtefact("rev_oracle", "23.26.1.2.3"));
     }
 
-    @Test
-    void testCheckAntArtefact() {
-        Set<String> antArtefacts = new HashSet<>();
-        antArtefacts.add("junit-jupiter-6.1.3.jar");
-        antArtefacts.add("additiona.jar");
-        antArtefacts.add("asm-9.8.7.jar");
+    @ParameterizedTest
+    @MethodSource("provideAntArtefacts")
+    void testCheckAntArtefact(String antArtefact) throws IOException {
+        checkAntArtefact(antArtefact, antArtefacts);
+    }
 
-        checkAntArtefact("junit-jupiter-6.1.3.jar", antArtefacts);
-        checkAntArtefact("asm-9.8.7.jar", antArtefacts);
+    @ParameterizedTest
+    @MethodSource("provideMissingAntArtefacts")
+    void testCheckAntArtefactMissingVersion(String missingAntArtefact) throws IOException {
         try {
-            checkAntArtefact("icu4j-78.1.jar", antArtefacts);
+            checkAntArtefact(missingAntArtefact, antArtefacts);
         } catch (BuildException be) {
-            assertEquals("Gradle artefact 'icu4j-78.1.jar' is missing from build.xml. Please synchronize extlibs and build.xml with libs.versions.toml.",
+            assertEquals(String.format("Gradle artefact '%s' is missing from build.xml. " + //
+                            "Please synchronize extlibs and build.xml with libs.versions.toml.", missingAntArtefact),
                             be.getMessage());
         }
+    }
+
+    private static Stream<Arguments> provideAntArtefacts() throws IOException {
+        return antArtefacts.stream().sorted().map(a -> Arguments.of(a));
+    }
+
+    private static Stream<Arguments> provideMissingAntArtefacts() throws IOException {
+        return antArtefacts.stream().sorted().map(a -> Arguments.of(a.substring(0, a.length() - 4) + ".999.jar"));
     }
 
     private void setLocationToBuildXml() throws URISyntaxException {
