@@ -824,9 +824,10 @@ The text for an official release would continue like ...
     </target>
 
     <target name="jar-complete" depends="jar, pycompile">
-        <taskdef name="jarjar" classname="org.pantsbuild.jarjar.JarJarTask">
+        <taskdef name="jarjar" classname="com.eed3si9n.jarjar.JarJarTask">
             <classpath>
-                <pathelement path="extlibs/jarjar-1.7.2.jar" />
+                <pathelement path="extlibs/ant-jarjar-1.18.1.jar" />
+                <pathelement path="extlibs/jarjar-1.18.1.jar" />
                 <path refid="main.classpath" />
             </classpath>
         </taskdef>
