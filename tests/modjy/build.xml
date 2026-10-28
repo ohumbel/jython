@@ -53,9 +53,10 @@
         <property name="mockrunner_servlet_jakarta_jar"
                   location="${build}/mockrunner-jakarta/mockrunner-servlet.jar" />
 
-        <taskdef name="jarjar" classname="org.pantsbuild.jarjar.JarJarTask">
+        <taskdef name="jarjar" classname="com.eed3si9n.jarjar.JarJarTask">
             <classpath>
-                <pathelement location="../../extlibs/jarjar-1.7.2.jar" />
+                <pathelement location="../../extlibs/ant-jarjar-1.18.1.jar" />
+                <pathelement location="../../extlibs/jarjar-1.18.1.jar" />
                 <pathelement location="../../extlibs/asm-9.11.jar" />
                 <pathelement location="../../extlibs/asm-commons-9.11.jar" />
             </classpath>

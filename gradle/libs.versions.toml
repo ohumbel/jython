@@ -9,6 +9,7 @@ rev_guava =               "33.7.2-jre"
 rev_icu4j =               "78.3"
 rev_informix =            "15.0.1.4"
 rev_jakarta_servlet_api = "6.1.0"
+rev_jarjar =               "1.18.1"
 rev_java_sizeof =         "0.0.5"
 rev_jffi =                "1.4.3"
 rev_jline =               "4.4.8"
@@ -22,6 +23,7 @@ rev_oracle =              "23.26.3.0.0"
 
 [libraries]
 ant =                                { module = "org.apache.ant:ant",                          version.ref = "rev_ant" }
+ant_jarjar =                         { module = "com.eed3si9n.jarjar:ant-jarjar",              version.ref = "rev_jarjar" }
 antlr =                              { module = "org.antlr:antlr",                             version.ref = "rev_antlr" }
 antlr-complete =                     { module = "org.antlr:antlr-complete",                    version.ref = "rev_antlr" }
 asm =                                { module = "org.ow2.asm:asm",                             version.ref = "rev_asm" }
@@ -35,6 +37,7 @@ guava =                              { module = "com.google.guava:guava",       
 icu4j =                              { module = "com.ibm.icu:icu4j",                           version.ref = "rev_icu4j"}
 informix =                           { module = "com.ibm.informix:jdbc",                       version.ref = "rev_informix" }
 jakarta_servlet_api =                { module = "jakarta.servlet:jakarta.servlet-api",         version.ref = "rev_jakarta_servlet_api" }
+jarjar =                             { module = "com.eed3si9n.jarjar:jarjar",                  version.ref = "rev_jarjar" }
 java_sizeof =                        { module = "com.carrotsearch:java-sizeof",                version.ref = "rev_java_sizeof" }
 jffi =                               { module = "com.github.jnr:jffi",                         version.ref = "rev_jffi" }
 jline =                              { module = "org.jline:jline",                             version.ref = "rev_jline" }

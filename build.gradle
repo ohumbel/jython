@@ -167,6 +167,9 @@ dependencies {
   testImplementation(libs.junit.jupiter)
   testImplementation(libs.junit.platform.launcher)
   testImplementation(libs.antlr.complete)
+  // to trigger dependabot on jarjar
+  testImplementation(libs.ant.jarjar)
+  testImplementation(libs.jarjar)
 }
 
 
