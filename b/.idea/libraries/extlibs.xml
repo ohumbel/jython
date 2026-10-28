@@ -3,9 +3,9 @@
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/extlibs/ant-1.10.18.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/antlr-complete-3.5.3.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/asm-9.11.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/asm-commons-9.11.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/asm-util-9.11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/asm-9.11.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/asm-commons-9.11.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/asm-util-9.11.1.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/bcpkix-jdk18on-1.86.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/bcprov-jdk18on-1.86.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/commons-compress-1.28.0.jar!/" />
