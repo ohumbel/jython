@@ -228,7 +228,7 @@ An example ant.properties file:
                 <file name="commons-io-2.22.0.jar"/>
                 <file name="failureaccess-1.0.3.jar"/>
                 <file name="guava-33.7.2-jre.jar"/>
-                <file name="icu4j-78.3.jar"/>
+                <file name="icu4j-79.1.jar"/>
                 <file name="jffi-1.4.3.jar"/>
                 <file name="java-sizeof-0.0.5.jar"/>
                 <file name="jnr-constants-0.11.2.jar"/>
@@ -851,7 +851,7 @@ The text for an official release would continue like ...
             <zipfileset src="extlibs/failureaccess-1.0.3.jar" excludes="META-INF/**"/>
             <zipfileset src="extlibs/guava-33.7.2-jre.jar" excludes="META-INF/**"/>
             <rule pattern="com.google.**" result="org.python.google.@1"/>
-            <zipfileset src="extlibs/icu4j-78.3.jar"/>
+            <zipfileset src="extlibs/icu4j-79.1.jar"/>
             <rule pattern="com.ibm.icu.**" result="org.python.icu.@1"/>
             <zipfileset src="extlibs/netty-buffer-4.2.19.Final.jar" excludes="META-INF/**"/>
             <rule pattern="io.netty.**" result="org.python.netty.@1"/>
