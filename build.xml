@@ -232,9 +232,9 @@ An example ant.properties file:
                 <file name="jffi-1.4.3.jar"/>
                 <file name="java-sizeof-0.0.5.jar"/>
                 <file name="jnr-constants-0.11.2.jar"/>
-                <file name="jnr-ffi-2.3.3.jar"/>
+                <file name="jnr-ffi-2.3.4.jar"/>
                 <file name="jnr-netdb-1.2.0.jar"/>
-                <file name="jnr-posix-3.2.4.jar"/>
+                <file name="jnr-posix-3.2.5.jar"/>
                 <file name="jline-4.4.8.jar"/>
                 <file name="netty-buffer-4.2.19.Final.jar"/>
                 <file name="netty-codec-base-4.2.19.Final.jar"/>
@@ -894,9 +894,9 @@ The text for an official release would continue like ...
             <!-- remainder of JNR, JFFI -->
             <zipfileset src="extlibs/jffi-1.4.3.jar"/>
             <zipfileset src="${extlibs.dir}/jnr-constants-0.11.2.jar"/>
-            <zipfileset src="${extlibs.dir}/jnr-ffi-2.3.3.jar"/>
+            <zipfileset src="${extlibs.dir}/jnr-ffi-2.3.4.jar"/>
             <zipfileset src="${extlibs.dir}/jnr-netdb-1.2.0.jar"/>
-            <zipfileset src="${extlibs.dir}/jnr-posix-3.2.4.jar"/>
+            <zipfileset src="${extlibs.dir}/jnr-posix-3.2.5.jar"/>
             <zipfileset src="extlibs/xercesImpl-2.12.2.jar"
                 excludes="META-INF/services/*, org/w3c/**"/>
             <rule pattern="org.apache.xml.**" result="org.python.apache.xml.@1"/>
@@ -919,7 +919,7 @@ The text for an official release would continue like ...
                     <attribute name="build-compiler" value="${build.compiler}" />
                     <attribute name="jdk-target-version" value="${jdk.target.version}" />
                     <attribute name="debug" value="${debug}" />
-                </section>
+                </section>f
             </manifest>
         </jarjar>
         <!-- pack jline as is - see above -->

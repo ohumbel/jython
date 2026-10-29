@@ -38,9 +38,9 @@
       <root url="jar://$PROJECT_DIR$/extlibs/jffi-x86_64-Windows.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jline-4.4.8.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jnr-constants-0.11.2.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/jnr-ffi-2.3.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/jnr-ffi-2.3.4.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jnr-netdb-1.2.0.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/jnr-posix-3.2.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/jnr-posix-3.2.5.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/junit-4.13.2.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/mysql-connector-j-9.7.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/netty-buffer-4.2.19.Final.jar!/" />
