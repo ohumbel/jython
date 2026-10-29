@@ -1536,6 +1536,7 @@ The text for an official release would continue like ...
     <target name="regrtest-windows" if="os.family.windows">
         <mkdir dir="${junit.reports}"/>
         <exec executable="${dist.dir}/bin/jython.exe" failonerror="true">
+            <env key="JAVA_OPTS" value="-Duser.language=en -Duser.region=US"/>
             <arg value="${dist.dir}/Lib/test/regrtest.py"/>
             <!-- Only run the tests that are expected to work on Jython -->
             <arg value="--expected"/>
@@ -1569,6 +1570,7 @@ The text for an official release would continue like ...
     <target name="regrtest-windows-file" if="os.family.windows">
         <mkdir dir="${junit.reports}"/>
         <exec executable="${dist.dir}/bin/jython.exe" failonerror="true">
+            <env key="JAVA_OPTS" value="-Duser.language=en -Duser.region=US"/>
             <arg value="${dist.dir}/Lib/test/regrtest.py"/>
             <arg value="--junit-xml"/>
             <arg value="${junit.reports}"/>
