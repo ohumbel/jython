@@ -15,7 +15,7 @@
       <root url="jar://$PROJECT_DIR$/extlibs/jarjar-1.7.2.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/java-sizeof-0.0.5.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jdbc-15.0.1.4.jar!/" />
-      <root url="jar://$PROJECT_DIR$/extlibs/jffi-1.4.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/extlibs/jffi-1.4.5.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jffi-aarch64-Linux.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jffi-arm-Linux.jar!/" />
       <root url="jar://$PROJECT_DIR$/extlibs/jffi-Darwin.jar!/" />
