@@ -919,7 +919,7 @@ The text for an official release would continue like ...
                     <attribute name="build-compiler" value="${build.compiler}" />
                     <attribute name="jdk-target-version" value="${jdk.target.version}" />
                     <attribute name="debug" value="${debug}" />
-                </section>f
+                </section>
             </manifest>
         </jarjar>
         <!-- pack jline as is - see above -->
