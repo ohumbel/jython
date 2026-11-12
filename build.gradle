@@ -255,40 +255,29 @@ configurations {
 }
 
 dependencies {
-  // The expose (Ant) task depends on classes compiled to here:
+  // The expose task depends on classes compiled to here:
   expose files(unexposedDir)
 }
 
-// A (Gradle) task to run the Ant task 'expose'.
-task expose (group: 'Custom', dependsOn: compileJava) {
+// A (Gradle) task to run 'expose'.
+task expose (type: JavaExec, group: 'Custom') {
 
   description = 'Expose Java types to Python using their annotations.'
 
-  // Allow Gradle to infer the need to regenreate the outputs
+  dependsOn compileJava
+
+  // Allow Gradle to infer the need to regenerate the outputs
   inputs.files(fileTree("${project.ext.unexposedDir}/org/python"))
+  inputs.file('CoreExposed.includes')
   outputs.dir(project.ext.exposedDir)
 
-  def exposedDir = project.ext.exposedDir
-  def unexposedDir = project.ext.unexposedDir
-
-  doLast {
-    /*
-     * Define an Ant task called 'expose' in the project's AntBuilder.
-     * We can't define it until ExposeTask has been compiled.
-     */
-    ant.taskdef(
-      name: 'expose',
-      classname: 'org.python.expose.generate.ExposeTask',
-      classpath: configurations.expose.asPath
-     )
-
-    // Use the Gradle-conventional directory structure (not the legacy one).
-    ant.expose(
-      srcdir: file(unexposedDir),
-      destdir: mkdir(file(exposedDir)),
-      includesfile: file('CoreExposed.includes')
-    )
-  }
+  classpath = configurations.expose
+  mainClass = 'org.python.expose.generate.ExposeTask'
+  args = [
+    '--srcdir', project.ext.unexposedDir,
+    '--destdir', project.ext.exposedDir,
+    '--includesfile', 'CoreExposed.includes'
+  ]
 }
 
 // Task to merge the exposed and unexposed classes
@@ -548,13 +537,15 @@ configurations {
 }
 
 dependencies {
-  // Jython as built so far should be on the path of the jycompile (Ant) task
+  // Jython as built so far should be on the path of the jycompile task
   pycompile files("$buildDir/classes/java/main")
   pycompile files("$buildDir/resources/main")
 }
 
-// A (Gradle) task to run the Ant task 'jycompile' (not pycompile).
-task pycompile(group: 'Custom', description: 'Compile the Python modules to .class files for the JAR') {
+// A (Gradle) task to run 'jycompile' (not pycompile).
+task pycompile(type: JavaExec, group: 'Custom') {
+
+  description = 'Compile the Python modules to .class files for the JAR'
 
   // Compiler depends on rest of Jython being fully assembled in 'classes'
   dependsOn classes
@@ -564,48 +555,33 @@ task pycompile(group: 'Custom', description: 'Compile the Python modules to .cla
   inputs.dir project.ext.buildLibDir
   outputs.dir project.ext.compiledLibDir
 
-  def inputsDir = project.ext.buildLibDir
-  def outputsDir = project.ext.compiledLibDir
+  classpath = configurations.pycompile
+  mainClass = 'org.python.util.JycompileAntTask'
 
-  doFirst {
-    /*
-     * Define an Ant task called 'jycompile' in the project's AntBuilder.
-     * We can't define it until JythoncAntTask has been compiled, so this
-     * must happen during the execution of the task (early).
-     */
-     ant.taskdef(
-       name: 'jycompile',
-       classname: 'org.python.util.JycompileAntTask',
-       classpath: configurations.pycompile.asPath
-     )
-  }
+  /*
+   * Now use JycompileAntTask to compile the Python source we
+   * supply to users. The exclusions have been copied from build.xml,
+   * and also this comment:
+    <!-- One might think that the exclusion of lib2to3/tests/** is
+       recursive, but one would be wrong ;) It's actually only
+       two levels, so for now the workaround is also to include
+       data/myfixes/**
 
-  doLast {
-    /*
-     * Now use the 'jycompile' Ant task to compile the Python source we
-     * supply to users. The exclusions have been copied from build.xml,
-     * and also this comment:
-      <!-- One might think that the exclusion of lib2to3/tests/** is
-         recursive, but one would be wrong ;) It's actually only
-         two levels, so for now the workaround is also to include
-         data/myfixes/**
-
-         This exclusion for lib2to3/tests/ in general is necessary
-         because data/infinite_recursion.py is not compileable by
-         Jython - it's too large and will exceed Java method
-         limits for the top level script; nor is
-         data/py3_test_grammar.py - it's Python 3. Meanwhile
-         refactor.get_all_fix_names depends on having *.py, not
-         exclusively $py.class, files available in
-         lib2to3/tests/data/myfixes/**. -->
-     */
-    def exclusions = ['test/**', 'lib2to3/tests/**', 'lib2to3/tests/data/myfixes/**']
-    ant.jycompile(
-      srcdir: inputsDir,
-      destdir: outputsDir,
-      excludes: exclusions.join(',')  // Yes, it's that way round :o
-    )
-  }
+       This exclusion for lib2to3/tests/ in general is necessary
+       because data/infinite_recursion.py is not compileable by
+       Jython - it's too large and will exceed Java method
+       limits for the top level script; nor is
+       data/py3_test_grammar.py - it's Python 3. Meanwhile
+       refactor.get_all_fix_names depends on having *.py, not
+       exclusively $py.class, files available in
+       lib2to3/tests/data/myfixes/**. -->
+   */
+  def exclusions = ['test/**', 'lib2to3/tests/**', 'lib2to3/tests/data/myfixes/**']
+  args = [
+    '--srcdir', project.ext.buildLibDir,
+    '--destdir', project.ext.compiledLibDir,
+    '--excludes', exclusions.join(',')
+  ]
 }
 
 

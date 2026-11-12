@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DefaultLogger;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.MatchingTask;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.util.GlobPatternMapper;
@@ -97,5 +99,87 @@ public abstract class GlobMatchingTask extends MatchingTask {
             throw new BuildException("destination directory '" + destDir + "' does not exist "
                     + "or is not a directory", getLocation());
         }
+    }
+
+    public void runFromCommandLine(String[] args) {
+        Project project = new Project();
+        project.init();
+        project.setBaseDir(new File("."));
+        DefaultLogger logger = new DefaultLogger();
+        logger.setOutputPrintStream(System.out);
+        logger.setErrorPrintStream(System.err);
+        logger.setMessageOutputLevel(Project.MSG_INFO);
+        project.addBuildListener(logger);
+        setProject(project);
+        if (getTaskName() == null || getTaskName().isEmpty()) {
+            setTaskName(getClass().getSimpleName());
+        }
+
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if ("--srcdir".equals(arg) || "-srcdir".equals(arg)) {
+                if (++i >= args.length) {
+                    throw new IllegalArgumentException("Missing value for " + arg);
+                }
+                setSrcdir(new Path(project, args[i]));
+            } else if ("--destdir".equals(arg) || "-destdir".equals(arg)) {
+                if (++i >= args.length) {
+                    throw new IllegalArgumentException("Missing value for " + arg);
+                }
+                setDestdir(new File(args[i]));
+            } else if ("--includesfile".equals(arg) || "-includesfile".equals(arg)) {
+                if (++i >= args.length) {
+                    throw new IllegalArgumentException("Missing value for " + arg);
+                }
+                setIncludesfile(new File(args[i]));
+            } else if ("--includes".equals(arg) || "-includes".equals(arg)) {
+                if (++i >= args.length) {
+                    throw new IllegalArgumentException("Missing value for " + arg);
+                }
+                setIncludes(args[i]);
+            } else if ("--excludesfile".equals(arg) || "-excludesfile".equals(arg)) {
+                if (++i >= args.length) {
+                    throw new IllegalArgumentException("Missing value for " + arg);
+                }
+                setExcludesfile(new File(args[i]));
+            } else if ("--excludes".equals(arg) || "-excludes".equals(arg)) {
+                if (++i >= args.length) {
+                    throw new IllegalArgumentException("Missing value for " + arg);
+                }
+                setExcludes(args[i]);
+            } else if (arg.startsWith("--srcdir=")) {
+                setSrcdir(new Path(project, arg.substring("--srcdir=".length())));
+            } else if (arg.startsWith("-srcdir=")) {
+                setSrcdir(new Path(project, arg.substring("-srcdir=".length())));
+            } else if (arg.startsWith("--destdir=")) {
+                setDestdir(new File(arg.substring("--destdir=".length())));
+            } else if (arg.startsWith("-destdir=")) {
+                setDestdir(new File(arg.substring("-destdir=".length())));
+            } else if (arg.startsWith("--includesfile=")) {
+                setIncludesfile(new File(arg.substring("--includesfile=".length())));
+            } else if (arg.startsWith("-includesfile=")) {
+                setIncludesfile(new File(arg.substring("-includesfile=".length())));
+            } else if (arg.startsWith("--includes=")) {
+                setIncludes(arg.substring("--includes=".length()));
+            } else if (arg.startsWith("-includes=")) {
+                setIncludes(arg.substring("-includes=".length()));
+            } else if (arg.startsWith("--excludesfile=")) {
+                setExcludesfile(new File(arg.substring("--excludesfile=".length())));
+            } else if (arg.startsWith("-excludesfile=")) {
+                setExcludesfile(new File(arg.substring("-excludesfile=".length())));
+            } else if (arg.startsWith("--excludes=")) {
+                setExcludes(arg.substring("--excludes=".length()));
+            } else if (arg.startsWith("-excludes=")) {
+                setExcludes(arg.substring("-excludes=".length()));
+            } else {
+                throw new IllegalArgumentException("Unknown argument: " + arg);
+            }
+        }
+
+        if (destDir != null && !destDir.exists()) {
+            destDir.mkdirs();
+        }
+
+        execute();
     }
 }

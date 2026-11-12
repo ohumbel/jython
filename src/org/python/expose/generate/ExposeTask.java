@@ -88,4 +88,8 @@ public class ExposeTask extends GlobMatchingTask {
             }
         }
     }
+
+    public static void main(String[] args) {
+        new ExposeTask().runFromCommandLine(args);
+    }
 }
