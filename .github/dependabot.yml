@@ -15,6 +15,9 @@ updates:
       bouncycastle:
         patterns:
           - "org.bouncycastle:bc*"
+      jarjar:
+        patterns:
+          - "com.eed3si9n.jarjar:*"
       jnr:
         patterns:
           - "com.github.jnr:*"

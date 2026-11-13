@@ -824,15 +824,15 @@ The text for an official release would continue like ...
     </target>
 
     <target name="jar-complete" depends="jar, pycompile">
-        <taskdef name="jarjar" classname="org.pantsbuild.jarjar.JarJarTask">
+        <taskdef name="jarjar" classname="com.eed3si9n.jarjar.JarJarTask">
             <classpath>
-                <pathelement path="extlibs/jarjar-1.7.2.jar" />
+                <pathelement path="extlibs/ant-jarjar-1.18.1.jar" />
+                <pathelement path="extlibs/jarjar-1.18.1.jar" />
                 <path refid="main.classpath" />
             </classpath>
         </taskdef>
         <!-- produce the big shadowed jar using jarjar -->
-        <property name="initial.jarjared.jar" value="jarjared.jar"/>
-        <jarjar destfile="${dist.dir}/${initial.jarjared.jar}" update="${jar.update}">
+        <jarjar destfile="${dist.dir}/${jython.deploy.jar}"  update="${jar.update}">
             <zipfileset src="${dist.dir}/${jython.dev.jar}"/>
             <!-- pin to Antlr 3 until we upgrade parsing -->
             <zipfileset src="extlibs/antlr-runtime-3.5.3.jar"/>
@@ -903,7 +903,8 @@ The text for an official release would continue like ...
             <rule pattern="org.apache.xerces.**" result="org.python.apache.xerces.@1"/>
             <rule pattern="org.apache.wml.**" result="org.python.apache.wml.@1"/>
             <rule pattern="org.apache.html.**" result="org.python.apache.html.@1"/>
-            <!-- leave jline out: jarjar cannot handle FFM classes - if we exclude them, the console is broken -->
+            <zipfileset src="extlibs/jline-4.4.8.jar"/>
+            <rule pattern="org.jline.**" result="org.python.jline.@1"/>
             <manifest>
                 <attribute name="Main-Class" value="org.python.util.jython" />
                 <attribute name="Built-By" value="${user.name}" />
@@ -922,17 +923,19 @@ The text for an official release would continue like ...
                 </section>
             </manifest>
         </jarjar>
-        <!-- pack jline as is - see above -->
+        <!-- pack jline as is - see above 
         <jar destfile="${dist.dir}/${jython.deploy.jar}" update="${jar.update}">
             <zipfileset src="${dist.dir}/${initial.jarjared.jar}"/>
             <zipfileset src="extlibs/jline-4.5.0.jar" excludes="META-INF/MANIFEST.MF"/>
         </jar>
-        <!-- delete the intermediate .jar file -->
+        -->
+        <!-- delete the intermediate .jar file
         <delete>
             <filelist dir="${dist.dir}">
                 <file name="${initial.jarjared.jar}"/>
             </filelist>
         </delete>
+        -->
     </target>
 
     <target name="jar-standalone" depends="jar-complete, copy-lib">
