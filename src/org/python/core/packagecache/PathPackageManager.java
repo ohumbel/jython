@@ -5,13 +5,12 @@ package org.python.core.packagecache;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.logging.Level;
 
 import org.python.core.Py;
-import org.python.core.PyException;
 import org.python.core.PyJavaPackage;
 import org.python.core.PyList;
 import org.python.core.PyObject;
@@ -158,7 +157,10 @@ public abstract class PathPackageManager extends CachedJarsPackageManager {
 
                 if (!pkgCand) {
                     try {
-                        int acc = checkAccess(new BufferedInputStream(new FileInputStream(cand)));
+                        int acc;
+                        try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(cand.toPath()))) {
+                            acc = checkAccess(bis);
+                        }
                         if ((acc == -1) || filterByAccess(jname, acc)) {
                             continue;
                         }

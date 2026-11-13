@@ -8,6 +8,7 @@ import java.util.Properties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.python.core.PySystemState;
+import org.python.core.PyType;
 import org.python.core.RegistryKey;
 import org.python.util.PythonInterpreter;
 
@@ -29,14 +30,12 @@ class JavaMakerSmokeTest {
         String input = new String();
         input += "import java.io.ByteArrayInputStream\n";
         input += "import java.lang.String\n";
-        input += "import org.python.core.Options\n";
-        input += "org.python.core.Options.proxyDebugDirectory = 'build/testclasses'\n";
         input += "class ProxyTest(java.io.ByteArrayInputStream):\n";
         input += "    def somemethod(self): pass\n";
         input += "ProxyTest(java.lang.String('teststr').getBytes())\n";
         interp.exec(input);
 
-        proxyClass = Class.forName("org.python.proxies.__main__$ProxyTest$0");
+        proxyClass = interp.get("ProxyTest", PyType.class).getProxyType();
     }
 
     @Test

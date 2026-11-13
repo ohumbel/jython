@@ -76,4 +76,8 @@ public class JycompileAntTask extends GlobMatchingTask {
     protected String getTo() {
         return imp.makeCompiledFilename(getFrom());
     }
+
+    public static void main(String[] args) {
+        new JycompileAntTask().runFromCommandLine(args);
+    }
 }

@@ -104,7 +104,7 @@ Invoke this with:
 ```
 PS> .\gradlew publish
 ```
-and a JAR and POM are delivered to ` .build2\repo` 
+and a JAR and POM are delivered to `build2\stagingRepo`
 
 Whereas the JARs delivered by the installer are somewhat "fat",
 embedding certain dependencies in shaded (renamed) form,
