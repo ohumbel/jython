@@ -802,7 +802,6 @@ test {
 
   // FIXME: Tests that hard-code directory paths (use a symbol):
   exclude 'org/python/compiler/custom_proxymaker/**'
-  exclude 'org/python/compiler/JavaMakerSmokeTest.class'
 
   // FIXME: Failing test finds project root from test class location
   exclude 'org/python/core/PySystemState_registry_Test.class'
