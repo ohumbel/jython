@@ -15,6 +15,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -436,7 +437,14 @@ public class ParserFacade {
         if (encoding == null) {
             return null;
         }
-        if (encoding.equals("Latin-1") || encoding.equals("latin-1")) {
+        if (encoding.endsWith("-")) {
+            encoding = encoding.substring(0, encoding.length() - 1);
+        }
+        String lower = encoding.toLowerCase(Locale.ROOT);
+        if (lower.equals("latin-1") || lower.equals("latin1")
+                || lower.equals("iso-latin-1-unix") || lower.equals("iso-8859-1-unix")
+                || lower.equals("iso-latin-1") || lower.equals("iso-8859-1"))
+        {
             return "ISO8859_1";
         }
         return encoding;

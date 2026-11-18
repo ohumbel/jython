@@ -1,14 +1,14 @@
 package org.python.antlr;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.Token;
-import org.antlr.runtime.tree.CommonTreeAdaptor;
-import org.antlr.runtime.tree.CommonTreeNodeStream;
-import org.antlr.runtime.tree.Tree;
-import org.antlr.runtime.tree.TreeAdaptor;
+import org.python.core.CompileMode;
+import org.python.core.CompilerFlags;
+import org.python.core.ParserFacade;
 
 /**
  * A walker producing a <code>PythonTree</code> AST.
@@ -27,54 +27,23 @@ public class PythonTreeTester {
 
     public PythonTree parse(String[] args) throws Exception {
         PythonTree result = null;
-        //ErrorHandler eh = new ListErrorHandler();
-        ErrorHandler eh = new FailFastHandler();
-        CharStream input = new ANTLRFileStream(args[0]);
-        PythonLexer lexer = new PythonLexer(input);
-        lexer.setErrorHandler(eh);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        PythonTokenSource indentedSource = new PythonTokenSource(tokens, args[0]);
-        tokens = new CommonTokenStream(indentedSource);
-        PythonParser parser = new PythonParser(tokens);
-        parser.setErrorHandler(eh);
-        parser.setTreeAdaptor(new PythonTreeAdaptor());
-        PythonTree r = null;
-        switch (_block) {
-        case MODULE :
-            r = parser.file_input().tree;
-            break;
-        case INTERACTIVE :
-            r = parser.single_input().tree;
-            break;
-        case EXPRESSION :
-            r = parser.eval_input().tree;
-                break;
-        }
-        if (args.length > 1) {
-            System.out.println(r.toStringTree());
-        }
-        if (!isParseOnly()) {
-            /*
-            CommonTreeNodeStream nodes = new CommonTreeNodeStream(r);
-            nodes.setTokenStream(tokens);
-            PythonWalker walker = new PythonWalker(nodes);
-            walker.setErrorHandler(eh);
+        File f = new File(args[0]);
+        try (InputStream stream = new FileInputStream(f)) {
+            CompilerFlags cflags = new CompilerFlags();
             switch (_block) {
-            case MODULE :
-                result = walker.module();
+            case MODULE:
+                result = ParserFacade.parse(stream, CompileMode.exec, args[0], cflags);
                 break;
-            case INTERACTIVE :
-                result = walker.interactive();
+            case INTERACTIVE:
+                result = ParserFacade.parse(stream, CompileMode.single, args[0], cflags);
                 break;
-            case EXPRESSION :
-                result = walker.expression();
+            case EXPRESSION:
+                result = ParserFacade.parse(stream, CompileMode.eval, args[0], cflags);
                 break;
             }
-
-            if (args.length > 1) {
-                System.out.println(result.toStringTree());
-            }
-            */
+        }
+        if (args.length > 1 && result != null) {
+            System.out.println(result.toStringTree());
         }
         return result;
     }

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * -Dbase.dir=/your/dir/containing/py/files
  * </pre>
  */
-class RegressionTestSuite {
+public class RegressionTestSuite {
 	private static final String BASEDIR_PROPERTY = "base.dir";
 
 	@TestFactory
@@ -80,7 +80,7 @@ class RegressionTestSuite {
 			if (name.endsWith(".py")) {
 				return true;
 			} else {
-				if (name.equals(".svn")) {
+				if (name.startsWith(".") || name.equals("build") || name.equals("build2") || name.equals("dist")) {
 					return false;
 				}
 			}
