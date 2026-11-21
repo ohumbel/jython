@@ -29,6 +29,7 @@ public class VersionMatchingAntTask extends Task {
         ARTEFACT_NAME_FORMATS.put("rev_icu4j", "icu4j-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_informix", "jdbc-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_jakarta_servlet_api", "jakarta.servlet-api-%s.jar");
+        ARTEFACT_NAME_FORMATS.put("rev_jarjar", "ant-jarjar-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_java_sizeof", "java-sizeof-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_jffi", "jffi-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_jline", "jline-%s.jar");
@@ -115,9 +116,18 @@ public class VersionMatchingAntTask extends Task {
 
     private static void addAntArtefact(String line, Set<String> artefacts) {
         line = line.trim();
-        if (line.startsWith("<file name=\"") && line.contains(".jar\"")) {
-            int quoteIndex = line.indexOf('"');
-            artefacts.add(line.substring(quoteIndex + 1, line.indexOf('"', quoteIndex + 1)));
+        if (line.contains(".jar\"")) {
+             if (line.startsWith("<file name=\"") ) {
+                 int quoteIndex = line.indexOf('"');
+                 artefacts.add(line.substring(quoteIndex + 1, line.indexOf('"', quoteIndex + 1)));
+             }
+             String pathStart = "<pathelement path=\"extlibs/";
+             if (line.startsWith(pathStart)) {
+                 int startIndex = pathStart.length();
+                 artefacts.add(line.substring(startIndex, line.indexOf('"', startIndex + 1)));
+             }
+            
+        
         }
     }
 

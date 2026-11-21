@@ -24,7 +24,6 @@
 .junie/
 
 # Eclipse files
-.classpath
 .externalToolBuilders/*
 .project
 .pydevproject
