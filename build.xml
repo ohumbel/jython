@@ -903,7 +903,7 @@ The text for an official release would continue like ...
             <rule pattern="org.apache.xerces.**" result="org.python.apache.xerces.@1"/>
             <rule pattern="org.apache.wml.**" result="org.python.apache.wml.@1"/>
             <rule pattern="org.apache.html.**" result="org.python.apache.html.@1"/>
-            <zipfileset src="extlibs/jline-4.4.8.jar"/>
+            <zipfileset src="extlibs/jline-4.7.0.jar"/>
             <rule pattern="org.jline.**" result="org.python.jline.@1"/>
             <manifest>
                 <attribute name="Main-Class" value="org.python.util.jython" />
@@ -923,19 +923,6 @@ The text for an official release would continue like ...
                 </section>
             </manifest>
         </jarjar>
-        <!-- pack jline as is - see above 
-        <jar destfile="${dist.dir}/${jython.deploy.jar}" update="${jar.update}">
-            <zipfileset src="${dist.dir}/${initial.jarjared.jar}"/>
-            <zipfileset src="extlibs/jline-4.7.0.jar" excludes="META-INF/MANIFEST.MF"/>
-        </jar>
-        -->
-        <!-- delete the intermediate .jar file
-        <delete>
-            <filelist dir="${dist.dir}">
-                <file name="${initial.jarjared.jar}"/>
-            </filelist>
-        </delete>
-        -->
     </target>
 
     <target name="jar-standalone" depends="jar-complete, copy-lib">
