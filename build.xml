@@ -832,7 +832,7 @@ The text for an official release would continue like ...
             </classpath>
         </taskdef>
         <!-- produce the big shadowed jar using jarjar -->
-        <jarjar destfile="${dist.dir}/${jython.deploy.jar}"  update="${jar.update}">
+        <jarjar destfile="${dist.dir}/${jython.deploy.jar}" filesonly="true" update="${jar.update}">
             <zipfileset src="${dist.dir}/${jython.dev.jar}"/>
             <!-- pin to Antlr 3 until we upgrade parsing -->
             <zipfileset src="extlibs/antlr-runtime-3.5.3.jar"/>
