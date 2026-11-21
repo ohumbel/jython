@@ -49,18 +49,13 @@ class InstallationTest  {
     void testGetExternalJavaVersionNoJavaInBinDirectory() {
         File wrongHome = new File(System.getProperty("user.home"));
         File binDir = new File(wrongHome, "bin");
-        assertFalse(binDir.exists());
-        try {
+        if (!binDir.exists()) {
             assertTrue(binDir.mkdirs());
-            JavaHomeHandler javaHomeHandler = new JavaHomeHandler(wrongHome.getAbsolutePath());
-            JavaVersionInfo versionInfo = Installation.getExternalJavaVersion(javaHomeHandler);
-            assertEquals(Installation.ERROR_RETURN, versionInfo.getErrorCode());
-            assertTrue(versionInfo.getReason().indexOf("invalid") >= 0);
-        } finally {
-            if (binDir.exists()) {
-                binDir.delete();
-            }
         }
+        JavaHomeHandler javaHomeHandler = new JavaHomeHandler(wrongHome.getAbsolutePath());
+        JavaVersionInfo versionInfo = Installation.getExternalJavaVersion(javaHomeHandler);
+        assertEquals(Installation.ERROR_RETURN, versionInfo.getErrorCode());
+        assertTrue(versionInfo.getReason().indexOf("invalid") >= 0);
     }
 
     @Test

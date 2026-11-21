@@ -20,6 +20,9 @@
 *.iws
 .idea/
 
+# AI artifacts
+.junie/
+
 # Eclipse files
 .externalToolBuilders/*
 .project

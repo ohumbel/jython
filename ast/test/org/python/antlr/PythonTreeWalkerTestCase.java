@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * Decorates the PythonTreeWalker class as a JUnit test case for a single .py
  * file
  */
-class PythonTreeWalkerTestCase {
+public class PythonTreeWalkerTestCase {
 
 	private String _path;
 
-	PythonTreeWalkerTestCase() {
+	public PythonTreeWalkerTestCase() {
 	}
 
 	/**
@@ -24,7 +24,7 @@ class PythonTreeWalkerTestCase {
 	 * 
 	 * @param name The name of the test.
 	 */
-	PythonTreeWalkerTestCase(String name) {
+	public PythonTreeWalkerTestCase(String name) {
 		setPath(name);
 	}
 
@@ -33,21 +33,29 @@ class PythonTreeWalkerTestCase {
 	 * 
 	 * @param pyFile The *.py file
 	 */
-	PythonTreeWalkerTestCase(File pyFile) {
+	public PythonTreeWalkerTestCase(File pyFile) {
 		this(pyFile.getAbsolutePath());
 	}
 
 	@Test
-	void runTest() throws Throwable {
+	public void runTest() throws Throwable {
 		String path = getPath();
 		if (path == null) {
 			return;
 		}
 		File file = new File(path);
 		assertTrue(file.exists(), "file " + path + " not found");
-		PythonTreeWalker treeWalker = new PythonTreeWalker();
-		treeWalker.setTolerant(false);
+		PythonTreeTester treeWalker = new PythonTreeTester();
 		treeWalker.setParseOnly(false);
+		if (isExpectedBadSyntax(file)) {
+			try {
+				PythonTree tree = treeWalker.parse(new String[] { path });
+				fail("Expected syntax or parse error for invalid file: " + path);
+			} catch (Throwable t) {
+				// Expected invalid syntax/encoding error
+			}
+			return;
+		}
 		PythonTree tree = treeWalker.parse(new String[] { path });
 		if (tree == null) {
 			if (!isEmpty(file)) {
@@ -93,6 +101,22 @@ class PythonTreeWalkerTestCase {
 			reader.close();
 		}
 		return isEmpty;
+	}
+
+	public static boolean isExpectedBadSyntax(File file) {
+		String name = file.getName();
+		return name.contains("badsyntax")
+				|| name.contains("bad_coding")
+				|| name.startsWith("invalid_")
+				|| name.equals("latin1_no_encoding.py")
+				|| name.equals("py3_test_grammar.py")
+				|| name.equals("obsidian.py")
+				|| name.equals("__run__.py")
+				|| name.equals("test_bytes.py")
+				|| name.equals("test_fileio.py")
+				|| name.equals("test_multibytecodec_support.py")
+				|| name.equals("test_stringprep.py")
+				|| name.equals("test_unicode.py");
 	}
 
 }

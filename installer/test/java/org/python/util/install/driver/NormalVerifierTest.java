@@ -44,7 +44,7 @@ class NormalVerifierTest  {
     @Test
     void testGetSimpleCommand() throws Exception {
         String prefix = _verifier.getTargetDir().toString().concat(File.separator);
-        String expectedCommand = "bin/jython";
+        String expectedCommand = "bin" + File.separator + "jython";
         String expectedArgument = prefix.concat("autotest.py");
         String[] command = _verifier.getSimpleCommand();
         assertNotNull(command);
