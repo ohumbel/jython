@@ -24,7 +24,6 @@ public class VersionMatchingAntTask extends Task {
         ARTEFACT_NAME_FORMATS.put("rev_asm", "asm-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_bouncycastle", "bcpkix-jdk18on-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_commons_compress", "commons-compress-%s.jar");
-        ARTEFACT_NAME_FORMATS.put("rev_commons_io", "commons-io-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_guava", "guava-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_icu4j", "icu4j-%s.jar");
         ARTEFACT_NAME_FORMATS.put("rev_informix", "jdbc-%s.jar");

@@ -42,14 +42,14 @@ class VersionMatchingAntTaskTest {
     void testParseGradleAretfacts() throws IOException {
         Set<String> gradleArtefacts = task.parseGradleArtefacts();
         assertNotNull(gradleArtefacts);
-        assertEquals(20, gradleArtefacts.size());
+        assertEquals(19, gradleArtefacts.size());
     }
 
     @Test
     void testParseAntArtefacts() throws IOException {
         Set<String> antArtefacts = task.parseAntArtefacts();
         assertNotNull(antArtefacts);
-        assertEquals(39, antArtefacts.size());
+        assertEquals(38, antArtefacts.size());
     }
 
     @Test
@@ -79,7 +79,6 @@ class VersionMatchingAntTaskTest {
         assertEquals("asm-9.8.7.jar", calculateGradleArtefact("rev_asm", "9.8.7"));
         assertEquals("bcpkix-jdk18on-8.7.6.jar", calculateGradleArtefact("rev_bouncycastle", "8.7.6"));
         assertEquals("commons-compress-78.1.jar", calculateGradleArtefact("rev_commons_compress", "78.1"));
-        assertEquals("commons-io-1.2.3.4.jar", calculateGradleArtefact("rev_commons_io", "1.2.3.4"));
         assertEquals("guava-33.3.3-jre.jar", calculateGradleArtefact("rev_guava", "33.3.3-jre"));
         assertEquals("icu4j-78.7.jar", calculateGradleArtefact("rev_icu4j", "78.7"));
         assertEquals("jdbc-15.3.2.1.jar", calculateGradleArtefact("rev_informix", "15.3.2.1"));
